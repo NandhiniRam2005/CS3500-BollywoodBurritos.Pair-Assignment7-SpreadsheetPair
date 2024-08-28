@@ -2,5 +2,14 @@
 
 public class Formula
 {
+ 
+    ///<summary>
+    ///empty contructor
+    ///</summary>
+    ///<param name="formula"> FIX ME </param>
+   ///
+    public Formula( string formula)
+    {
 
+    }
 }
