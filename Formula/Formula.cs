@@ -10,6 +10,6 @@ public class Formula
    ///
     public Formula( string formula)
     {
-
+        formula = "hi";
     }
 }
