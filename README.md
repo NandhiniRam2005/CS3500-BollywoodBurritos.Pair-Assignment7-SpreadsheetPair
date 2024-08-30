@@ -16,4 +16,4 @@ The Spreadsheet program is currently capable of assesing the syntax of formulas 
 # Time Expenditures:
 
     1. Assignment One:   Predicted Hours:          8        Actual Hours:   6.5
-    2. Assignment Two:   Predicted Hours:           15        Actual Hours:    4
+    2. Assignment Two:   Predicted Hours:           17        Actual Hours:    4
