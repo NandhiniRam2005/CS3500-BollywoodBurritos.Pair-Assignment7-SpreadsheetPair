@@ -17,6 +17,8 @@
 
 namespace CS3500.Formula;
 
+using System.ComponentModel.Design;
+using System.Text;
 using System.Text.RegularExpressions;
 
 /// <summary>
@@ -54,6 +56,10 @@ public class Formula
     /// </summary>
     private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
 
+    private List<string> orderedFormula = new List<string>();
+
+    private StringBuilder formulaString = new StringBuilder();
+
     /// <summary>
     ///   Initializes a new instance of the <see cref="Formula"/> class.
     ///   <para>
@@ -83,25 +89,33 @@ public class Formula
     /// <param name="formula"> The string representation of the formula to be created.</param>
     public Formula(string formula)
     {
-        string normailizedFormula = formula.ToString();
+        this.orderedFormula = new List<string>();
 
         int closingParenthesis = 0;
         int openingParenthesis = 0;
         int numberOfTokens = 0;
         string previousToken = string.Empty;
 
-        List<string> tokens = GetTokens(normailizedFormula);
-        if (tokens.Count <= 0)
+        List<string> tokens = GetTokens(formula);
+        if (tokens.Count == 0)
         {
             throw new FormulaFormatException("Formula's must have at least one token!");
         }
 
         foreach (string token in tokens)
         {
-            // first token rule
-            if (numberOfTokens == 0)
-            {
+            numberOfTokens++;
 
+            // Following rules
+            IsPrevValid(token, previousToken);
+
+            // first token rule
+            if (numberOfTokens == 1)
+            {
+                if (!token.Equals("(") && !IsNum(token) && !IsVar(token))
+                {
+                    throw new FormulaFormatException("Invalid starting token! Formulas must begin with an opening parenthesis, number, or variable ");
+                }
             }
 
             // closing parenthesis rule
@@ -112,34 +126,87 @@ public class Formula
                 {
                     throw new FormulaFormatException("Number of closing parenthesis exceeded number of opening parenthesis");
                 }
+            }
 
-                // parenthesis and operator following rule
-                else if (token == ")")
+            // Balance Parent and CLosing Parent
+            else if (token == "(")
+            {
+                openingParenthesis++;
+            }
+
+            // Last Token rule
+            else if (numberOfTokens == tokens.Count())
+            {
+                if (!token.Equals(")") && !IsVar(token) && !IsNum(token))
                 {
-                    openingParenthesis++;
-                }
-
-                // valid token rule
-                else if (IsVar(token))
-                {
-
+                    throw new FormulaFormatException("Last token must be a \")\" number or variable!");
                 }
             }
+            else if (!IsVar(token) && !IsOperator(token) && !IsNum(token) && !token.Equals("(") && !token.Equals(")"))
+            {
+                throw new FormulaFormatException(token + " is not a valid token!");
+            }
+
+            previousToken = token;
+            this.orderedFormula.Add(token);
+        }
+
+        if (openingParenthesis != closingParenthesis)
+        {
+            throw new FormulaFormatException("Number of closing and opening parenthesis not equal!");
         }
     }
 
-    private bool isPrevValid(string currToken, string prevToken)
+    /// <summary>
+    /// HI.
+    /// </summary>
+    /// <param name="currToken"></param>
+    /// <param name="prevToken"></param >
+    /// <returns></returns>
+    private static void IsPrevValid(string currToken, string prevToken)
     {
-        if (prevToken.Equals("+") || prevToken.Equals("*") || prevToken.Equals("-") || prevToken.Equals("/"))
+        if (IsOperator(prevToken) || prevToken.Equals("("))
         {
-
+            if (!currToken.Equals("(") && !IsNum(currToken) && !IsVar(currToken))
+            {
+                throw new FormulaFormatException("Tokens following an operator or \"(\" must be a number, variable or \"(\"!");
+            }
         }
-        else if (prevToken.Equals("("))
+        else if (IsNum(prevToken) || IsVar(prevToken) || prevToken.Equals(")"))
         {
-
+            if (!currToken.Equals(")") && !IsOperator(currToken))
+            {
+                throw new FormulaFormatException("Tokens following a number, \")\", or variable must be an operator or \")\"!");
+            }
         }
 
-        return true;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    private static bool IsNum(string token)
+    {
+        try
+        {
+            Convert.ToDouble(token);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    private static bool IsOperator(string token)
+    {
+        if (token.Equals("+") || token.Equals("*") || token.Equals("-") || token.Equals("/"))
+        {
+            return true;
+        }
+        return false;
     }
 
     /// <summary>
@@ -161,8 +228,16 @@ public class Formula
     /// <returns> the set of variables (string names) representing the variables referenced by the formula. </returns>
     public ISet<string> GetVariables()
     {
-        // FIXME: implement your code here
-        return new HashSet<string>();
+        HashSet<string> variables = new HashSet<string>(); 
+        foreach (string token in this.orderedFormula)
+        {
+            if (IsVar(token) && !variables.Contains(token))
+            {
+                variables.Add(token);
+            }
+        }
+
+        return variables;
     }
 
     /// <summary>
@@ -197,8 +272,7 @@ public class Formula
     /// </returns>
     public override string ToString()
     {
-        // FIXME: add your code here.
-        return string.Empty;
+        return this.formulaString.ToString();
     }
 
     /// <summary>
