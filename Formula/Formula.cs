@@ -83,7 +83,63 @@ public class Formula
     /// <param name="formula"> The string representation of the formula to be created.</param>
     public Formula(string formula)
     {
-        // FIXME: implement your code here
+        string normailizedFormula = formula.ToString();
+
+        int closingParenthesis = 0;
+        int openingParenthesis = 0;
+        int numberOfTokens = 0;
+        string previousToken = string.Empty;
+
+        List<string> tokens = GetTokens(normailizedFormula);
+        if (tokens.Count <= 0)
+        {
+            throw new FormulaFormatException("Formula's must have at least one token!");
+        }
+
+        foreach (string token in tokens)
+        {
+            // first token rule
+            if (numberOfTokens == 0)
+            {
+
+            }
+
+            // closing parenthesis rule
+            if (token == ")")
+            {
+                closingParenthesis++;
+                if (closingParenthesis > openingParenthesis)
+                {
+                    throw new FormulaFormatException("Number of closing parenthesis exceeded number of opening parenthesis");
+                }
+
+                // parenthesis and operator following rule
+                else if (token == ")")
+                {
+                    openingParenthesis++;
+                }
+
+                // valid token rule
+                else if (IsVar(token))
+                {
+
+                }
+            }
+        }
+    }
+
+    private bool isPrevValid(string currToken, string prevToken)
+    {
+        if (prevToken.Equals("+") || prevToken.Equals("*") || prevToken.Equals("-") || prevToken.Equals("/"))
+        {
+
+        }
+        else if (prevToken.Equals("("))
+        {
+
+        }
+
+        return true;
     }
 
     /// <summary>

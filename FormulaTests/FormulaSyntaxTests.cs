@@ -4,9 +4,9 @@
 // <authors> Joel Rodriguez </authors>
 // <date> August 29, 2024 </date>
 
-namespace CS3500.Formula;
+namespace CS3500.FormulaTests;
 
-using CS3500.Formula2; // Change this using statement to use different formula implementations.
+using CS3500.Formula;
 
 /// <summary>
 ///   <para>
@@ -89,7 +89,7 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///   <para>
-    ///     Make sure a simple varibale token is recognized.
+    ///     Make sure a simple variable token is recognized.
     ///   </para>
     ///   <remarks>
     ///     This is an example of a test that is not expected to throw an exception, i.e., it succeeds.
@@ -100,6 +100,23 @@ public class FormulaSyntaxTests
     public void FormulaConstructor_TestOneVariableToken_Valid()
     {
         _ = new Formula("a7");
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Make sure only a space token is not a valid token on its own. It should throw a FormulaFormatException.
+    ///     This also tests the first token rule and the last token rule.
+    ///   </para>
+    ///   <remarks>
+    ///     This is an example of a test that is not expected to throw an exception, i.e., it succeeds.
+    ///     In other words, the formula " " is an invalid formula which should cause an errors.
+    ///   </remarks>
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(FormulaFormatException))]
+    public void FormulaConstructor_TestSpaceTokenOnly_Invalid()
+    {
+        _ = new Formula(" ");
     }
 
     // --- Tests for Valid Token Rule ---
@@ -223,7 +240,7 @@ public class FormulaSyntaxTests
     ///   </para>
     ///   <remarks>
     ///     This is an example of a test that is expected to not throw an exception, i.e., it succeeds.
-    ///     In other words, the formula "72 + 3.5E3" is a valid formula which should not cause an error.
+    ///     In other words, the formula "72 + 3.5e3" is a valid formula which should not cause an error.
     ///   </remarks>
     /// </summary>
     [TestMethod]
@@ -239,7 +256,7 @@ public class FormulaSyntaxTests
     ///   </para>
     ///   <remarks>
     ///     This is an example of a test that is expected to not throw an exception, i.e., it succeeds.
-    ///     In other words, the formula "72 + 3.5E3" is a valid formula which should not cause an error.
+    ///     In other words, the formula "72 + 3.5e3" is a valid formula which should not cause an error.
     ///   </remarks>
     /// </summary>
     [TestMethod]
@@ -278,6 +295,23 @@ public class FormulaSyntaxTests
     public void FormulaConstructor_TestNegativeScientificToken_Valid()
     {
         _ = new Formula("72 + 3.5E-3");
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Make sure a formula with valid tokens, using scientific notation with no number after e, is recognized
+    ///     as invalid and throws a FormulaFormatException as Expected.
+    ///   </para>
+    ///   <remarks>
+    ///     This is an example of a test that is expected to throw an exception, i.e., it fails.
+    ///     In other words, the formula "72 + 3.5e" is a invalid formula which should cause an error.
+    ///   </remarks>
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(FormulaFormatException))]
+    public void FormulaConstructor_TestScientificTokenWithoutNumberAfterE_Valid()
+    {
+        _ = new Formula("72 + 3.5e");
     }
 
     /// <summary>
@@ -348,8 +382,8 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///   <para>
-    ///     Make sure a simple valid formula with valid tokens and with closing parenthesiss never
-    ///     exceeding that of regular parenthesiss is recognized as valid. This test doubles and tests
+    ///     Make sure a simple valid formula with valid tokens and with closing parenthesis never
+    ///     exceeding that of regular parenthesis is recognized as valid. This test doubles and tests
     ///     the extra following rule.
     ///   </para>
     ///   <remarks>
@@ -365,8 +399,8 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///   <para>
-    ///     Make sure an invalid formula where the number of closing parenthesiss exceeds the
-    ///     number of opening parenthesiss is recognized as invalid.
+    ///     Make sure an invalid formula where the number of closing parenthesis exceeds the
+    ///     number of opening parenthesis is recognized as invalid.
     ///   </para>
     ///   <remarks>
     ///     This is an example of a test that is expected to throw an exception, i.e., it fails.
@@ -375,7 +409,7 @@ public class FormulaSyntaxTests
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(FormulaFormatException))]
-    public void FormulaConstructor_TestTooManyClosingParenthesiss_Invalid()
+    public void FormulaConstructor_TestTooManyClosingParenthesis_Invalid()
     {
         _ = new Formula(")(6+7");
     }
@@ -400,9 +434,9 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///   <para>
-    ///     Make sure an invalid formula where the number of closing parenthesiss exceeds the
-    ///     number of opening parenthesiss, which in turn is an equation where the number of
-    ///     parenthesis is not balancedis recognized as invalid.
+    ///     Make sure an invalid formula where the number of closing parenthesis exceeds the
+    ///     number of opening parenthesis, which in turn is an equation where the number of
+    ///     parenthesis is not balanced is recognized as invalid.
     ///   </para>
     ///   <remarks>
     ///     This is an example of a test that is expected to throw an exception, i.e., it fails.
@@ -411,7 +445,7 @@ public class FormulaSyntaxTests
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(FormulaFormatException))]
-    public void FormulaConstructor_TestUnbalancedParenthesiss_Invalid()
+    public void FormulaConstructor_TestUnbalancedParenthesis_Invalid()
     {
         _ = new Formula("((7+32)");
     }
@@ -429,7 +463,7 @@ public class FormulaSyntaxTests
     ///   </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_TestSpacesFolowingOpeningParenthesis_Valid()
+    public void FormulaConstructor_TestSpacesFollowingOpeningParenthesis_Valid()
     {
         _ = new Formula(" 1+1");
     }
@@ -477,7 +511,7 @@ public class FormulaSyntaxTests
     ///   </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_TestFirstTokenOpeningParenthesiss_Valid()
+    public void FormulaConstructor_TestFirstTokenOpeningParenthesis_Valid()
     {
         _ = new Formula("(x7)+32");
     }
@@ -574,12 +608,12 @@ public class FormulaSyntaxTests
     ///   </para>
     ///   <remarks>
     ///     This is an example of a test that is expected to throw an exception, i.e., it fails.
-    ///     In other words, the formula "(71+x1)(" is an ivalid formula which should cause an errors.
+    ///     In other words, the formula "(71+x1)(" is an invalid formula which should cause an errors.
     ///   </remarks>
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(FormulaFormatException))]
-    public void FormulaConstructor_TestLastTokenIsOpeningParenthesis_Inalid()
+    public void FormulaConstructor_TestLastTokenIsOpeningParenthesis_Invalid()
     {
         _ = new Formula("(71+x1)(");
     }
@@ -591,12 +625,12 @@ public class FormulaSyntaxTests
     ///   </para>
     ///   <remarks>
     ///     This is an example of a test that is expected to throw an exception, i.e., it fails.
-    ///     In other words, the formula "71+x1+" is an ivalid formula which should cause an errors.
+    ///     In other words, the formula "71+x1+" is an invalid formula which should cause an errors.
     ///   </remarks>
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(FormulaFormatException))]
-    public void FormulaConstructor_TestLastTokenIsOperator_Inalid()
+    public void FormulaConstructor_TestLastTokenIsOperator_Invalid()
     {
         _ = new Formula("71+x1+");
     }
@@ -605,7 +639,7 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///   <para>
-    ///     Make sure a simple well formula where a number follows an opening parenthesiss is accepted by
+    ///     Make sure a simple well formula where a number follows an opening parenthesis is accepted by
     ///     the constructor (the constructor should not throw an exception).
     ///   </para>
     ///   <remarks>
@@ -614,14 +648,14 @@ public class FormulaSyntaxTests
     ///   </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_TestNumberFollowsOpeningParenthese_Valid()
+    public void FormulaConstructor_TestNumberFollowsOpeningParenthesis_Valid()
     {
         _ = new Formula("7+(1)+3");
     }
 
     /// <summary>
     ///   <para>
-    ///     Make sure a simple well formula where a variable follows an opening parenthesiss is accepted by
+    ///     Make sure a simple well formula where a variable follows an opening parenthesis is accepted by
     ///     the constructor (the constructor should not throw an exception).
     ///   </para>
     ///   <remarks>
@@ -630,14 +664,14 @@ public class FormulaSyntaxTests
     ///   </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_TestVariableFollowsOpeningParenthese_Valid()
+    public void FormulaConstructor_TestVariableFollowsOpeningParenthesis_Valid()
     {
         _ = new Formula("7+(x1)+3");
     }
 
     /// <summary>
     ///   <para>
-    ///     Make sure a simple well formula where a opening parenthesis follows an opening parenthesiss 
+    ///     Make sure a simple well formula where a opening parenthesis follows an opening parenthesis
     ///     is accepted by the constructor (the constructor should not throw an exception).
     ///   </para>
     ///   <remarks>
@@ -646,7 +680,7 @@ public class FormulaSyntaxTests
     ///   </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_TestOpeningParenthesisFollowsOpeningParenthese_Valid()
+    public void FormulaConstructor_TestOpeningParenthesisFollowsOpeningParenthesis_Valid()
     {
         _ = new Formula("7+((1))+3");
     }
@@ -705,7 +739,7 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///   <para>
-    ///     Make sure a formula in which there is a space between two numbers and no operator that the contstructor throws
+    ///     Make sure a formula in which there is a space between two numbers and no operator that the constructor throws
     ///     a FormulaFormatException as expected.
     ///   </para>
     ///   <remarks>
@@ -715,7 +749,7 @@ public class FormulaSyntaxTests
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(FormulaFormatException))]
-    public void FormulaConstructor_TestSpacesFolowingNumber_Invalid()
+    public void FormulaConstructor_TestSpacesFollowingNumber_Invalid()
     {
         _ = new Formula("(1 1)");
     }
@@ -732,7 +766,7 @@ public class FormulaSyntaxTests
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(FormulaFormatException))]
-    public void FormulaConstructor_TestSpacesFolowingVariable_Invalid()
+    public void FormulaConstructor_TestSpacesFollowingVariable_Invalid()
     {
         _ = new Formula("(x1 1)");
     }
@@ -749,7 +783,7 @@ public class FormulaSyntaxTests
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(FormulaFormatException))]
-    public void FormulaConstructor_TestNoValidTokenFolowingClosingParenthesis_Invalid()
+    public void FormulaConstructor_TestNoValidTokenFollowingClosingParenthesis_Invalid()
     {
         _ = new Formula("(1+1) 2+3");
     }
@@ -786,5 +820,4 @@ public class FormulaSyntaxTests
     {
         _ = new Formula("1+1   +    2+3");
     }
-
 }
