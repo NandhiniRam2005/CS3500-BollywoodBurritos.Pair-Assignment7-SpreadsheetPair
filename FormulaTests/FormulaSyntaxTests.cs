@@ -820,4 +820,14 @@ public class FormulaSyntaxTests
     {
         _ = new Formula("1+1   +    2+3");
     }
+
+    // TO STRING TESTS
+
+    [TestMethod]
+    public void ToString_TestBasicFormula_Valid()
+    {
+        Formula testFormula = new Formula("1.0000 + x7 + 36");
+        string expectedString = "1+X7+36";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
 }

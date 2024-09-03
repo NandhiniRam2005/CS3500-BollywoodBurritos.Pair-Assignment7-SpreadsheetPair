@@ -148,6 +148,8 @@ public class Formula
             }
 
             previousToken = token;
+            string normalizedToken = NormalizeToken(token);
+            this.formulaString.Append(normalizedToken);
             this.orderedFormula.Add(token);
         }
 
@@ -206,7 +208,28 @@ public class Formula
         {
             return true;
         }
+
         return false;
+    }
+    
+    private static string NormalizeToken(string token)
+    {
+        string normalizedToken = "";
+        if (IsNum(token))
+        {
+           double numberAsDouble = Convert.ToDouble(token);
+           normalizedToken = numberAsDouble.ToString();
+           return normalizedToken;
+        }
+        else if (IsVar(token))
+        {
+            normalizedToken = token.ToUpper();
+            return normalizedToken;
+        }
+        else
+        {
+            return token;
+        }
     }
 
     /// <summary>
