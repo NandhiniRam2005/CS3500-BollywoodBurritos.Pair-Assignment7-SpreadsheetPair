@@ -1,6 +1,6 @@
 ﻿Author:     Joel Rodriguez
 Partner:    None
-Start Date: 7-Aug-2024
+Start Date: 29-Aug-2024
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  joel-rodriguez
 Repo:      https://github.com/uofu-cs3500-20-fall2024/spreadsheet-joel-rodriguez
@@ -20,6 +20,8 @@ Leave a space for a new paragraph.
 # Consulted Peers:
 
 List any peers (or other people) in the class (or outside for that matter) that you talked with about the project for more than one minute.
+
+1. Nandhini Ramanathan
 
 # References:
 

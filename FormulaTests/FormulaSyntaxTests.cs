@@ -721,7 +721,7 @@ public class FormulaSyntaxTests
     /// <summary>
     ///   <para>
     ///     Make sure a simple invalid formula where a closing parenthesis follows an opening parenthesis is
-    ///     not accepted bythe constructor (the constructor should throw a FormulaFormatException).
+    ///     not accepted by the constructor (the constructor should throw a FormulaFormatException).
     ///   </para>
     ///   <remarks>
     ///     This is an example of a test that is expected to throw an exception, i.e., it fails.
@@ -821,8 +821,11 @@ public class FormulaSyntaxTests
         _ = new Formula("1+1   +    2+3");
     }
 
-    // TO STRING TESTS
+    //  --- Tests for ToString ---
 
+    /// <summary>
+    ///  This test check to see if a basic formula can be successfully translated using the ToString method. 
+    /// </summary>
     [TestMethod]
     public void ToString_TestBasicFormula_Valid()
     {
@@ -830,4 +833,185 @@ public class FormulaSyntaxTests
         string expectedString = "1+X7+36";
         Assert.AreEqual(expectedString, testFormula.ToString());
     }
+
+    /// <summary>
+    ///  This test ensures that the ToString method works with scientific notation.
+    /// </summary>
+    [TestMethod]
+    public void ToString_TestFormulaWithScientificNotation_Valid()
+    {
+        Formula testFormula = new Formula("10e-1 + x7 + 36E-2");
+        string expectedString = "1+X7+0.36";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
+
+    /// <summary>
+    /// This test ensures that the ToString method is able to translate variables that use both capital and lower case.
+    /// </summary>
+    [TestMethod]
+    public void ToString_TestFormulaWithLowerAndUpperCaseVariables_Valid()
+    {
+        Formula testFormula = new Formula("1.0000 + x7 + 36 + Y7");
+        string expectedString = "1+X7+36+Y7";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
+
+    /// <summary>
+    /// This test ensures that decimals can be properly translated using the ToString method.
+    /// </summary>
+    [TestMethod]
+    public void ToString_TestDecimalFormula_Valid()
+    {
+        Formula testFormula = new Formula("1.234 + x7 + 36");
+        string expectedString = "1.234+X7+36";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
+
+    /// <summary>
+    /// This test ensures that scientific notation numbers that use positive numbers to make the number bigger
+    /// can be translated
+    /// </summary>
+    [TestMethod]
+    public void ToString_TestPositiveScientificNotation_Valid()
+    {
+        Formula testFormula = new Formula("1.2e1 + x7 + 3.6e2");
+        string expectedString = "12+X7+360";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
+
+    /// <summary>
+    /// Test to ensure that the ToString method will not return invalid results if handed
+    /// formulas with odd spacing.
+    /// </summary>
+    [TestMethod]
+    public void ToString_TestOddSpacing_Valid()
+    {
+        Formula testFormula = new Formula("1.0000               + x7 +       36");
+        string expectedString = "1+X7+36";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
+
+    /// <summary>
+    /// Test to ensure that the ToString method is able to handle all operators.
+    /// </summary>
+    [TestMethod]
+    public void ToString_TestOperators_Valid()
+    {
+        Formula testFormula = new Formula("1.0000 + x7 * 36 / 8 - 9");
+        string expectedString = "1+X7*36/8-9";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
+
+    /// <summary>
+    /// Test to ensure that the ToString method can properly translate parentheses.
+    /// </summary>
+    [TestMethod]
+    public void ToString_TestParenthesis_Valid()
+    {
+        Formula testFormula = new Formula("(1.0000 + x7 ) + 36");
+        string expectedString = "(1+X7)+36";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
+
+    //  --- Tests for GetVariables ---
+
+    /// <summary>
+    /// This test ensures that the get variables method returns the proper set even when a formula contains 
+    /// multiple of the same variable.
+    /// </summary>
+    [TestMethod]
+    public void GetVariables_TestMultipleIdenticalVariables_Valid()
+    {
+        Formula testFormula = new Formula("x7 + y3 + x7 + z4+ y3 + h8");
+        HashSet<string> variables = (HashSet<string>)testFormula.GetVariables();
+        HashSet<string> expectedVariables = new HashSet<string>();
+        expectedVariables.Add("X7");
+        expectedVariables.Add("Y3");
+        expectedVariables.Add("Z4");
+        expectedVariables.Add("H8");
+        int expectedSize = expectedVariables.Count;
+        int actualSize = variables.Count;
+
+        bool sameContents = variables.SetEquals(expectedVariables);
+        Assert.AreEqual(expectedSize, actualSize);
+        Assert.IsTrue(sameContents);
+            
+    }
+
+    /// <summary>
+    /// Test to ensure the GetVariables method is able to return a single variable.
+    /// </summary>
+    [TestMethod]
+    public void GetVariables_TestOneVariable_Valid()
+    {
+        Formula testFormula = new Formula("x7");
+        HashSet<string> variables = (HashSet<string>)testFormula.GetVariables();
+        HashSet<string> expectedVariables = new HashSet<string>();
+        expectedVariables.Add("X7");
+        int expectedSize = expectedVariables.Count;
+        int actualSize = variables.Count;
+
+        bool sameContents = variables.SetEquals(expectedVariables);
+        Assert.AreEqual(expectedSize, actualSize);
+        Assert.IsTrue(sameContents);
+
+    }
+    /// <summary>
+    /// Test to ensure the GetVariables returns the proper set of variables even when there is a 
+    /// long formula with the same duplicate variable.
+    /// </summary>
+    [TestMethod]
+    public void GetVariables_TestAllTheSameVariable_Valid()
+    {
+        Formula testFormula = new Formula("x7 + x7 + x7+ x7");
+        HashSet<string> variables = (HashSet<string>)testFormula.GetVariables();
+        HashSet<string> expectedVariables = new HashSet<string>();
+        expectedVariables.Add("X7");
+        int expectedSize = expectedVariables.Count;
+        int actualSize = variables.Count;
+
+        bool sameContents = variables.SetEquals(expectedVariables);
+        Assert.AreEqual(expectedSize, actualSize);
+        Assert.IsTrue(sameContents);
+
+    }
+
+    /// <summary>
+    /// Test to ensure the GetVariables method returns the proper set of Variables even when there are the same 
+    /// variables with different cases in the formula.
+    /// </summary>
+    [TestMethod]
+    public void GetVariables_SameVariableDifferentCase_Valid()
+    {
+        Formula testFormula = new Formula("x7 + y3 + X7 + Y3");
+        HashSet<string> variables = (HashSet<string>)testFormula.GetVariables();
+        HashSet<string> expectedVariables = new HashSet<string>();
+        expectedVariables.Add("X7");
+        expectedVariables.Add("Y3");
+        int expectedSize = expectedVariables.Count;
+        int actualSize = variables.Count;
+
+        bool sameContents = variables.SetEquals(expectedVariables);
+        Assert.AreEqual(expectedSize, actualSize);
+        Assert.IsTrue(sameContents);
+
+    }
+    /// <summary>
+    /// This test ensures that formula with no variables returns an empty set when calling GetVariables.
+    /// </summary>
+    [TestMethod]
+    public void GetVariables_NoVariablesReturnsEmptySet_Valid()
+    {
+        Formula testFormula = new Formula("2+2+7/2");
+        HashSet<string> variables = (HashSet<string>)testFormula.GetVariables();
+        HashSet<string> expectedVariables = new HashSet<string>();
+        int expectedSize = expectedVariables.Count;
+        int actualSize = variables.Count;
+
+        bool sameContents = variables.SetEquals(expectedVariables);
+        Assert.AreEqual(expectedSize, actualSize);
+        Assert.IsTrue(sameContents);
+
+    }
+
 }

@@ -149,7 +149,7 @@ public class Formula
             previousToken = token;
             string normalizedToken = NormalizeToken(token);
             this.formulaString.Append(normalizedToken);
-            this.orderedFormula.Add(token);
+            this.orderedFormula.Add(normalizedToken);
         }
 
         if (openingParenthesis != closingParenthesis)
