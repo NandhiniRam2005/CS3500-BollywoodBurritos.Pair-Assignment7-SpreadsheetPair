@@ -392,7 +392,7 @@ public class FormulaSyntaxTests
     ///   </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_TestClosingParenthesissSimple_Valid()
+    public void FormulaConstructor_TestClosingParenthesisSimple_Valid()
     {
         _ = new Formula("(7+32)");
     }

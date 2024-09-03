@@ -1,4 +1,4 @@
-﻿// <copyright file="Formula_PS2.cs" company="UofU-CS3500">
+﻿// <copyright file="Formula.cs" company="UofU-CS3500">
 // Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
 // <summary>
@@ -13,7 +13,6 @@
 //     to represent your work and any changes you make.
 //   </para>
 // </summary>
-
 
 namespace CS3500.Formula;
 
@@ -56,9 +55,9 @@ public class Formula
     /// </summary>
     private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
 
-    private List<string> orderedFormula = new List<string>();
+    private List<string> orderedFormula = new ();
 
-    private StringBuilder formulaString = new StringBuilder();
+    private StringBuilder formulaString = new ();
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="Formula"/> class.
@@ -89,7 +88,7 @@ public class Formula
     /// <param name="formula"> The string representation of the formula to be created.</param>
     public Formula(string formula)
     {
-        this.orderedFormula = new List<string>();
+        this.orderedFormula = new ();
 
         int closingParenthesis = 0;
         int openingParenthesis = 0;
@@ -160,79 +159,6 @@ public class Formula
     }
 
     /// <summary>
-    /// HI.
-    /// </summary>
-    /// <param name="currToken"></param>
-    /// <param name="prevToken"></param >
-    /// <returns></returns>
-    private static void IsPrevValid(string currToken, string prevToken)
-    {
-        if (IsOperator(prevToken) || prevToken.Equals("("))
-        {
-            if (!currToken.Equals("(") && !IsNum(currToken) && !IsVar(currToken))
-            {
-                throw new FormulaFormatException("Tokens following an operator or \"(\" must be a number, variable or \"(\"!");
-            }
-        }
-        else if (IsNum(prevToken) || IsVar(prevToken) || prevToken.Equals(")"))
-        {
-            if (!currToken.Equals(")") && !IsOperator(currToken))
-            {
-                throw new FormulaFormatException("Tokens following a number, \")\", or variable must be an operator or \")\"!");
-            }
-        }
-
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="token"></param>
-    /// <returns></returns>
-    private static bool IsNum(string token)
-    {
-        try
-        {
-            Convert.ToDouble(token);
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-    }
-
-    private static bool IsOperator(string token)
-    {
-        if (token.Equals("+") || token.Equals("*") || token.Equals("-") || token.Equals("/"))
-        {
-            return true;
-        }
-
-        return false;
-    }
-    
-    private static string NormalizeToken(string token)
-    {
-        string normalizedToken = "";
-        if (IsNum(token))
-        {
-           double numberAsDouble = Convert.ToDouble(token);
-           normalizedToken = numberAsDouble.ToString();
-           return normalizedToken;
-        }
-        else if (IsVar(token))
-        {
-            normalizedToken = token.ToUpper();
-            return normalizedToken;
-        }
-        else
-        {
-            return token;
-        }
-    }
-
-    /// <summary>
     ///   <para>
     ///     Returns a set of all the variables in the formula.
     ///   </para>
@@ -251,7 +177,7 @@ public class Formula
     /// <returns> the set of variables (string names) representing the variables referenced by the formula. </returns>
     public ISet<string> GetVariables()
     {
-        HashSet<string> variables = new HashSet<string>(); 
+        HashSet<string> variables = new HashSet<string>();
         foreach (string token in this.orderedFormula)
         {
             if (IsVar(token) && !variables.Contains(token))
@@ -271,7 +197,7 @@ public class Formula
     ///     The string will contain no spaces.
     ///   </para>
     ///   <para>
-    ///     If the string is passed to the Formula constructor, the new Formula f 
+    ///     If the string is passed to the Formula constructor, the new Formula f
     ///     will be such that this.ToString() == f.ToString().
     ///   </para>
     ///   <para>
@@ -296,6 +222,89 @@ public class Formula
     public override string ToString()
     {
         return this.formulaString.ToString();
+    }
+
+    /// <summary>
+    /// This method checks if a currentToken's previous token is valid and follows all following rules for a formula.
+    /// </summary>
+    /// <param name="currToken"> This is the current token that is being checked in our formula.</param>
+    /// <param name="prevToken"> The token that comes prior to the current token. </param >
+    ///
+    private static void IsPrevValid(string currToken, string prevToken)
+    {
+        if (IsOperator(prevToken) || prevToken.Equals("("))
+        {
+            if (!currToken.Equals("(") && !IsNum(currToken) && !IsVar(currToken))
+            {
+                throw new FormulaFormatException("Tokens following an operator or \"(\" must be a number, variable or \"(\"!");
+            }
+        }
+        else if (IsNum(prevToken) || IsVar(prevToken) || prevToken.Equals(")"))
+        {
+            if (!currToken.Equals(")") && !IsOperator(currToken))
+            {
+                throw new FormulaFormatException("Tokens following a number, \")\", or variable must be an operator or \")\"!");
+            }
+        }
+    }
+
+    /// <summary>
+    /// This method processes a token to see if its contents can be processed as a number.
+    /// </summary>
+    /// <param name="token"> The token that is being checked for being a number.</param>
+    /// <returns> A bool that represents whether or not the token can be represented as a number.</returns>
+    private static bool IsNum(string token)
+    {
+        try
+        {
+            Convert.ToDouble(token);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// This method processes a token to see if its contents can be processed as an operator.
+    /// </summary>
+    /// <param name="token"> The token that is being checked for being a operator.</param>
+    /// <returns> A bool that represents whether or not the token can be represented as a operator.</returns>
+    private static bool IsOperator(string token)
+    {
+        if (token.Equals("+") || token.Equals("*") || token.Equals("-") || token.Equals("/"))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// A private helper method that "normalizes" tokens. For example 5.00000 and 50e-1 turns into 5. Variables
+    /// such as x1 turn into X1.
+    /// </summary>
+    /// <param name="token"> The token to be normalized.</param>
+    /// <returns>A normalized token. Refer to method summary on what normalizing is.</returns>
+    private static string NormalizeToken(string token)
+    {
+        string normalizedToken = string.Empty;
+        if (IsNum(token))
+        {
+            double numberAsDouble = Convert.ToDouble(token);
+            normalizedToken = numberAsDouble.ToString();
+            return normalizedToken;
+        }
+        else if (IsVar(token))
+        {
+            normalizedToken = token.ToUpper();
+            return normalizedToken;
+        }
+        else
+        {
+            return token;
+        }
     }
 
     /// <summary>
@@ -364,7 +373,6 @@ public class Formula
         return results;
     }
 }
-
 
 /// <summary>
 ///   Used to report syntax errors in the argument to the Formula constructor.
