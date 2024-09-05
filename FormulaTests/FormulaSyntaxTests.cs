@@ -2,7 +2,7 @@
 //   Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
 // <authors> Joel Rodriguez </authors>
-// <date> August 29, 2024 </date>
+// <date> September, 5 2024 </date>
 
 namespace CS3500.FormulaTests;
 
@@ -137,6 +137,18 @@ public class FormulaSyntaxTests
         _ = new Formula("#");
     }
 
+
+    /// <summary>
+    ///   <para>
+    ///     Make sure an unrecognized tokens are recognized as invalid.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(FormulaFormatException))]
+    public void FormulaConstructor_TestMultipleInvalidToken_Invalid()
+    {
+        _ = new Formula("1 + udiahfkj + 12");
+    }
+
     /// <summary>
     ///   <para>
     ///     Make sure an invalid variable token "aaa" is recognized as invalid when mixed with other valid tokens.
@@ -153,6 +165,15 @@ public class FormulaSyntaxTests
         _ = new Formula("3+2+aaa*7");
     }
 
+    /// <summary>
+    /// Tests if a bad variable token such as "x1x" throws an exception.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(FormulaFormatException))]
+    public void FormulaConstructor_TestOneAndAHalfVariables_Invalid()
+    {
+        _ = new Formula("x1x");
+    }
     /// <summary>
     ///   <para>
     ///     Make sure an invalid token "&" is recognized as invalid when mixed with other valid tokens.
@@ -182,7 +203,7 @@ public class FormulaSyntaxTests
     [TestMethod]
     public void FormulaConstructor_TestLongerVariable_Valid()
     {
-        _ = new Formula("72 + ebsja232");
+        _ = new Formula("72 + ebsja23");
     }
 
     /// <summary>
@@ -411,7 +432,7 @@ public class FormulaSyntaxTests
     [ExpectedException(typeof(FormulaFormatException))]
     public void FormulaConstructor_TestTooManyClosingParenthesis_Invalid()
     {
-        _ = new Formula(")(6+7");
+        _ = new Formula("5 + 6)(6+7");
     }
 
     // --- Tests for Balanced Parentheses Rule

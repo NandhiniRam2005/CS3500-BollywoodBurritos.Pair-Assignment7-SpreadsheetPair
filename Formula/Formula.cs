@@ -1,19 +1,9 @@
 ﻿// <copyright file="Formula.cs" company="UofU-CS3500">
 // Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
-// <summary>
-//   <para>
-//     This code is provides to start your assignment.  It was written
-//     by Profs Joe, Danny, and Jim.  You should keep this attribution
-//     at the top of your code where you have your header comment, along
-//     with the other required information.
-//   </para>
-//   <para>
-//     You should remove/add/adjust comments in your file as appropriate
-//     to represent your work and any changes you make.
-//   </para>
-// </summary>
-
+// <authors> Joel Rodriguez,  Profs Joe, Danny, and Jim. </authors>
+// <date> September 5, 2024 </date>
+//
 namespace CS3500.Formula;
 
 using System.ComponentModel.Design;
@@ -96,6 +86,8 @@ public class Formula
         string previousToken = string.Empty;
 
         List<string> tokens = GetTokens(formula);
+
+        // One Token Rule
         if (tokens.Count == 0)
         {
             throw new FormulaFormatException("Formula's must have at least one token!");
@@ -105,10 +97,13 @@ public class Formula
         {
             numberOfTokens++;
 
+            // Valid Token Rule
+            IsValidToken(token);
+
             // Following rules
             IsPrevValid(token, previousToken);
 
-            // first token rule
+            // First token rule
             if (numberOfTokens == 1)
             {
                 if (!token.Equals("(") && !IsNum(token) && !IsVar(token))
@@ -117,7 +112,7 @@ public class Formula
                 }
             }
 
-            // closing parenthesis rule
+            // Closing parenthesis rule
             if (token == ")")
             {
                 closingParenthesis++;
@@ -127,7 +122,7 @@ public class Formula
                 }
             }
 
-            // Balance Parent and CLosing Parent
+            // Balance Parentheses and Closing Parentheses rules
             else if (token == "(")
             {
                 openingParenthesis++;
@@ -140,10 +135,6 @@ public class Formula
                 {
                     throw new FormulaFormatException("Last token must be a \")\" number or variable!");
                 }
-            }
-            else if (!IsVar(token) && !IsOperator(token) && !IsNum(token) && !token.Equals("(") && !token.Equals(")"))
-            {
-                throw new FormulaFormatException(token + " is not a valid token!");
             }
 
             previousToken = token;
@@ -189,6 +180,10 @@ public class Formula
         return variables;
     }
 
+    /// <returns>
+    ///   A canonical version (string) of the formula. All "equal" formulas
+    ///   should have the same value here.
+    /// </returns>
     /// <summary>
     ///   <para>
     ///     Returns a string representation of a canonical form of the formula.
@@ -215,10 +210,6 @@ public class Formula
     ///     This code should execute in O(1) time.
     ///   <para>
     /// </summary>
-    /// <returns>
-    ///   A canonical version (string) of the formula. All "equal" formulas
-    ///   should have the same value here.
-    /// </returns>
     public override string ToString()
     {
         return this.formulaString.ToString();
@@ -308,6 +299,19 @@ public class Formula
     }
 
     /// <summary>
+    /// This method checks to see if a token is valid as described in assignment instructions.
+    /// </summary>
+    /// <param name="token"> The token which is being checked for validity. </param>
+    /// <exception cref="FormulaFormatException"> The exception to be thrown if a token is invalid.</exception>
+    private static void IsValidToken(string token)
+    {
+        if (!IsVar(token) && !IsOperator(token) && !IsNum(token) && !token.Equals("(") && !token.Equals(")"))
+        {
+            throw new FormulaFormatException(token + " is not a valid token!");
+        }
+    }
+
+    /// <summary>
     ///   Reports whether "token" is a variable.  It must be one or more letters
     ///   followed by one or more numbers.
     /// </summary>
@@ -343,7 +347,7 @@ public class Formula
     /// <returns> The ordered list of tokens in the formula. </returns>
     private static List<string> GetTokens(string formula)
     {
-        List<string> results = [];
+        List<string> results = new ();
 
         string lpPattern = @"\(";
         string rpPattern = @"\)";
