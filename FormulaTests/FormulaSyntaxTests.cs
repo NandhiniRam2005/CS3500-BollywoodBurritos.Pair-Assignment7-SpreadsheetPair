@@ -934,6 +934,61 @@ public class FormulaSyntaxTests
         Assert.AreEqual(expectedString, testFormula.ToString());
     }
 
+    /// <summary>
+    /// Test to ensure that the ToString method can properly translate a small scientific number.
+    /// </summary>
+    [TestMethod]
+    public void ToString_TestSmallScientific_Valid()
+    {
+        Formula testFormula = new Formula("(1e-10 + x7 ) + 36");
+        string expectedString = "(1E-10+X7)+36";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
+
+    /// <summary>
+    /// Test to ensure that the ToString method can properly translate a huge scientific notation number.
+    /// </summary>
+    [TestMethod]
+    public void ToString_TestBigScientific_Valid()
+    {
+        Formula testFormula = new Formula("(1e20 + x7 ) + 36");
+        string expectedString = "(1E+20+X7)+36";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
+
+    /// <summary>
+    /// Test to ensure that the ToString method can properly translate a small decimal.
+    /// </summary>
+    [TestMethod]
+    public void ToString_TestSmallDecimal_Valid()
+    {
+        Formula testFormula = new Formula("(0.000005 + x7 ) + 36");
+        string expectedString = "(5E-06+X7)+36";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
+
+    /// <summary>
+    /// Test to ensure that the ToString method can properly translate a huge decimal.
+    /// </summary>
+    [TestMethod]
+    public void ToString_TestBigDecimal_Valid()
+    {
+        Formula testFormula = new Formula("(1000000.723 + x7 ) + 36");
+        string expectedString = "(1000000.723+X7)+36";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
+
+    /// <summary>
+    /// Test to ensure that the ToString method can properly translate a huge integer.
+    /// </summary>
+    [TestMethod]
+    public void ToString_TestBigInt_Valid()
+    {
+        Formula testFormula = new Formula("(100000000000000000000 + x7 ) + 36");
+        string expectedString = "(1E+20+X7)+36";
+        Assert.AreEqual(expectedString, testFormula.ToString());
+    }
+
     //  --- Tests for GetVariables ---
 
     /// <summary>
@@ -1026,6 +1081,46 @@ public class FormulaSyntaxTests
         Formula testFormula = new Formula("2+2+7/2");
         HashSet<string> variables = (HashSet<string>)testFormula.GetVariables();
         HashSet<string> expectedVariables = new HashSet<string>();
+        int expectedSize = expectedVariables.Count;
+        int actualSize = variables.Count;
+
+        bool sameContents = variables.SetEquals(expectedVariables);
+        Assert.AreEqual(expectedSize, actualSize);
+        Assert.IsTrue(sameContents);
+
+    }
+
+    /// <summary>
+    /// This test ensures that formula with a variable only at the end returns the proper variables when calling 
+    /// GetVariables.
+    /// </summary>
+    [TestMethod]
+    public void GetVariables_VariableOnlyAtEnd_Valid()
+    {
+        Formula testFormula = new Formula("2+2+7/x2");
+        HashSet<string> variables = (HashSet<string>)testFormula.GetVariables();
+        HashSet<string> expectedVariables = new HashSet<string>();
+        expectedVariables.Add("X2");
+        int expectedSize = expectedVariables.Count;
+        int actualSize = variables.Count;
+
+        bool sameContents = variables.SetEquals(expectedVariables);
+        Assert.AreEqual(expectedSize, actualSize);
+        Assert.IsTrue(sameContents);
+
+    }
+
+    /// <summary>
+    /// This test ensures that formula with a variable only at the start returns the proper variables when calling 
+    /// GetVariables.
+    /// </summary>
+    [TestMethod]
+    public void GetVariables_VariableOnlyAtStart_Valid()
+    {
+        Formula testFormula = new Formula("x2+2+7/2");
+        HashSet<string> variables = (HashSet<string>)testFormula.GetVariables();
+        HashSet<string> expectedVariables = new HashSet<string>();
+        expectedVariables.Add("X2");
         int expectedSize = expectedVariables.Count;
         int actualSize = variables.Count;
 

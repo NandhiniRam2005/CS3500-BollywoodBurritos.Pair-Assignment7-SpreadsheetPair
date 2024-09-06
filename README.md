@@ -17,4 +17,4 @@ evaluate formulas and much more...
 # Time Expenditures:
 
     1. Assignment One:   Predicted Hours:          8        Actual Hours:   6.5
-    2. Assignment Two:   Predicted Hours:           17        Actual Hours:    7
+    2. Assignment Two:   Predicted Hours:           17        Actual Hours:    8

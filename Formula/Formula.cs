@@ -6,7 +6,6 @@
 //
 namespace CS3500.Formula;
 
-using System.ComponentModel.Design;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -47,7 +46,9 @@ public class Formula
 
     private List<string> orderedFormula = new ();
 
-    private StringBuilder formulaString = new ();
+    private StringBuilder formulaStringBuilder = new ();
+
+    private string formulaString = string.Empty;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="Formula"/> class.
@@ -139,14 +140,17 @@ public class Formula
 
             previousToken = token;
             string normalizedToken = NormalizeToken(token);
-            this.formulaString.Append(normalizedToken);
+            this.formulaStringBuilder.Append(normalizedToken);
             this.orderedFormula.Add(normalizedToken);
         }
 
+        // Balanced Parenthesis rule
         if (openingParenthesis != closingParenthesis)
         {
             throw new FormulaFormatException("Number of closing and opening parenthesis not equal!");
         }
+
+        this.formulaString = this.formulaStringBuilder.ToString();
     }
 
     /// <summary>
@@ -180,10 +184,6 @@ public class Formula
         return variables;
     }
 
-    /// <returns>
-    ///   A canonical version (string) of the formula. All "equal" formulas
-    ///   should have the same value here.
-    /// </returns>
     /// <summary>
     ///   <para>
     ///     Returns a string representation of a canonical form of the formula.
@@ -208,11 +208,13 @@ public class Formula
     ///   </code>
     ///   <para>
     ///     This code should execute in O(1) time.
-    ///   <para>
+    ///   </para>
     /// </summary>
+    /// <returns> A canonical version (string) of the formula. All "equal" formulas
+    ///   should have the same value here.</returns>
     public override string ToString()
     {
-        return this.formulaString.ToString();
+        return this.formulaString;
     }
 
     /// <summary>
@@ -246,15 +248,7 @@ public class Formula
     /// <returns> A bool that represents whether or not the token can be represented as a number.</returns>
     private static bool IsNum(string token)
     {
-        try
-        {
-            Convert.ToDouble(token);
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
+        return double.TryParse(token, out double result);
     }
 
     /// <summary>
@@ -283,7 +277,7 @@ public class Formula
         string normalizedToken = string.Empty;
         if (IsNum(token))
         {
-            double numberAsDouble = Convert.ToDouble(token);
+            double.TryParse(token, out double numberAsDouble);
             normalizedToken = numberAsDouble.ToString();
             return normalizedToken;
         }
