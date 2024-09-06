@@ -4,7 +4,7 @@ Start Date: 20-Aug-2024
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  joel-rodriguez
 Repo:      https://github.com/uofu-cs3500-20-fall2024/spreadsheet-joel-rodriguez
-Commit Date: 05-September-2024 (of when submission is ready to be evaluated)
+Commit Date: 06-September-2024 (of when submission is ready to be evaluated)
 Project:   FormulaTests
 Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use in Academic Coursework.
 ```

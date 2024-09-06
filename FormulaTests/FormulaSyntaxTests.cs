@@ -2,7 +2,7 @@
 //   Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
 // <authors> Joel Rodriguez </authors>
-// <date> September, 5 2024 </date>
+// <date> September, 6 2024 </date>
 
 namespace CS3500.FormulaTests;
 

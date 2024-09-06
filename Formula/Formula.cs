@@ -2,7 +2,7 @@
 // Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
 // <authors> Joel Rodriguez,  Profs Joe, Danny, and Jim. </authors>
-// <date> September 5, 2024 </date>
+// <date> September 6, 2024 </date>
 //
 namespace CS3500.Formula;
 
@@ -44,11 +44,9 @@ public class Formula
     /// </summary>
     private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
 
-    private List<string> orderedFormula = new ();
+    private readonly List<string> orderedFormula = new ();
 
-    private StringBuilder formulaStringBuilder = new ();
-
-    private string formulaString = string.Empty;
+    private readonly string formulaString = string.Empty;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="Formula"/> class.
@@ -85,6 +83,8 @@ public class Formula
         int openingParenthesis = 0;
         int numberOfTokens = 0;
         string previousToken = string.Empty;
+
+        StringBuilder formulaStringBuilder = new StringBuilder();
 
         List<string> tokens = GetTokens(formula);
 
@@ -140,7 +140,7 @@ public class Formula
 
             previousToken = token;
             string normalizedToken = NormalizeToken(token);
-            this.formulaStringBuilder.Append(normalizedToken);
+            formulaStringBuilder.Append(normalizedToken);
             this.orderedFormula.Add(normalizedToken);
         }
 
@@ -150,7 +150,7 @@ public class Formula
             throw new FormulaFormatException("Number of closing and opening parenthesis not equal!");
         }
 
-        this.formulaString = this.formulaStringBuilder.ToString();
+        this.formulaString = formulaStringBuilder.ToString();
     }
 
     /// <summary>
@@ -248,7 +248,7 @@ public class Formula
     /// <returns> A bool that represents whether or not the token can be represented as a number.</returns>
     private static bool IsNum(string token)
     {
-        return double.TryParse(token, out double result);
+        return double.TryParse(token, out double _);
     }
 
     /// <summary>
@@ -277,7 +277,7 @@ public class Formula
         string normalizedToken = string.Empty;
         if (IsNum(token))
         {
-            double.TryParse(token, out double numberAsDouble);
+            double numberAsDouble = Convert.ToDouble(token);
             normalizedToken = numberAsDouble.ToString();
             return normalizedToken;
         }
