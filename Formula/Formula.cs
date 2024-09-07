@@ -62,7 +62,7 @@ public class Formula
     /// </summary>
     private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
 
-    private readonly List<string> orderedFormula = new ();
+    private readonly List<string> orderedFormula = new();
 
     private readonly string formulaString = string.Empty;
 
@@ -95,7 +95,7 @@ public class Formula
     /// <param name="formula"> The string representation of the formula to be created.</param>
     public Formula(string formula)
     {
-        this.orderedFormula = new ();
+        this.orderedFormula = new();
 
         int closingParenthesis = 0;
         int openingParenthesis = 0;
@@ -359,7 +359,7 @@ public class Formula
     /// <returns> The ordered list of tokens in the formula. </returns>
     private static List<string> GetTokens(string formula)
     {
-        List<string> results = new ();
+        List<string> results = new();
 
         string lpPattern = @"\(";
         string rpPattern = @"\)";

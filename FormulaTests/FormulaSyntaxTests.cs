@@ -1027,7 +1027,7 @@ public class FormulaSyntaxTests
         bool sameContents = variables.SetEquals(expectedVariables);
         Assert.AreEqual(expectedSize, actualSize);
         Assert.IsTrue(sameContents);
-            
+
     }
 
     /// <summary>
