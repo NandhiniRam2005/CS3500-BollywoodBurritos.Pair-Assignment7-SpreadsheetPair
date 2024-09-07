@@ -10,7 +10,7 @@ Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use i
 ```
 
 # Comments to Evaluators:
-
+Nothing there is nothing special.
 
 # Assignment Specific Topics
 There was no assignment specific topics for this assignment.
