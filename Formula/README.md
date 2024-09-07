@@ -27,4 +27,3 @@ List any peers (or other people) in the class (or outside for that matter) that 
     1. Iteration statements - for, foreach, do, and while - https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/iteration-statements#the-foreach-statement
     2. Convert String to Double in C# - https://www.educba.com/convert-string-to-double-in-c-sharp/
     3. Create and Throw Exceptions - https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/creating-and-throwing-exceptions
-    '''
