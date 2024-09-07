@@ -16,8 +16,6 @@ No comments there is nothing special.
 # Assignment Specific Topics
 There was no assignment specific topics for this assignment.
 
-Leave a space for a new paragraph.
-
 # Consulted Peers:
 
 I did not consult any peers for the FormulaTests class because I felt that sharing tests would be too close to Academic Misconduct.

@@ -16,8 +16,6 @@ Nothing there is nothing special.
 # Assignment Specific Topics
 There was no assignment specific topics for this assignment.
 
-Leave a space for a new paragraph.
-
 # Consulted Peers:
 
 List any peers (or other people) in the class (or outside for that matter) that you talked with about the project for more than one minute.
