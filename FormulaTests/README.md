@@ -1,4 +1,5 @@
-﻿Author:     Joel Rodriguez
+﻿```
+Author:     Joel Rodriguez
 Partner:    None
 Start Date: 20-Aug-2024
 Course:     CS 3500, University of Utah, School of Computing
@@ -26,4 +27,4 @@ I did not consult any peers for the FormulaTests class because I felt that shari
     1. Assert.Equals(Object, Object) Method - https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.testtools.unittesting.assert.equals?view=visualstudiosdk-2022
     2. Use breakpoints in the Visual Studio debugger - https://learn.microsoft.com/en-us/visualstudio/debugger/using-breakpoints?view=vs-2022
     3. Tutorial: Learn to debug C# code using Visual Studio - https://learn.microsoft.com/en-us/visualstudio/get-started/csharp/tutorial-debugger?view=vs-2022
-    '''
+   

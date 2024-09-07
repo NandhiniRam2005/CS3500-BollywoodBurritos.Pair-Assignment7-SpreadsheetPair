@@ -1,4 +1,5 @@
-﻿Author:     Joel Rodriguez
+﻿```
+Author:     Joel Rodriguez
 Partner:    None
 Start Date: 29-Aug-2024
 Course:     CS 3500, University of Utah, School of Computing
@@ -6,7 +7,7 @@ GitHub ID:  joel-rodriguez
 Repo:      https://github.com/uofu-cs3500-20-fall2024/spreadsheet-joel-rodriguez
 Commit Date: 06-September-2024 Time (of when submission is ready to be evaluated)
 Project:   Formula
-Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use in Academic Coursework.
+Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use in Academic Coursework.```
 ```
 
 # Comments to Evaluators:
