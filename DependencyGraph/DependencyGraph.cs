@@ -72,6 +72,9 @@ namespace CS3500.DependencyGraph;
 /// </summary>
 public class DependencyGraph
 {
+    private Dictionary<string, HashSet<string>> dependents = new Dictionary<string, HashSet<string>>(); // the node and everything it depends on
+    private Dictionary<string, HashSet<string>> dependees = new Dictionary<string, HashSet<string>>(); // the node and all of its dependees
+
     /// <summary>
     ///   Initializes a new instance of the <see cref="DependencyGraph"/> class.
     ///   The initial DependencyGraph is empty.
@@ -85,7 +88,7 @@ public class DependencyGraph
     /// </summary>
     public int Size
     {
-        get { return 0; }
+        get { return dependents.Count; }
     }
 
     /// <summary>
@@ -95,7 +98,8 @@ public class DependencyGraph
     /// <returns> true if the node has dependents. </returns>
     public bool HasDependents(string nodeName)
     {
-        return false;
+        bool hasDependents = this.dependents.ContainsKey(nodeName);
+        return hasDependents;
     }
 
     /// <summary>
@@ -105,7 +109,8 @@ public class DependencyGraph
     /// <param name="nodeName">The name of the node.</param>
     public bool HasDependees(string nodeName)
     {
-        return false;
+        bool hasDependees = this.dependees.ContainsKey(nodeName);
+        return hasDependees;
     }
 
     /// <summary>
@@ -117,7 +122,8 @@ public class DependencyGraph
     /// <returns> The dependents of nodeName. </returns>
     public IEnumerable<string> GetDependents(string nodeName)
     {
-        return new List<string>(); // Choose your own data structure
+        HashSet<string> nodesDependents = this.dependents[nodeName];
+        return nodesDependents; 
     }
 
     /// <summary>
@@ -129,7 +135,8 @@ public class DependencyGraph
     /// <returns> The dependees of nodeName. </returns>
     public IEnumerable<string> GetDependees(string nodeName)
     {
-        return new List<string>(); // Choose your own data structure
+        HashSet<string> nodesDependees = this.dependees[nodeName];
+        return nodesDependees; 
     }
 
     /// <summary>
@@ -144,6 +151,24 @@ public class DependencyGraph
     /// <param name="dependent"> The name of the node that cannot be evaluated until after the other node has been. </param>
     public void AddDependency(string dependee, string dependent)
     {
+        if (!this.dependents.ContainsKey(dependee))
+        {
+            this.dependents.Add(dependee, new HashSet<string>());
+            this.dependents[dependee].Add(dependent);
+        }
+        else
+        {
+            this.dependents[dependee].Add(dependent);
+        }
+        if (!this.dependees.ContainsKey(dependent))
+        {
+            this.dependees.Add(dependent, new HashSet<string>());
+            this.dependees[dependent].Add(dependee);
+        }
+        else
+        {
+            this.dependees[dependent].Add(dependee);
+        }
     }
 
     /// <summary>
@@ -155,6 +180,12 @@ public class DependencyGraph
     /// <param name="dependent"> The name of the node that cannot be evaluated until the other node has been. </param>
     public void RemoveDependency(string dependee, string dependent)
     {
+        //looks if the dictionary dependee exists
+        //goes into nodes dependees and removes the dependee from its HashSet
+                //if this makes the dependees HashSet size 0 then also remove the key from the Dictionary as well
+        //looks if the dictionary dependent exists.
+        //goes into nodes dependents and removes the dependent from its HashSet 
+             //if this makes the dependents HashSet size 0 then also remove the key from the Dictionary as well
     }
 
     /// <summary>
