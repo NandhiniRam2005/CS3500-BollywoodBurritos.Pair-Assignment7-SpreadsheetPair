@@ -122,8 +122,15 @@ public class DependencyGraph
     /// <returns> The dependents of nodeName. </returns>
     public IEnumerable<string> GetDependents(string nodeName)
     {
-        HashSet<string> nodesDependents = this.dependents[nodeName];
-        return nodesDependents; 
+        if (this.dependents.ContainsKey(nodeName))
+        {
+            HashSet<string> nodesDependents = this.dependents[nodeName];
+            return nodesDependents;
+        }
+        else
+        {
+            return new HashSet<string>();
+        }
     }
 
     /// <summary>
@@ -135,8 +142,15 @@ public class DependencyGraph
     /// <returns> The dependees of nodeName. </returns>
     public IEnumerable<string> GetDependees(string nodeName)
     {
-        HashSet<string> nodesDependees = this.dependees[nodeName];
-        return nodesDependees; 
+        if (this.dependees.ContainsKey(nodeName))
+        {
+            HashSet<string> nodesDependees = this.dependees[nodeName];
+            return nodesDependees;
+        }
+        else
+        {
+            return new HashSet<string>();
+        }
     }
 
     /// <summary>
@@ -180,12 +194,24 @@ public class DependencyGraph
     /// <param name="dependent"> The name of the node that cannot be evaluated until the other node has been. </param>
     public void RemoveDependency(string dependee, string dependent)
     {
-        //looks if the dictionary dependee exists
-        //goes into nodes dependees and removes the dependee from its HashSet
-                //if this makes the dependees HashSet size 0 then also remove the key from the Dictionary as well
-        //looks if the dictionary dependent exists.
-        //goes into nodes dependents and removes the dependent from its HashSet 
-             //if this makes the dependents HashSet size 0 then also remove the key from the Dictionary as well
+
+        if (this.dependents.ContainsKey(dependee))
+        {
+            this.dependents[dependee].Remove(dependent);
+            if (this.dependents[dependee].Count == 0)
+            {
+                this.dependents.Remove(dependee);
+            }
+        }
+
+        if (this.dependees.ContainsKey(dependent)){
+            this.dependees[dependent].Remove(dependee);
+            if (this.dependees[dependent].Count == 0)
+            {
+                this.dependees.Remove(dependee);
+            }
+
+        }
     }
 
     /// <summary>
@@ -196,6 +222,14 @@ public class DependencyGraph
     /// <param name="newDependents"> The new dependents for nodeName. </param>
     public void ReplaceDependents(string nodeName, IEnumerable<string> newDependents)
     {
+        if (this.dependents.ContainsKey(nodeName))
+        {
+            this.dependents[nodeName].Clear();
+            foreach (string newDependent in newDependents)
+            {
+                this.dependents[nodeName].Add(newDependent);
+            }
+        }
     }
 
     /// <summary>
@@ -208,5 +242,13 @@ public class DependencyGraph
     /// <param name="newDependees"> The new dependees for nodeName. Could be empty.</param>
     public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees)
     {
+        if (this.dependees.ContainsKey(nodeName))
+        {
+            this.dependees[nodeName].Clear();
+            foreach (string newDependee in newDependees)
+            {
+                this.dependees[nodeName].Add(newDependee);
+            }
+        }
     }
 }
