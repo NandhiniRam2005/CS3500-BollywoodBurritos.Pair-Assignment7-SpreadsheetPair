@@ -171,6 +171,9 @@ public class DependencyGraph
     /// <param name="dependent"> The name of the node that cannot be evaluated until after the other node has been. </param>
     public void AddDependency(string dependee, string dependent)
     {
+        int dependentCount = this.dependents.Count;
+        int dependeeCount = this.dependees.Count;
+
         if (!this.dependents.ContainsKey(dependee))
         {
             this.dependents.Add(dependee, new HashSet<string>());
@@ -191,7 +194,10 @@ public class DependencyGraph
             this.dependees[dependent].Add(dependee);
         }
 
-        this.sizeOfGraph++;
+        if (dependentCount != this.dependents.Count || dependeeCount != this.dependees.Count)
+        {
+            this.sizeOfGraph++;
+        }
     }
 
     /// <summary>
@@ -252,6 +258,20 @@ public class DependencyGraph
                 this.sizeOfGraph++;
             }
         }
+        else
+        {
+            this.dependents.Add(nodeName, new HashSet<string>());
+            foreach (string newDependent in newDependents)
+            {
+                this.dependents[nodeName].Add(newDependent);
+                this.sizeOfGraph++;
+            }
+        }
+
+        if (this.dependents[nodeName].Count == 0)
+        {
+            this.dependents.Remove(nodeName);
+        }
     }
 
     /// <summary>
@@ -274,6 +294,20 @@ public class DependencyGraph
                 this.dependees[nodeName].Add(newDependee);
                 this.sizeOfGraph++;
             }
+        }
+        else
+        {
+            this.dependees.Add(nodeName, new HashSet<string>());
+            foreach (string newDependee in newDependees)
+            {
+                this.dependees[nodeName].Add(newDependee);
+                this.sizeOfGraph++;
+            }
+        }
+
+        if (this.dependees[nodeName].Count == 0)
+        {
+            this.dependees.Remove(nodeName);
         }
     }
 }

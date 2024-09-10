@@ -573,26 +573,26 @@ public class DependencyGraphTests
     /// <summary>
     /// Tests "replacing" a nodes dependents (none) with many dependents. Effectively making the method an add all nodes method.
     /// </summary>
-    //[TestMethod]
-    //public void DependencyGraphReplaceDependents_ReplaceNoDependentsWithManyDependents()
-    //{
-    //    DependencyGraph graph = new ();
-    //    List<string> replacementDependents = new ();
-    //    replacementDependents.Add("f");
-    //    replacementDependents.Add("g");
-    //    replacementDependents.Add("h");
-    //    replacementDependents.Add("p");
-    //    graph.ReplaceDependents("a", replacementDependents);
-    //    IEnumerable<string> actualDependents = graph.GetDependents("a");
-    //    HashSet<string> hashActualDependents = actualDependents.ToHashSet();
-    //    HashSet<string> expectedDependents = new ();
-    //    expectedDependents.Add("f");
-    //    expectedDependents.Add("g");
-    //    expectedDependents.Add("h");
-    //    expectedDependents.Add("p");
-    //    bool sameContents = hashActualDependents.SetEquals(expectedDependents);
-    //    Assert.IsTrue(sameContents);
-    //}
+    [TestMethod]
+    public void DependencyGraphReplaceDependents_ReplaceNoDependentsWithManyDependents()
+    {
+        DependencyGraph graph = new ();
+        List<string> replacementDependents = new ();
+        replacementDependents.Add("f");
+        replacementDependents.Add("g");
+        replacementDependents.Add("h");
+        replacementDependents.Add("p");
+        graph.ReplaceDependents("a", replacementDependents);
+        IEnumerable<string> actualDependents = graph.GetDependents("a");
+        HashSet<string> hashActualDependents = actualDependents.ToHashSet();
+        HashSet<string> expectedDependents = new ();
+        expectedDependents.Add("f");
+        expectedDependents.Add("g");
+        expectedDependents.Add("h");
+        expectedDependents.Add("p");
+        bool sameContents = hashActualDependents.SetEquals(expectedDependents);
+        Assert.IsTrue(sameContents);
+    }
 
     // ReplaceDependees  Tests -----------------
 
@@ -711,7 +711,7 @@ public class DependencyGraphTests
     }
 
     /// <summary>
-    /// Tests replacing one nodes only dependee with no dependees.
+    /// Tests replacing one nodes only dependee with no dependees works and is valid.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependees_ReplaceOneDependentWithNoDependees()
@@ -723,6 +723,30 @@ public class DependencyGraphTests
         IEnumerable<string> actualDependees = graph.GetDependees("a");
         HashSet<string> hashActualDependees = actualDependees.ToHashSet();
         HashSet<string> expectedDependees = new ();
+        bool sameContents = hashActualDependees.SetEquals(expectedDependees);
+        Assert.IsTrue(sameContents);
+    }
+
+    /// <summary>
+    /// Tests "replacing" a nodes dependees (none) with many dependees. Effectively making the method an add all nodes method.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphReplaceDependees_ReplaceNoDependeesWithManyDependees()
+    {
+        DependencyGraph graph = new ();
+        List<string> replacementDependees = new ();
+        replacementDependees.Add("f");
+        replacementDependees.Add("g");
+        replacementDependees.Add("h");
+        replacementDependees.Add("p");
+        graph.ReplaceDependees("a", replacementDependees);
+        IEnumerable<string> actualDependees = graph.GetDependees("a");
+        HashSet<string> hashActualDependees = actualDependees.ToHashSet();
+        HashSet<string> expectedDependees = new ();
+        expectedDependees.Add("f");
+        expectedDependees.Add("g");
+        expectedDependees.Add("h");
+        expectedDependees.Add("p");
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
     }
@@ -828,28 +852,142 @@ public class DependencyGraphTests
     }
 
     /// <summary>
-    /// Tests "replacing" a nodes dependees (none) with many dependees. Effectively making the method an add all nodes method.
+    /// Tests that size updates properly after removing the same node twice.
     /// </summary>
-    //[TestMethod]
-    //public void DependencyGraphReplaceDependees_ReplaceNoDependeesWithManyDependees()
-    //{
-    //    DependencyGraph graph = new ();
-    //    List<string> replacementDependees = new ();
-    //    replacementDependees.Add("f");
-    //    replacementDependees.Add("g");
-    //    replacementDependees.Add("h");
-    //    replacementDependees.Add("p");
-    //    graph.ReplaceDependees("a", replacementDependees);
-    //    IEnumerable<string> actualDependees = graph.GetDependees("a");
-    //    HashSet<string> hashActualDependees = actualDependees.ToHashSet();
-    //    HashSet<string> expectedDependees = new ();
-    //    expectedDependees.Add("f");
-    //    expectedDependees.Add("g");
-    //    expectedDependees.Add("h");
-    //    expectedDependees.Add("p");
-    //    bool sameContents = hashActualDependees.SetEquals(expectedDependees);
-    //    Assert.IsTrue(sameContents);
-    //}
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterRemovingSameNodeTwice()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("q", "a");
+        graph.AddDependency("d", "a");
+        graph.RemoveDependency("d", "a");
+        graph.RemoveDependency("d", "a");
+        Assert.IsTrue(graph.Size == 2);
+    }
+
+    /// <summary>
+    /// Tests that size updates properly after adding same node twice.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterAddingSameNodeTwice()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("q", "a");
+        graph.AddDependency("d", "a");
+        graph.AddDependency("d", "a");
+        Assert.IsTrue(graph.Size == 3);
+    }
+
+    /// <summary>
+    /// Tests that size updates properly after replacing nothing with nothing. The size should be 0.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterReplacingNothingWithNothingDependents_NoChange()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        List<string> replacementDependents = new ();
+        graph.ReplaceDependents("a", replacementDependents);
+        Assert.IsTrue(graph.Size == 0);
+    }
+
+    /// <summary>
+    /// Tests that size updates after replacing dependees. (Adding less).
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterReplacingNothingWithNothingDependees_NoChange()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        List<string> replacementDependees = new ();
+        graph.ReplaceDependees("a", replacementDependees);
+        Assert.IsTrue(graph.Size == 0);
+    }
+
+    /// <summary>
+    /// Tests that size updates properly after removing a dependency that does not exist.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterRemovingNodeThatDoesNotExist()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("q", "a");
+        graph.AddDependency("d", "a");
+        graph.RemoveDependency("sad", "w");
+        Assert.IsTrue(graph.Size == 3);
+    }
+
+    /// <summary>
+    /// Tests that size updates after replacing something with nothing. For a ReplaceDependees call.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterReplacingSomethingWithNothingRemovesDependee()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("q", "a");
+        graph.AddDependency("d", "a");
+        List<string> replacementDependees = new ();
+        graph.ReplaceDependees("a", replacementDependees);
+        Assert.IsTrue(graph.Size == 0);
+    }
+
+    /// <summary>
+    /// Tests that size updates after replacing something with nothing. For a ReplaceDependents call.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterReplacingSomethingWithNothingDependents()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("a", "q");
+        graph.AddDependency("a", "d");
+        graph.AddDependency("a", "b");
+        List<string> replacementDependents = new ();
+        graph.ReplaceDependents("a", replacementDependents);
+        Assert.IsTrue(graph.Size == 0);
+    }
+
+    /// <summary>
+    /// Tests that size updates after replacing something with nothing. For a ReplaceDependees call.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterReplacingSomethingWithNothingDependees()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("q", "a");
+        graph.AddDependency("d", "a");
+        List<string> replacementDependees = new ();
+        graph.ReplaceDependees("a", replacementDependees);
+        Assert.IsTrue(graph.Size == 0);
+    }
+
+    /// <summary>
+    /// Tests that size updates after replacing nothing with something. For a ReplaceDependents call.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterReplacingNothingWithSomethingDependents()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        List<string> replacementDependents = new ();
+        replacementDependents.Add("b");
+        graph.ReplaceDependees("a", replacementDependents);
+        Assert.IsTrue(graph.Size == 1);
+    }
+
+    /// <summary>
+    /// Tests that size updates after replacing nothing with something. For a ReplaceDependees call.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterReplacingNothingWithSomethingDependees()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        List<string> replacementDependees = new ();
+        replacementDependees.Add("b");
+        graph.ReplaceDependees("a", replacementDependees);
+        Assert.IsTrue(graph.Size == 1);
+    }
 
     // Stress Tests -------------------------
 
