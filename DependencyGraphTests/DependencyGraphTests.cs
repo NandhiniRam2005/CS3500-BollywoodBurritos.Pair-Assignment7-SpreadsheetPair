@@ -17,7 +17,7 @@
 //
 // </summary>
 
-// Ignore Spelling: Dependees
+// Ignore Spelling: Dependees Dependee
 
 namespace DependencyGraphTests;
 
@@ -614,7 +614,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes only dependee with a new dependee.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependees_ReplaceOneDependeeeWithOneDependee()
+    public void DependencyGraphReplaceDependees_ReplaceOneDependeeWithOneDependee()
     {
         DependencyGraph graph = new();
         graph.AddDependency("b", "a");
@@ -736,6 +736,107 @@ public class DependencyGraphTests
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
     }
+    // Size tests ---------------------
+
+    /// <summary>
+    ///  Tests that size updates after adding dependencies
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterAdding()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("c", "b");
+        graph.AddDependency("d", "c");
+        graph.AddDependency("b", "d");
+        Assert.IsTrue (graph.Size == 4);
+    }
+
+    /// <summary>
+    /// Tests that size updates after adding and then removing dependencies
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterAddingAndRemoving()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("c", "b");
+        graph.AddDependency("d", "c");
+        graph.AddDependency("b", "d");
+        graph.RemoveDependency("d", "c");
+        graph.RemoveDependency("c", "b");
+        Assert.IsTrue(graph.Size == 2);
+    }
+
+    /// <summary>
+    /// Test that size updates after replacing dependents. (Adding more)
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterReplacingDependentsMore()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("c", "b");
+        List<string> replacementDependents = new();
+        replacementDependents.Add("f");
+        replacementDependents.Add("g");
+        replacementDependents.Add("h");
+        replacementDependents.Add("p");
+        graph.ReplaceDependents("b" , replacementDependents);
+        Assert.IsTrue(graph.Size == 5);
+    }
+
+    /// <summary>
+    /// Tests that size updates after replacing dependees. (Adding more)
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterReplacingDependeesMore()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("c", "b");
+        List<string> replacementDependees = new();
+        replacementDependees.Add("f");
+        replacementDependees.Add("g");
+        replacementDependees.Add("h");
+        replacementDependees.Add("p");
+        graph.ReplaceDependees("a", replacementDependees);
+        Assert.IsTrue(graph.Size == 5);
+    }
+
+    /// <summary>
+    /// Test that size updates after replacing dependents. (Adding less)
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterReplacingDependentsLess()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("b", "d");
+        graph.AddDependency("b", "q");
+        List<string> replacementDependents = new();
+        replacementDependents.Add("f");
+        graph.ReplaceDependents("b", replacementDependents);
+        Assert.IsTrue(graph.Size == 1);
+    }
+
+    /// <summary>
+    /// Tests that size updates after replacing dependees. (Adding less)
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterReplacingDependeesLess()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("q", "a");
+        graph.AddDependency("d", "a");
+        List<string> replacementDependees = new();
+        replacementDependees.Add("f");
+        graph.ReplaceDependees("a", replacementDependees);
+        Assert.IsTrue(graph.Size == 1);
+    }
+
+
     /// <summary>
     /// Tests "replacing" a nodes dependees (none) with many dependees. Effectively making the method an add all nodes method
     /// Should we add?

@@ -27,6 +27,5 @@ List any peers (or other people) in the class (or outside for that matter) that 
 
 # References:
 
-    1.
-    2.
-    3.
+    1. How to get a Dictionary Value by Key - https://www.dofactory.com/code-examples/csharp/dictionary-value-by-key
+    2. HashSet<T> Constructors - https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1.-ctor?view=net-8.0

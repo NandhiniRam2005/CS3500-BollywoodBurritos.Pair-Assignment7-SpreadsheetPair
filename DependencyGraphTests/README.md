@@ -22,10 +22,10 @@ There was no assignment specific topics for this assignment.
 
 List any peers (or other people) in the class (or outside for that matter) that you talked with about the project for more than one minute.
 
-1. Nandhini Ramanathan
+1. 
 
 # References:
 
-    1.
+    1.IEnumerable interface - https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=net-8.0
     2.
     3.
