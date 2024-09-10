@@ -1,4 +1,7 @@
-﻿// Skeleton implementation written by Joe Zachary for CS 3500, September 2013.
+﻿// <copyright file="DependencyGraph.cs" company="UofU-CS3500">
+// Copyright (c) 2024 UofU-CS3500 All rights reserved.
+// </copyright>
+// Skeleton implementation written by Joe Zachary for CS 3500, September 2013.
 // Version 1.1 (Fixed error in comment for RemoveDependency.)
 // Version 1.2 - Daniel Kopta
 // Version 1.3 - H. James de St. Germain Fall 2024
@@ -25,7 +28,6 @@
 // </summary>
 
 // Ignore Spelling: Dependees dependee
-
 namespace CS3500.DependencyGraph;
 
 /// <summary>
@@ -72,23 +74,27 @@ namespace CS3500.DependencyGraph;
 /// </summary>
 public class DependencyGraph
 {
-    private Dictionary<string, HashSet<string>> dependents = new Dictionary<string, HashSet<string>>(); // the node and everything it depends on
-    private Dictionary<string, HashSet<string>> dependees = new Dictionary<string, HashSet<string>>(); // the node and all of its dependees
-    private int sizeOfGraph = 0;
+    private Dictionary<string, HashSet<string>> dependents; // The node and everything it depends on
+    private Dictionary<string, HashSet<string>> dependees; // The node and all of its dependees
+    private int sizeOfGraph;
+
     /// <summary>
     ///   Initializes a new instance of the <see cref="DependencyGraph"/> class.
     ///   The initial DependencyGraph is empty.
     /// </summary>
     public DependencyGraph()
     {
+        this.dependees = new Dictionary<string, HashSet<string>>();
+        this.dependents = new Dictionary<string, HashSet<string>>();
+        this.sizeOfGraph = 0;
     }
 
     /// <summary>
-    /// The number of ordered pairs in the DependencyGraph.
+    /// Gets the number of ordered pairs in the DependencyGraph.
     /// </summary>
     public int Size
     {
-        get { return sizeOfGraph; }
+        get { return this.sizeOfGraph; }
     }
 
     /// <summary>
@@ -154,7 +160,7 @@ public class DependencyGraph
     }
 
     /// <summary>
-    /// <para> 
+    /// <para>
     ///   Adds the ordered pair (dependee, dependent), if it doesn't already exist (otherwise nothing happens).
     /// </para>
     /// <para>
@@ -174,6 +180,7 @@ public class DependencyGraph
         {
             this.dependents[dependee].Add(dependent);
         }
+
         if (!this.dependees.ContainsKey(dependent))
         {
             this.dependees.Add(dependent, new HashSet<string>());
@@ -183,6 +190,7 @@ public class DependencyGraph
         {
             this.dependees[dependent].Add(dependee);
         }
+
         this.sizeOfGraph++;
     }
 
@@ -204,22 +212,25 @@ public class DependencyGraph
             {
                 this.dependents.Remove(dependee);
             }
+
             containedDependee = true;
         }
 
-        if (this.dependees.ContainsKey(dependent)){
+        if (this.dependees.ContainsKey(dependent))
+        {
             this.dependees[dependent].Remove(dependee);
             if (this.dependees[dependent].Count == 0)
             {
                 this.dependees.Remove(dependee);
             }
+
             containedDependent = true;
         }
+
         if (containedDependent && containedDependee)
         {
             this.sizeOfGraph--;
         }
-        
     }
 
     /// <summary>

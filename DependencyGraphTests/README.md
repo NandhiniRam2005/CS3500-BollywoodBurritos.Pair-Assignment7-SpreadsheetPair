@@ -13,7 +13,9 @@ Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use i
 This project is made to determine the correctness of the DependencyGraph project using various tests.
 
 # Comments to Evaluators:
-None for now...
+I commented my own stress test the one labeled "Intense Stress Test" to show understanding of the stress test.
+I did not make a stress test for the replace methods as those should not be completing in O(1) time as mentioned
+in Piazza.
 
 # Assignment Specific Topics
 There was no assignment specific topics for this assignment.

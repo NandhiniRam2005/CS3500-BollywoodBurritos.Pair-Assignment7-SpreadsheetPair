@@ -1,3 +1,6 @@
+// <copyright file="DependencyGraphTests.cs" company="UofU-CS3500">
+// Copyright (c) 2024 UofU-CS3500 All rights reserved.
+// </copyright>
 // <summary>
 // Author:    Joel Rodriguez
 // Partner:   None
@@ -18,7 +21,6 @@
 // </summary>
 
 // Ignore Spelling: Dependees Dependee
-
 namespace DependencyGraphTests;
 
 using System.Collections;
@@ -26,7 +28,7 @@ using CS3500.DependencyGraph;
 
 /// <summary>
 ///   This is a test class for DependencyGraphTest and is intended
-///   to contain all DependencyGraphTest Unit Tests
+///   to contain all DependencyGraphTest Unit Tests.
 /// </summary>
 [TestClass]
 public class DependencyGraphTests
@@ -34,13 +36,12 @@ public class DependencyGraphTests
     // GraphDependency Constructor  Tests -----------------
 
     /// <summary>
-    /// Ensures that no exception is thrown upon creation of a DependencyGraph
+    /// Ensures that no exception is thrown upon creation of a DependencyGraph.
     /// </summary>
     [TestMethod]
     public void DependencyGraphConstructor_DependencyGraphIsCreated_True()
     {
        _ = new DependencyGraph();
-       
     }
 
     // Size Tests -----------------
@@ -58,8 +59,8 @@ public class DependencyGraphTests
         graph.AddDependency("a", "b");
         bool graphHasDependents = graph.HasDependents("a");
         Assert.IsTrue(graphHasDependents);
-
     }
+
     /// <summary>
     /// Checks to make sure a node which depends on multiple nodes does appear to have dependents.
     /// This test doubles as an AddDependency test.
@@ -74,8 +75,8 @@ public class DependencyGraphTests
         graph.AddDependency("a", "q");
         bool graphHasDependents = graph.HasDependents("a");
         Assert.IsTrue(graphHasDependents);
-
     }
+
     /// <summary>
     /// Checks to make sure two nodes which depend on multiple nodes do appear to both have dependents.
     /// This test doubles as an AddDependency test.
@@ -94,7 +95,6 @@ public class DependencyGraphTests
         bool qHasDependents = graph.HasDependents("q");
         Assert.IsTrue(qHasDependents);
         Assert.IsTrue(bHasDependents);
-
     }
 
     /// <summary>
@@ -108,7 +108,6 @@ public class DependencyGraphTests
         graph.AddDependency("a", "b");
         bool graphHasDependents = graph.HasDependents("b");
         Assert.IsFalse(graphHasDependents);
-
     }
 
     // HasDependees Tests -----------------
@@ -124,8 +123,8 @@ public class DependencyGraphTests
         graph.AddDependency("a", "b");
         bool graphHasDependees = graph.HasDependees("b");
         Assert.IsTrue(graphHasDependees);
-
     }
+
     /// <summary>
     /// Checks to make sure a node which is depended on multiple nodes does appear to have dependees.
     /// This test doubles as an AddDependency test.
@@ -140,8 +139,8 @@ public class DependencyGraphTests
         graph.AddDependency("q", "b");
         bool graphHasdependees = graph.HasDependees("b");
         Assert.IsTrue(graphHasdependees);
-
     }
+
     /// <summary>
     /// Checks to make sure two nodes which are depended on multiple nodes do appear to both have dependees.
     /// This test doubles as an AddDependency test.
@@ -160,7 +159,6 @@ public class DependencyGraphTests
         bool tHasDependees = graph.HasDependees("t");
         Assert.IsTrue(bHasDependees);
         Assert.IsTrue(tHasDependees);
-
     }
 
     /// <summary>
@@ -174,7 +172,6 @@ public class DependencyGraphTests
         graph.AddDependency("a", "b");
         bool graphHasDependees = graph.HasDependees("a");
         Assert.IsFalse(graphHasDependees);
-
     }
 
     // GetDependents Tests -----------------
@@ -190,13 +187,11 @@ public class DependencyGraphTests
         graph.AddDependency("a", "b");
         IEnumerable<string> actualDependents = graph.GetDependents("a");
         HashSet<string> expectedDependents = new ();
-        expectedDependents.Add ("b");
+        expectedDependents.Add("b");
         bool sameContents = actualDependents.ToHashSet().SetEquals(expectedDependents);
         Assert.IsTrue(sameContents);
-        
-
-
     }
+
     /// <summary>
     /// Checks to make sure a node which depends on multiple nodes does appear to have those specific dependents.
     /// This test doubles as an AddDependency test.
@@ -217,10 +212,8 @@ public class DependencyGraphTests
         expectedDependents.Add("q");
         bool sameContents = actualDependents.ToHashSet().SetEquals(expectedDependents);
         Assert.IsTrue(sameContents);
-    
-
-
     }
+
     /// <summary>
     /// Checks to make sure two nodes which depend on multiple nodes do appear to both have those specific dependents.
     /// This test doubles as an AddDependency test.
@@ -249,7 +242,6 @@ public class DependencyGraphTests
         bool sameContentsTwo = qActualDependents.ToHashSet().SetEquals(qExpectedDependents);
         Assert.IsTrue(sameContents);
         Assert.IsTrue(sameContentsTwo);
-
     }
 
     /// <summary>
@@ -261,10 +253,9 @@ public class DependencyGraphTests
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
         IEnumerable<string> actualDependents = graph.GetDependents("b");
-        HashSet<string> expectedDependents = new();
+        HashSet<string> expectedDependents = new ();
         bool sameContents = actualDependents.ToHashSet().SetEquals(expectedDependents);
         Assert.IsTrue(sameContents);
-
     }
 
     // GetDependees  Tests -----------------
@@ -279,13 +270,12 @@ public class DependencyGraphTests
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
         IEnumerable<string> actualDependees = graph.GetDependees("b");
-        HashSet<string> expectedDependees = new();
+        HashSet<string> expectedDependees = new ();
         expectedDependees.Add("a");
         bool sameContents = actualDependees.ToHashSet().SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
-
-
     }
+
     /// <summary>
     /// Checks to make sure a node which depends on multiple nodes does appear to have those specific dependees.
     /// This test doubles as an AddDependency test.
@@ -299,16 +289,15 @@ public class DependencyGraphTests
         graph.AddDependency("d", "a");
         graph.AddDependency("q", "a");
         IEnumerable<string> actualDependees = graph.GetDependees("a");
-        HashSet<string> expectedDependees = new();
+        HashSet<string> expectedDependees = new ();
         expectedDependees.Add("b");
         expectedDependees.Add("c");
         expectedDependees.Add("d");
         expectedDependees.Add("q");
         bool sameContents = actualDependees.ToHashSet().SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
-
-
     }
+
     /// <summary>
     /// Checks to make sure two nodes which depend on multiple nodes do appear to both have those specific dependees.
     /// This test doubles as an AddDependency test.
@@ -322,22 +311,21 @@ public class DependencyGraphTests
         graph.AddDependency("f", "a");
         graph.AddDependency("v", "a");
         graph.AddDependency("t", "q");
-        graph.AddDependency("e","q");
+        graph.AddDependency("e", "q");
         IEnumerable<string> aActualDependees = graph.GetDependees("a");
-        HashSet<string> aExpectedDependees = new();
+        HashSet<string> aExpectedDependees = new ();
         aExpectedDependees.Add("b");
         aExpectedDependees.Add("z");
         aExpectedDependees.Add("f");
         aExpectedDependees.Add("v");
         IEnumerable<string> qActualDependees = graph.GetDependees("q");
-        HashSet<string> qExpectedDependees = new();
+        HashSet<string> qExpectedDependees = new ();
         qExpectedDependees.Add("t");
         qExpectedDependees.Add("e");
         bool sameContents = aActualDependees.ToHashSet().SetEquals(aExpectedDependees);
         bool sameContentsTwo = qActualDependees.ToHashSet().SetEquals(qExpectedDependees);
         Assert.IsTrue(sameContents);
         Assert.IsTrue(sameContentsTwo);
-
     }
 
     /// <summary>
@@ -349,13 +337,12 @@ public class DependencyGraphTests
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
         IEnumerable<string> actualDependees = graph.GetDependees("a");
-        HashSet<string> expectedDependees = new();
+        HashSet<string> expectedDependees = new ();
         bool sameContents = actualDependees.ToHashSet().SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
-
     }
-    // Remove Dependency Tests -------------------
 
+    // Remove Dependency Tests -------------------
 
     /// <summary>
     /// Checks to make sure a node with a dependee can have all of its dependency's removed and return the proper
@@ -370,13 +357,11 @@ public class DependencyGraphTests
         graph.RemoveDependency("b", "a");
         IEnumerable<string> actualDependees = graph.GetDependees("a");
         HashSet<string> hashActualDependees = actualDependees.ToHashSet();
-        HashSet<string> expectedDependees = new();
+        HashSet<string> expectedDependees = new ();
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
-
-
-
     }
+
     /// <summary>
     /// Checks to make sure a node which depends on multiple nodes can have some of its nodes removed and return
     /// the correct nodes for its dependees.
@@ -394,14 +379,13 @@ public class DependencyGraphTests
         graph.RemoveDependency("d", "a");
         IEnumerable<string> actualDependees = graph.GetDependees("a");
         HashSet<string> hashActualDependees = actualDependees.ToHashSet();
-        HashSet<string> expectedDependees = new();
+        HashSet<string> expectedDependees = new ();
         expectedDependees.Add("b");
         expectedDependees.Add("c");
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
-
-
     }
+
     /// <summary>
     /// Checks to make sure two nodes which depend on multiple nodes can have their nodes removed and return the correct
     /// nodes for its dependees.
@@ -422,17 +406,16 @@ public class DependencyGraphTests
         graph.RemoveDependency("e", "q");
         IEnumerable<string> aActualDependees = graph.GetDependees("a");
         HashSet<string> hashAActualDependees = aActualDependees.ToHashSet();
-        HashSet<string> aExpectedDependees = new();
+        HashSet<string> aExpectedDependees = new ();
         aExpectedDependees.Add("b");
         aExpectedDependees.Add("z");
         IEnumerable<string> qActualDependees = graph.GetDependees("q");
         HashSet<string> hashQActualDependees = qActualDependees.ToHashSet();
-        HashSet<string> qExpectedDependees = new();
+        HashSet<string> qExpectedDependees = new ();
         qExpectedDependees.Add("t");
         bool sameContentsOne = hashAActualDependees.SetEquals(aExpectedDependees);
         bool sameContentsTwo = hashQActualDependees.SetEquals(qExpectedDependees);
         Assert.IsTrue(sameContentsOne && sameContentsTwo);
-
     }
 
     /// <summary>
@@ -446,12 +429,10 @@ public class DependencyGraphTests
         graph.AddDependency("b", "a");
         graph.RemoveDependency("a", "b");
         IEnumerable<string> actualDependees = graph.GetDependees("a");
-        HashSet<string> expectedDependees = new();
+        HashSet<string> expectedDependees = new ();
         expectedDependees.Add("b");
         bool sameContents = actualDependees.ToHashSet().SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
-       
-
     }
 
     // AddDependency  Tests -----------------
@@ -459,7 +440,7 @@ public class DependencyGraphTests
     // ReplaceDependents  Tests -----------------
 
     /// <summary>
-    /// Tests replacing one nodes only dependent with a new dependent.
+    /// Tests replacing one nodes only dependent with a new  dependent.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependents_ReplaceOneDependentWithOneDependent()
@@ -475,17 +456,17 @@ public class DependencyGraphTests
         expectedDependents.Add("f");
         bool sameContents = hashActualDependents.SetEquals(expectedDependents);
         Assert.IsTrue(sameContents);
-
     }
+
     /// <summary>
-    /// Tests replacing one nodes only dependent with many new dependents.
+    /// Tests replacing one nodes only dependent with many new  dependents.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependents_ReplaceOneDependentWithMultipleDependent()
     {
-        DependencyGraph graph = new();
+        DependencyGraph graph = new ();
         graph.AddDependency("a", "b");
-        List<string> replacementDependents = new();
+        List<string> replacementDependents = new ();
         replacementDependents.Add("f");
         replacementDependents.Add("g");
         replacementDependents.Add("h");
@@ -493,7 +474,7 @@ public class DependencyGraphTests
         graph.ReplaceDependents("a", replacementDependents);
         IEnumerable<string> actualDependents = graph.GetDependents("a");
         HashSet<string> hashActualDependents = actualDependents.ToHashSet();
-        HashSet<string> expectedDependents = new();
+        HashSet<string> expectedDependents = new ();
         expectedDependents.Add("f");
         expectedDependents.Add("g");
         expectedDependents.Add("h");
@@ -501,39 +482,41 @@ public class DependencyGraphTests
         bool sameContents = hashActualDependents.SetEquals(expectedDependents);
         Assert.IsTrue(sameContents);
     }
+
     /// <summary>
     /// Tests replacing one nodes many dependents with one dependent.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependents_ReplaceManyDependentWithOneDependent()
     {
-        DependencyGraph graph = new();
+        DependencyGraph graph = new ();
         graph.AddDependency("a", "b");
         graph.AddDependency("a", "c");
         graph.AddDependency("a", "d");
         graph.AddDependency("a", "e");
-        List<string> replacementDependents = new();
+        List<string> replacementDependents = new ();
         replacementDependents.Add("f");
         graph.ReplaceDependents("a", replacementDependents);
         IEnumerable<string> actualDependents = graph.GetDependents("a");
         HashSet<string> hashActualDependents = actualDependents.ToHashSet();
-        HashSet<string> expectedDependents = new();
+        HashSet<string> expectedDependents = new ();
         expectedDependents.Add("f");
         bool sameContents = hashActualDependents.SetEquals(expectedDependents);
         Assert.IsTrue(sameContents);
     }
+
     /// <summary>
-    /// Tests replacing one nodes many dependents with many new dependents.
+    /// Tests replacing one nodes many dependents with many new  dependents.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependents_ReplaceManyDependentWithManyDependents()
     {
-        DependencyGraph graph = new();
+        DependencyGraph graph = new ();
         graph.AddDependency("a", "b");
         graph.AddDependency("a", "c");
         graph.AddDependency("a", "d");
         graph.AddDependency("a", "e");
-        List<string> replacementDependents = new();
+        List<string> replacementDependents = new ();
         replacementDependents.Add("f");
         replacementDependents.Add("g");
         replacementDependents.Add("h");
@@ -541,7 +524,7 @@ public class DependencyGraphTests
         graph.ReplaceDependents("a", replacementDependents);
         IEnumerable<string> actualDependents = graph.GetDependents("a");
         HashSet<string> hashActualDependents = actualDependents.ToHashSet();
-        HashSet<string> expectedDependents = new();
+        HashSet<string> expectedDependents = new ();
         expectedDependents.Add("f");
         expectedDependents.Add("g");
         expectedDependents.Add("h");
@@ -549,49 +532,52 @@ public class DependencyGraphTests
         bool sameContents = hashActualDependents.SetEquals(expectedDependents);
         Assert.IsTrue(sameContents);
     }
+
     /// <summary>
     /// Tests replacing one nodes many dependents with no dependents.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependents_ReplaceManyDependentWithNoDependents()
     {
-        DependencyGraph graph = new();
+        DependencyGraph graph = new ();
         graph.AddDependency("a", "b");
         graph.AddDependency("a", "c");
         graph.AddDependency("a", "d");
         graph.AddDependency("a", "e");
-        List<string> replacementDependents = new();
+        List<string> replacementDependents = new ();
         graph.ReplaceDependents("a", replacementDependents);
         IEnumerable<string> actualDependents = graph.GetDependents("a");
         HashSet<string> hashActualDependents = actualDependents.ToHashSet();
-        HashSet<string> expectedDependents = new();
+        HashSet<string> expectedDependents = new ();
         bool sameContents = hashActualDependents.SetEquals(expectedDependents);
         Assert.IsTrue(sameContents);
     }
+
     /// <summary>
     /// Tests replacing one nodes only dependent with no dependents.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependents_ReplaceOneDependentWithNoDependents()
     {
-        DependencyGraph graph = new();
+        DependencyGraph graph = new ();
         graph.AddDependency("a", "b");
-        List<string> replacementDependents = new();
+        List<string> replacementDependents = new ();
         graph.ReplaceDependents("a", replacementDependents);
         IEnumerable<string> actualDependents = graph.GetDependents("a");
         HashSet<string> hashActualDependents = actualDependents.ToHashSet();
-        HashSet<string> expectedDependents = new();
+        HashSet<string> expectedDependents = new ();
         bool sameContents = hashActualDependents.SetEquals(expectedDependents);
         Assert.IsTrue(sameContents);
     }
+
     /// <summary>
-    /// Tests "replacing" a nodes dependents (none) with many dependents. Effectively making the method an add all nodes method
+    /// Tests "replacing" a nodes dependents (none) with many dependents. Effectively making the method an add all nodes method.
     /// </summary>
     //[TestMethod]
     //public void DependencyGraphReplaceDependents_ReplaceNoDependentsWithManyDependents()
     //{
-    //    DependencyGraph graph = new();
-    //    List<string> replacementDependents = new();
+    //    DependencyGraph graph = new ();
+    //    List<string> replacementDependents = new ();
     //    replacementDependents.Add("f");
     //    replacementDependents.Add("g");
     //    replacementDependents.Add("h");
@@ -599,7 +585,7 @@ public class DependencyGraphTests
     //    graph.ReplaceDependents("a", replacementDependents);
     //    IEnumerable<string> actualDependents = graph.GetDependents("a");
     //    HashSet<string> hashActualDependents = actualDependents.ToHashSet();
-    //    HashSet<string> expectedDependents = new();
+    //    HashSet<string> expectedDependents = new ();
     //    expectedDependents.Add("f");
     //    expectedDependents.Add("g");
     //    expectedDependents.Add("h");
@@ -611,33 +597,33 @@ public class DependencyGraphTests
     // ReplaceDependees  Tests -----------------
 
     /// <summary>
-    /// Tests replacing one nodes only dependee with a new dependee.
+    /// Tests replacing one nodes only dependee with a new  dependee.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependees_ReplaceOneDependeeWithOneDependee()
     {
-        DependencyGraph graph = new();
+        DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
-        List<string> replacementDependees = new();
+        List<string> replacementDependees = new ();
         replacementDependees.Add("f");
         graph.ReplaceDependees("a", replacementDependees);
         IEnumerable<string> actualDependees = graph.GetDependees("a");
         HashSet<string> hashActualDependees = actualDependees.ToHashSet();
-        HashSet<string> expectedDependees = new();
+        HashSet<string> expectedDependees = new ();
         expectedDependees.Add("f");
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
-
     }
+
     /// <summary>
-    /// Tests replacing one nodes only dependee with many new dependees.
+    /// Tests replacing one nodes only dependee with many new  dependees.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependees_ReplaceOneDependentWithMultipleDependent()
     {
-        DependencyGraph graph = new();
+        DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
-        List<string> replacementDependees = new();
+        List<string> replacementDependees = new ();
         replacementDependees.Add("f");
         replacementDependees.Add("g");
         replacementDependees.Add("h");
@@ -645,7 +631,7 @@ public class DependencyGraphTests
         graph.ReplaceDependees("a", replacementDependees);
         IEnumerable<string> actualDependees = graph.GetDependees("a");
         HashSet<string> hashActualDependees = actualDependees.ToHashSet();
-        HashSet<string> expectedDependees = new();
+        HashSet<string> expectedDependees = new ();
         expectedDependees.Add("f");
         expectedDependees.Add("g");
         expectedDependees.Add("h");
@@ -653,39 +639,41 @@ public class DependencyGraphTests
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
     }
+
     /// <summary>
     /// Tests replacing one nodes many dependees with one dependee.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependees_ReplaceManyDependentWithOneDependee()
     {
-        DependencyGraph graph = new();
+        DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
         graph.AddDependency("c", "a");
         graph.AddDependency("d", "a");
         graph.AddDependency("e", "a");
-        List<string> replacementDependees = new();
+        List<string> replacementDependees = new ();
         replacementDependees.Add("f");
         graph.ReplaceDependees("a", replacementDependees);
         IEnumerable<string> actualDependees = graph.GetDependees("a");
         HashSet<string> hashActualDependees = actualDependees.ToHashSet();
-        HashSet<string> expectedDependees = new();
+        HashSet<string> expectedDependees = new ();
         expectedDependees.Add("f");
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
     }
+
     /// <summary>
-    /// Tests replacing one nodes many dependees with many new dependees.
+    /// Tests replacing one nodes many dependees with many new  dependees.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependees_ReplaceManyDependeesWithManyDependees()
     {
-        DependencyGraph graph = new();
+        DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
         graph.AddDependency("c", "a");
         graph.AddDependency("d", "a");
         graph.AddDependency("e", "a");
-        List<string> replacementDependees = new();
+        List<string> replacementDependees = new ();
         replacementDependees.Add("f");
         replacementDependees.Add("g");
         replacementDependees.Add("h");
@@ -693,7 +681,7 @@ public class DependencyGraphTests
         graph.ReplaceDependees("a", replacementDependees);
         IEnumerable<string> actualDependees = graph.GetDependees("a");
         HashSet<string> hashActualDependees = actualDependees.ToHashSet();
-        HashSet<string> expectedDependees = new();
+        HashSet<string> expectedDependees = new ();
         expectedDependees.Add("f");
         expectedDependees.Add("g");
         expectedDependees.Add("h");
@@ -701,45 +689,48 @@ public class DependencyGraphTests
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
     }
+
     /// <summary>
     /// Tests replacing one nodes many dependees with no dependees.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependees_ReplaceManyDependentWithNoDependees()
     {
-        DependencyGraph graph = new();
+        DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
         graph.AddDependency("d", "a");
         graph.AddDependency("c", "a");
         graph.AddDependency("e", "a");
-        List<string> replacementDependees = new();
+        List<string> replacementDependees = new ();
         graph.ReplaceDependees("a", replacementDependees);
         IEnumerable<string> actualDependees = graph.GetDependees("a");
         HashSet<string> hashActualDependees = actualDependees.ToHashSet();
-        HashSet<string> expectedDependees = new();
+        HashSet<string> expectedDependees = new ();
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
     }
+
     /// <summary>
     /// Tests replacing one nodes only dependee with no dependees.
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependees_ReplaceOneDependentWithNoDependees()
     {
-        DependencyGraph graph = new();
+        DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
-        List<string> replacementDependees = new();
+        List<string> replacementDependees = new ();
         graph.ReplaceDependees("a", replacementDependees);
         IEnumerable<string> actualDependees = graph.GetDependees("a");
         HashSet<string> hashActualDependees = actualDependees.ToHashSet();
-        HashSet<string> expectedDependees = new();
+        HashSet<string> expectedDependees = new ();
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
     }
+
     // Size tests ---------------------
 
     /// <summary>
-    ///  Tests that size updates after adding dependencies
+    ///  Tests that size updates after adding dependencies.
     /// </summary>
     [TestMethod]
     public void DependencyGraphSize_TestSizeAfterAdding()
@@ -749,11 +740,11 @@ public class DependencyGraphTests
         graph.AddDependency("c", "b");
         graph.AddDependency("d", "c");
         graph.AddDependency("b", "d");
-        Assert.IsTrue (graph.Size == 4);
+        Assert.IsTrue(graph.Size == 4);
     }
 
     /// <summary>
-    /// Tests that size updates after adding and then removing dependencies
+    /// Tests that size updates after adding and then removing dependencies.
     /// </summary>
     [TestMethod]
     public void DependencyGraphSize_TestSizeAfterAddingAndRemoving()
@@ -769,7 +760,7 @@ public class DependencyGraphTests
     }
 
     /// <summary>
-    /// Test that size updates after replacing dependents. (Adding more)
+    /// Test that size updates after replacing dependents. (Adding more).
     /// </summary>
     [TestMethod]
     public void DependencyGraphSize_TestSizeAfterReplacingDependentsMore()
@@ -777,17 +768,17 @@ public class DependencyGraphTests
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
         graph.AddDependency("c", "b");
-        List<string> replacementDependents = new();
+        List<string> replacementDependents = new ();
         replacementDependents.Add("f");
         replacementDependents.Add("g");
         replacementDependents.Add("h");
         replacementDependents.Add("p");
-        graph.ReplaceDependents("b" , replacementDependents);
+        graph.ReplaceDependents("b", replacementDependents);
         Assert.IsTrue(graph.Size == 5);
     }
 
     /// <summary>
-    /// Tests that size updates after replacing dependees. (Adding more)
+    /// Tests that size updates after replacing dependees. (Adding more).
     /// </summary>
     [TestMethod]
     public void DependencyGraphSize_TestSizeAfterReplacingDependeesMore()
@@ -795,7 +786,7 @@ public class DependencyGraphTests
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
         graph.AddDependency("c", "b");
-        List<string> replacementDependees = new();
+        List<string> replacementDependees = new ();
         replacementDependees.Add("f");
         replacementDependees.Add("g");
         replacementDependees.Add("h");
@@ -805,7 +796,7 @@ public class DependencyGraphTests
     }
 
     /// <summary>
-    /// Test that size updates after replacing dependents. (Adding less)
+    /// Test that size updates after replacing dependents. (Adding less).
     /// </summary>
     [TestMethod]
     public void DependencyGraphSize_TestSizeAfterReplacingDependentsLess()
@@ -814,14 +805,14 @@ public class DependencyGraphTests
         graph.AddDependency("b", "a");
         graph.AddDependency("b", "d");
         graph.AddDependency("b", "q");
-        List<string> replacementDependents = new();
+        List<string> replacementDependents = new ();
         replacementDependents.Add("f");
         graph.ReplaceDependents("b", replacementDependents);
         Assert.IsTrue(graph.Size == 1);
     }
 
     /// <summary>
-    /// Tests that size updates after replacing dependees. (Adding less)
+    /// Tests that size updates after replacing dependees. (Adding less).
     /// </summary>
     [TestMethod]
     public void DependencyGraphSize_TestSizeAfterReplacingDependeesLess()
@@ -830,22 +821,20 @@ public class DependencyGraphTests
         graph.AddDependency("b", "a");
         graph.AddDependency("q", "a");
         graph.AddDependency("d", "a");
-        List<string> replacementDependees = new();
+        List<string> replacementDependees = new ();
         replacementDependees.Add("f");
         graph.ReplaceDependees("a", replacementDependees);
         Assert.IsTrue(graph.Size == 1);
     }
 
-
     /// <summary>
-    /// Tests "replacing" a nodes dependees (none) with many dependees. Effectively making the method an add all nodes method
-    /// Should we add?
+    /// Tests "replacing" a nodes dependees (none) with many dependees. Effectively making the method an add all nodes method.
     /// </summary>
     //[TestMethod]
     //public void DependencyGraphReplaceDependees_ReplaceNoDependeesWithManyDependees()
     //{
-    //    DependencyGraph graph = new();
-    //    List<string> replacementDependees = new();
+    //    DependencyGraph graph = new ();
+    //    List<string> replacementDependees = new ();
     //    replacementDependees.Add("f");
     //    replacementDependees.Add("g");
     //    replacementDependees.Add("h");
@@ -853,7 +842,7 @@ public class DependencyGraphTests
     //    graph.ReplaceDependees("a", replacementDependees);
     //    IEnumerable<string> actualDependees = graph.GetDependees("a");
     //    HashSet<string> hashActualDependees = actualDependees.ToHashSet();
-    //    HashSet<string> expectedDependees = new();
+    //    HashSet<string> expectedDependees = new ();
     //    expectedDependees.Add("f");
     //    expectedDependees.Add("g");
     //    expectedDependees.Add("h");
@@ -861,16 +850,19 @@ public class DependencyGraphTests
     //    bool sameContents = hashActualDependees.SetEquals(expectedDependees);
     //    Assert.IsTrue(sameContents);
     //}
+
     // Stress Tests -------------------------
+
     /// <summary>
-    ///   FIXME: Explain carefully what this code tests.
-    ///          Also, update in-line comments as appropriate.
+    ///  The following test is a stress test which tests how fast our DependencyGraph is able to add and remove
+    ///  then add some back and remove some dependency pairs. The test must complete in less than two seconds
+    ///  and must also be correct.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)] 
+    [Timeout(2000)]
     public void StressTest()
     {
-        DependencyGraph dg = new();
+        DependencyGraph dg = new ();
 
         // A bunch of strings to use
         const int SIZE = 200;
@@ -880,7 +872,7 @@ public class DependencyGraphTests
             letters[i] = string.Empty + ((char)('a' + i));
         }
 
-        // The correct answers
+        // The correct answers gets what the correct dependencies should be.
         HashSet<string>[] dependents = new HashSet<string>[SIZE];
         HashSet<string>[] dependees = new HashSet<string>[SIZE];
         for (int i = 0; i < SIZE; i++)
@@ -889,7 +881,7 @@ public class DependencyGraphTests
             dependees[i] = [];
         }
 
-        // Add a bunch of dependencies
+        // Add a bunch of dependencies.
         for (int i = 0; i < SIZE; i++)
         {
             for (int j = i + 1; j < SIZE; j++)
@@ -941,5 +933,85 @@ public class DependencyGraphTests
         }
     }
 
+    /// <summary>
+    ///  The following test is a stress test which tests how fast our DependencyGraph is able to add and remove
+    ///  then add some back and remove some dependency pairs. The test must complete in less than three seconds
+    ///  and must also be correct. This is a very intense stress test..
+    /// </summary>
+    [TestMethod]
+    [Timeout(3000)]
+    public void IntenseStressTest()
+    {
+        DependencyGraph dg = new ();
 
+        // A bunch of strings to use for adding dependents and dependees
+        const int SIZE = 1000;
+        string[] letters = new string[SIZE];
+        for (int i = 0; i < SIZE; i++)
+        {
+            letters[i] = string.Empty + ((char)('a' + i));
+        }
+
+        // The correct answers that will be used to compare our actual results too.
+        // This code block basically adds the numbers 0 - size to a HashSet.
+        HashSet<string>[] dependents = new HashSet<string>[SIZE];
+        HashSet<string>[] dependees = new HashSet<string>[SIZE];
+        for (int i = 0; i < SIZE; i++)
+        {
+            dependents[i] = [];
+            dependees[i] = [];
+        }
+
+        // Add a bunch of dependencies to our graph more specifically about 1 million dependencies.
+        // This is because it is doing 1000 loops 999 times
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = i + 1; j < SIZE; j++)
+            {
+                dg.AddDependency(letters[i], letters[j]);
+                dependents[i].Add(letters[j]);
+                dependees[j].Add(letters[i]);
+            }
+        }
+
+        // Remove a bunch of dependencies. More specifically a little under 1 million dependencies.
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = i + 4; j < SIZE; j += 4)
+            {
+                dg.RemoveDependency(letters[i], letters[j]);
+                dependents[i].Remove(letters[j]);
+                dependees[j].Remove(letters[i]);
+            }
+        }
+
+        // Add some back. About half of the original amount (500,000).
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = i + 1; j < SIZE; j += 2)
+            {
+                dg.AddDependency(letters[i], letters[j]);
+                dependents[i].Add(letters[j]);
+                dependees[j].Add(letters[i]);
+            }
+        }
+
+        // Remove some more.About one third of the original amount.
+        for (int i = 0; i < SIZE; i += 2)
+        {
+            for (int j = i + 3; j < SIZE; j += 3)
+            {
+                dg.RemoveDependency(letters[i], letters[j]);
+                dependents[i].Remove(letters[j]);
+                dependees[j].Remove(letters[i]);
+            }
+        }
+
+        // Make sure everything is right by cross checking with what was made earlier.
+        for (int i = 0; i < SIZE; i++)
+        {
+            Assert.IsTrue(dependents[i].SetEquals(new HashSet<string>(dg.GetDependents(letters[i]))));
+            Assert.IsTrue(dependees[i].SetEquals(new HashSet<string>(dg.GetDependees(letters[i]))));
+        }
+    }
 }
