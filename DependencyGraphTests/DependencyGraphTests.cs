@@ -543,6 +543,35 @@ public class DependencyGraphTests
     }
 
     /// <summary>
+    /// Tests replacing a nodes dependents successfully updates both data structures housing our dependents
+    /// and dependees.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphReplaceDependents_ReplaceUpdatesDependentsAndDependees()
+    {
+        DependencyGraph graph = new ();
+        graph.AddDependency("a", "b");
+        graph.AddDependency("a", "c");
+        graph.AddDependency("a", "d");
+        graph.AddDependency("a", "e");
+        List<string> replacementDependents = new ();
+        replacementDependents.Add("f");
+        graph.ReplaceDependents("a", replacementDependents);
+        IEnumerable<string> actualDependents = graph.GetDependents("a");
+        HashSet<string> hashActualDependents = actualDependents.ToHashSet();
+        HashSet<string> expectedDependents = new ();
+        expectedDependents.Add("f");
+        bool sameContents = hashActualDependents.SetEquals(expectedDependents);
+        Assert.IsTrue(sameContents);
+        IEnumerable<string> actualDependees = graph.GetDependees("f");
+        HashSet<string> hashActualDependees = actualDependees.ToHashSet();
+        HashSet<string> expectedDependees = new ();
+        expectedDependees.Add("a");
+        bool sameContentsOne = hashActualDependees.SetEquals(expectedDependees);
+        Assert.IsTrue(sameContents);
+    }
+
+    /// <summary>
     /// Tests replacing one nodes many dependents with many new  dependents.
     /// </summary>
     [TestMethod]
@@ -697,6 +726,35 @@ public class DependencyGraphTests
         expectedDependees.Add("f");
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
+    }
+
+    /// <summary>
+    /// Tests replacing one nodes many dependees successfully updates data structures that house dependents
+    /// and dependees.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphReplaceDependees_ReplaceUpdatesDataStructures()
+    {
+        DependencyGraph graph = new ();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("c", "a");
+        graph.AddDependency("d", "a");
+        graph.AddDependency("e", "a");
+        List<string> replacementDependees = new ();
+        replacementDependees.Add("f");
+        graph.ReplaceDependees("a", replacementDependees);
+        IEnumerable<string> actualDependees = graph.GetDependees("a");
+        HashSet<string> hashActualDependees = actualDependees.ToHashSet();
+        HashSet<string> expectedDependees = new ();
+        expectedDependees.Add("f");
+        bool sameContents = hashActualDependees.SetEquals(expectedDependees);
+        Assert.IsTrue(sameContents);
+        IEnumerable<string> actualDependents = graph.GetDependents("f");
+        HashSet<string> hashActualDependents = actualDependents.ToHashSet();
+        HashSet<string> expectedDependents = new ();
+        expectedDependents.Add("a");
+        bool sameContentsOne = hashActualDependents.SetEquals(expectedDependents);
+        Assert.IsTrue(sameContentsOne);
     }
 
     /// <summary>
