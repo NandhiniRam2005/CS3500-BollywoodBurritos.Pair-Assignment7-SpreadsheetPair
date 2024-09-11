@@ -74,8 +74,8 @@ namespace CS3500.DependencyGraph;
 /// </summary>
 public class DependencyGraph
 {
-    private Dictionary<string, HashSet<string>> dependents; // The node and everything it depends on
-    private Dictionary<string, HashSet<string>> dependees; // The node and all of its dependees
+    private Dictionary<string, HashSet<string>> dependents; // The node and all of the nodes that depend on it.
+    private Dictionary<string, HashSet<string>> dependees; // The node and all nodes it depends on.
     private int sizeOfGraph;
 
     /// <summary>
@@ -227,7 +227,7 @@ public class DependencyGraph
             this.dependees[dependent].Remove(dependee);
             if (this.dependees[dependent].Count == 0)
             {
-                this.dependees.Remove(dependee);
+                this.dependees.Remove(dependent);
             }
 
             containedDependent = true;
@@ -249,13 +249,22 @@ public class DependencyGraph
     {
         if (this.dependents.ContainsKey(nodeName))
         {
+            HashSet<string> nodesOriginalDependents = (HashSet<string>)this.GetDependents(nodeName);
+            foreach (string dependent in nodesOriginalDependents)
+            {
+                this.dependees[dependent].Remove(nodeName);
+                if (this.dependees[dependent].Count == 0)
+                {
+                    this.dependees.Remove(dependent);
+                }
+            }
+
             int sizeOfNodeSet = this.dependents[nodeName].Count;
             this.sizeOfGraph -= sizeOfNodeSet;
             this.dependents[nodeName].Clear();
             foreach (string newDependent in newDependents)
             {
-                this.dependents[nodeName].Add(newDependent);
-                this.sizeOfGraph++;
+                this.AddDependency(nodeName, newDependent);
             }
         }
         else
@@ -263,8 +272,7 @@ public class DependencyGraph
             this.dependents.Add(nodeName, new HashSet<string>());
             foreach (string newDependent in newDependents)
             {
-                this.dependents[nodeName].Add(newDependent);
-                this.sizeOfGraph++;
+                this.AddDependency(nodeName, newDependent);
             }
         }
 
@@ -286,13 +294,22 @@ public class DependencyGraph
     {
         if (this.dependees.ContainsKey(nodeName))
         {
+            HashSet<string> nodesOriginalDependees = (HashSet<string>)this.GetDependees(nodeName);
+            foreach (string dependee in nodesOriginalDependees)
+            {
+                this.dependents[dependee].Remove(nodeName);
+                if (this.dependents[dependee].Count == 0)
+                {
+                    this.dependents.Remove(dependee);
+                }
+            }
+
             int sizeOfNodeSet = this.dependees[nodeName].Count;
             this.sizeOfGraph -= sizeOfNodeSet;
             this.dependees[nodeName].Clear();
             foreach (string newDependee in newDependees)
             {
-                this.dependees[nodeName].Add(newDependee);
-                this.sizeOfGraph++;
+                this.AddDependency(newDependee, nodeName);
             }
         }
         else
@@ -300,8 +317,7 @@ public class DependencyGraph
             this.dependees.Add(nodeName, new HashSet<string>());
             foreach (string newDependee in newDependees)
             {
-                this.dependees[nodeName].Add(newDependee);
-                this.sizeOfGraph++;
+                this.AddDependency(newDependee, nodeName);
             }
         }
 

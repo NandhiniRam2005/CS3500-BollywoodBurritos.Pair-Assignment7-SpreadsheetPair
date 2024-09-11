@@ -23,7 +23,6 @@
 // Ignore Spelling: Dependees Dependee
 namespace DependencyGraphTests;
 
-using System.Collections;
 using CS3500.DependencyGraph;
 
 /// <summary>
@@ -43,8 +42,6 @@ public class DependencyGraphTests
     {
        _ = new DependencyGraph();
     }
-
-    // Size Tests -----------------
 
     // HasDependents  Tests -----------------
 
@@ -350,7 +347,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphRemoveDependees_GraphWithOnePair()
+    public void DependencyGraphRemoveDependency_GraphWithOnePair()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -358,8 +355,40 @@ public class DependencyGraphTests
         IEnumerable<string> actualDependees = graph.GetDependees("a");
         HashSet<string> hashActualDependees = actualDependees.ToHashSet();
         HashSet<string> expectedDependees = new ();
+        IEnumerable<string> actualDependents = graph.GetDependents("a");
+        HashSet<string> hashActualDependents = actualDependents.ToHashSet();
+        HashSet<string> expectedDependents = new ();
+
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
+
+        bool sameContentsOne = hashActualDependents.SetEquals(expectedDependents);
+        Assert.IsTrue(sameContentsOne);
+    }
+
+    /// <summary>
+    /// Checks to make sure a node with a dependee can have all of its dependency's removed and return the proper
+    /// dependees.
+    /// This test doubles as an AddDependency test.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphRemoveDependency_RemoveWhereItContainsTheDependeeButNotDependency()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.RemoveDependency("b", "l");
+        IEnumerable<string> actualDependees = graph.GetDependees("a");
+        HashSet<string> hashActualDependees = actualDependees.ToHashSet();
+        HashSet<string> expectedDependees = new ();
+        expectedDependees.Add("b");
+        IEnumerable<string> actualDependents = graph.GetDependents("b");
+        HashSet<string> hashActualDependents = actualDependents.ToHashSet();
+        HashSet<string> expectedDependents = new ();
+        expectedDependents.Add("a");
+        bool sameContents = hashActualDependees.SetEquals(expectedDependees);
+        Assert.IsTrue(sameContents);
+        bool sameContentsOne = hashActualDependents.SetEquals(expectedDependents);
+        Assert.IsTrue(sameContentsOne);
     }
 
     /// <summary>
@@ -368,7 +397,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphRemoveDependees_GraphWithMultipleDependees()
+    public void DependencyGraphRemoveDependency_GraphWithMultipleDependees()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -382,7 +411,12 @@ public class DependencyGraphTests
         HashSet<string> expectedDependees = new ();
         expectedDependees.Add("b");
         expectedDependees.Add("c");
+        IEnumerable<string> actualDependentsOfQ = graph.GetDependents("q");
+        HashSet<string> hashActualDependentsOfQ = actualDependentsOfQ.ToHashSet();
+        HashSet<string> expectedDependents = new ();
         bool sameContents = hashActualDependees.SetEquals(expectedDependees);
+        Assert.IsTrue(sameContents);
+        bool sameContentsOne = hashActualDependentsOfQ.SetEquals(expectedDependents);
         Assert.IsTrue(sameContents);
     }
 
@@ -392,7 +426,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphRemoveDependees_GraphWithMultipleDependeesAndDependees()
+    public void DependencyGraphRemoveDependency_GraphWithMultipleDependentsAndDependees()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -423,7 +457,7 @@ public class DependencyGraphTests
     /// remove a nonexistent dependee that no exception will be thrown.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphRemoveDependees_RemovingFromNodeWithNoDependees_Valid()
+    public void DependencyGraphRemoveDependency_RemovingNodeThatDoesNotExistButIsClose_Valid()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -433,9 +467,12 @@ public class DependencyGraphTests
         expectedDependees.Add("b");
         bool sameContents = actualDependees.ToHashSet().SetEquals(expectedDependees);
         Assert.IsTrue(sameContents);
+        IEnumerable<string> actualDependents = graph.GetDependents("b");
+        HashSet<string> expectedDependents = new ();
+        expectedDependents.Add("a");
+        bool sameContents1 = actualDependents.ToHashSet().SetEquals(expectedDependents);
+        Assert.IsTrue(sameContents1);
     }
-
-    // AddDependency  Tests -----------------
 
     // ReplaceDependents  Tests -----------------
 
