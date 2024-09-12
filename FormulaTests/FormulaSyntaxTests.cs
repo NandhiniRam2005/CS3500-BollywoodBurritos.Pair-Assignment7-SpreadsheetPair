@@ -17,7 +17,6 @@
 // File Contents
 //
 // This class tests the formula class for consistency and checks the constructor, ToString, and GetVariables.
-//    
 // </summary>
 
 namespace CS3500.FormulaTests;
@@ -85,7 +84,7 @@ public class FormulaSyntaxTests
     [ExpectedException(typeof(FormulaFormatException))]
     public void FormulaConstructor_TestNoTokens_Invalid()
     {
-        _ = new Formula("");  // note: it is arguable that you should replace "" with string.Empty for readability and clarity of intent (e.g., not a cut and paste error or a "I forgot to put something there" error)
+        _ = new Formula(string.Empty);  // note: it is arguable that you should replace "" with string.Empty for readability and clarity of intent (e.g., not a cut and paste error or a "I forgot to put something there" error)
     }
 
     /// <summary>
@@ -153,7 +152,6 @@ public class FormulaSyntaxTests
         _ = new Formula("#");
     }
 
-
     /// <summary>
     ///   <para>
     ///     Make sure an unrecognized tokens are recognized as invalid.
@@ -190,6 +188,7 @@ public class FormulaSyntaxTests
     {
         _ = new Formula("x1x");
     }
+
     /// <summary>
     ///   <para>
     ///     Make sure an invalid token "&" is recognized as invalid when mixed with other valid tokens.
@@ -491,8 +490,8 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///   <para>
-    ///     Make sure a formula in which there is a space as the first token is accepted by the constructor 
-    ///     and throws no exceptions
+    ///     Make sure a formula in which there is a space as the first token is accepted by the constructor
+    ///     and throws no exceptions.
     ///   </para>
     ///   <remarks>
     ///     This is an example of a test that is expected to throw an exception, i.e., it succeeds.
@@ -587,7 +586,6 @@ public class FormulaSyntaxTests
         _ = new Formula("$3");
     }
 
-
     // --- Tests for  Last Token Rule ---
 
     /// <summary>
@@ -640,7 +638,7 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///   <para>
-    ///     Make sure a invalid formula where the last token is an opening parenthesis is not 
+    ///     Make sure a invalid formula where the last token is an opening parenthesis is not
     ///     accepted by the constructor (the constructor should throw a FileFormatException).
     ///   </para>
     ///   <remarks>
@@ -810,7 +808,7 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///   <para>
-    ///     Make sure a formula in which there is a space (no valid token) between an opening 
+    ///     Make sure a formula in which there is a space (no valid token) between an opening
     ///     parenthesis and another valid token and no operator throws a FormulaFormatException as expected.
     ///   </para>
     ///   <remarks>
@@ -858,10 +856,10 @@ public class FormulaSyntaxTests
         _ = new Formula("1+1   +    2+3");
     }
 
-    //  --- Tests for ToString ---
+    // --- Tests for ToString ---
 
     /// <summary>
-    ///  This test check to see if a basic formula can be successfully translated using the ToString method. 
+    ///  This test check to see if a basic formula can be successfully translated using the ToString method.
     /// </summary>
     [TestMethod]
     public void ToString_TestBasicFormula_Valid()
@@ -906,7 +904,7 @@ public class FormulaSyntaxTests
 
     /// <summary>
     /// This test ensures that scientific notation numbers that use positive numbers to make the number bigger
-    /// can be translated
+    /// can be translated.
     /// </summary>
     [TestMethod]
     public void ToString_TestPositiveScientificNotation_Valid()
@@ -1005,10 +1003,10 @@ public class FormulaSyntaxTests
         Assert.AreEqual(expectedString, testFormula.ToString());
     }
 
-    //  --- Tests for GetVariables ---
+    // --- Tests for GetVariables ---
 
     /// <summary>
-    /// This test ensures that the get variables method returns the proper set even when a formula contains 
+    /// This test ensures that the get variables method returns the proper set even when a formula contains
     /// multiple of the same variable.
     /// </summary>
     [TestMethod]
@@ -1027,7 +1025,6 @@ public class FormulaSyntaxTests
         bool sameContents = variables.SetEquals(expectedVariables);
         Assert.AreEqual(expectedSize, actualSize);
         Assert.IsTrue(sameContents);
-
     }
 
     /// <summary>
@@ -1046,10 +1043,10 @@ public class FormulaSyntaxTests
         bool sameContents = variables.SetEquals(expectedVariables);
         Assert.AreEqual(expectedSize, actualSize);
         Assert.IsTrue(sameContents);
-
     }
+
     /// <summary>
-    /// Test to ensure the GetVariables returns the proper set of variables even when there is a 
+    /// Test to ensure the GetVariables returns the proper set of variables even when there is a
     /// long formula with the same duplicate variable.
     /// </summary>
     [TestMethod]
@@ -1065,11 +1062,10 @@ public class FormulaSyntaxTests
         bool sameContents = variables.SetEquals(expectedVariables);
         Assert.AreEqual(expectedSize, actualSize);
         Assert.IsTrue(sameContents);
-
     }
 
     /// <summary>
-    /// Test to ensure the GetVariables method returns the proper set of Variables even when there are the same 
+    /// Test to ensure the GetVariables method returns the proper set of Variables even when there are the same
     /// variables with different cases in the formula.
     /// </summary>
     [TestMethod]
@@ -1086,8 +1082,8 @@ public class FormulaSyntaxTests
         bool sameContents = variables.SetEquals(expectedVariables);
         Assert.AreEqual(expectedSize, actualSize);
         Assert.IsTrue(sameContents);
-
     }
+
     /// <summary>
     /// This test ensures that formula with no variables returns an empty set when calling GetVariables.
     /// </summary>
@@ -1103,11 +1099,10 @@ public class FormulaSyntaxTests
         bool sameContents = variables.SetEquals(expectedVariables);
         Assert.AreEqual(expectedSize, actualSize);
         Assert.IsTrue(sameContents);
-
     }
 
     /// <summary>
-    /// This test ensures that formula with a variable only at the end returns the proper variables when calling 
+    /// This test ensures that formula with a variable only at the end returns the proper variables when calling
     /// GetVariables.
     /// </summary>
     [TestMethod]
@@ -1123,11 +1118,10 @@ public class FormulaSyntaxTests
         bool sameContents = variables.SetEquals(expectedVariables);
         Assert.AreEqual(expectedSize, actualSize);
         Assert.IsTrue(sameContents);
-
     }
 
     /// <summary>
-    /// This test ensures that formula with a variable only at the start returns the proper variables when calling 
+    /// This test ensures that formula with a variable only at the start returns the proper variables when calling
     /// GetVariables.
     /// </summary>
     [TestMethod]
@@ -1143,7 +1137,5 @@ public class FormulaSyntaxTests
         bool sameContents = variables.SetEquals(expectedVariables);
         Assert.AreEqual(expectedSize, actualSize);
         Assert.IsTrue(sameContents);
-
     }
-
 }
