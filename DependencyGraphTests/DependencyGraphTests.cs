@@ -32,7 +32,7 @@ using CS3500.DependencyGraph;
 [TestClass]
 public class DependencyGraphTests
 {
-    // GraphDependency Constructor  Tests -----------------
+    // DependencyGraph Constructor  Tests -----------------
 
     /// <summary>
     /// Ensures that no exception is thrown upon creation of a DependencyGraph.
@@ -50,7 +50,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphHasDependents_GraphWithOnePair()
+    public void DependencyGraphHasDependents_GraphWithOnePair_Valid()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
@@ -63,7 +63,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphHasDependents_GraphWithMultipleDependents()
+    public void DependencyGraphHasDependents_GraphWithMultipleDependents_True()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
@@ -79,7 +79,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphHasDependents_GraphWithMultipleDependeesAndDependents()
+    public void DependencyGraphHasDependents_GraphWithMultipleDependeesAndDependents_True()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
@@ -114,7 +114,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphHasDependees_GraphWithOnePair()
+    public void DependencyGraphHasDependees_GraphWithOnePair_True()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
@@ -127,7 +127,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphHasDependees_GraphWithMultipleDependees()
+    public void DependencyGraphHasDependees_GraphWithMultipleDependees_True()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
@@ -143,7 +143,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphHasDependees_GraphWithMultipleDependentsAndDependees()
+    public void DependencyGraphHasDependees_GraphWithMultipleDependentsAndDependees_True()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
@@ -163,7 +163,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphHasDependees_GraphWithOnePair_NoDependees()
+    public void DependencyGraphHasDependees_GraphWithOnePair_NoDependeesFalse()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
@@ -178,7 +178,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphGetDependents_GraphWithOnePair()
+    public void DependencyGraphGetDependents_GraphWithOnePair_ReturnsOneNode()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
@@ -194,7 +194,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphGetDependents_GraphWithMultipleDependents()
+    public void DependencyGraphGetDependents_GraphWithMultipleDependents_ReturnsMultipleNode()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
@@ -216,7 +216,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphGetDependents_GraphWithMultipleDependeesAndDependents()
+    public void DependencyGraphGetDependents_GraphWithMultipleDependeesAndDependents_ReturnsMultipleNodes()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
@@ -262,7 +262,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphGetDependees_GraphWithOnePair()
+    public void DependencyGraphGetDependees_GraphWithOnePair_ReturnsOneNode()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "b");
@@ -278,7 +278,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphGetDependees_GraphWithMultipleDependees()
+    public void DependencyGraphGetDependees_GraphWithMultipleDependees_ReturnsMultipleNodes()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -300,7 +300,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphGetDependees_GraphWithMultipleDependeesAndDependents()
+    public void DependencyGraphGetDependees_GraphWithMultipleDependeesAndDependents_ReturnsMultipleDependents()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -347,7 +347,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphRemoveDependency_GraphWithOnePair()
+    public void DependencyGraphRemoveDependency_GraphWithOnePair_ReturnsOnePair()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -372,7 +372,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphRemoveDependency_RemoveWhereItContainsTheDependeeButNotDependency()
+    public void DependencyGraphRemoveDependency_RemoveWhereItContainsTheDependeeButNotDependency_ReturnsChangedDependee()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -397,7 +397,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphRemoveDependency_GraphWithMultipleDependees()
+    public void DependencyGraphRemoveDependency_GraphWithMultipleDependees_ReturnsChangedDependees()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -426,7 +426,7 @@ public class DependencyGraphTests
     /// This test doubles as an AddDependency test.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphRemoveDependency_GraphWithMultipleDependentsAndDependees()
+    public void DependencyGraphRemoveDependency_GraphWithMultipleDependentsAndDependees_ReturnsChangedDependees()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -457,7 +457,7 @@ public class DependencyGraphTests
     /// remove a nonexistent dependee that no exception will be thrown.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphRemoveDependency_RemovingNodeThatDoesNotExistButIsClose_Valid()
+    public void DependencyGraphRemoveDependency_RemovingNodeThatDoesNotExistButIsClose_DoesNotChangeDependees()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -480,7 +480,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes only dependent with a new  dependent.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependents_ReplaceOneDependentWithOneDependent()
+    public void DependencyGraphReplaceDependents_ReplaceOneDependentWithOneDependent_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("a", "b");
@@ -499,7 +499,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes only dependent with many new  dependents.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependents_ReplaceOneDependentWithMultipleDependent()
+    public void DependencyGraphReplaceDependents_ReplaceOneDependentWithMultipleDependent_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("a", "b");
@@ -524,7 +524,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes many dependents with one dependent.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependents_ReplaceManyDependentWithOneDependent()
+    public void DependencyGraphReplaceDependents_ReplaceManyDependentWithOneDependent_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("a", "b");
@@ -547,7 +547,7 @@ public class DependencyGraphTests
     /// and dependees.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependents_ReplaceUpdatesDependentsAndDependees()
+    public void DependencyGraphReplaceDependents_ReplaceUpdatesDependentsAndDependees_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("a", "b");
@@ -575,7 +575,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes many dependents with many new  dependents.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependents_ReplaceManyDependentWithManyDependents()
+    public void DependencyGraphReplaceDependents_ReplaceManyDependentWithManyDependents_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("a", "b");
@@ -603,7 +603,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes many dependents with no dependents.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependents_ReplaceManyDependentWithNoDependents()
+    public void DependencyGraphReplaceDependents_ReplaceManyDependentWithNoDependents_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("a", "b");
@@ -623,7 +623,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes only dependent with no dependents.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependents_ReplaceOneDependentWithNoDependents()
+    public void DependencyGraphReplaceDependents_ReplaceOneDependentWithNoDependents_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("a", "b");
@@ -640,7 +640,7 @@ public class DependencyGraphTests
     /// Tests "replacing" a nodes dependents (none) with many dependents. Effectively making the method an add all nodes method.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependents_ReplaceNoDependentsWithManyDependents()
+    public void DependencyGraphReplaceDependents_ReplaceNoDependentsWithManyDependents_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         List<string> replacementDependents = new ();
@@ -666,7 +666,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes only dependee with a new  dependee.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependees_ReplaceOneDependeeWithOneDependee()
+    public void DependencyGraphReplaceDependees_ReplaceOneDependeeWithOneDependee_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
@@ -685,7 +685,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes only dependee with many new  dependees.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependees_ReplaceOneDependentWithMultipleDependent()
+    public void DependencyGraphReplaceDependees_ReplaceOneDependentWithMultipleDependent_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
@@ -710,7 +710,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes many dependees with one dependee.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependees_ReplaceManyDependentWithOneDependee()
+    public void DependencyGraphReplaceDependees_ReplaceManyDependentWithOneDependee_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
@@ -733,7 +733,7 @@ public class DependencyGraphTests
     /// and dependees.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependees_ReplaceUpdatesDataStructures()
+    public void DependencyGraphReplaceDependees_ReplaceUpdatesDataStructures_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
@@ -761,7 +761,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes many dependees with many new  dependees.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependees_ReplaceManyDependeesWithManyDependees()
+    public void DependencyGraphReplaceDependees_ReplaceManyDependeesWithManyDependees_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
@@ -789,7 +789,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes many dependees with no dependees.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependees_ReplaceManyDependentWithNoDependees()
+    public void DependencyGraphReplaceDependees_ReplaceManyDependentWithNoDependees_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
@@ -809,7 +809,7 @@ public class DependencyGraphTests
     /// Tests replacing one nodes only dependee with no dependees works and is valid.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependees_ReplaceOneDependentWithNoDependees()
+    public void DependencyGraphReplaceDependees_ReplaceOneDependentWithNoDependees_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         graph.AddDependency("b", "a");
@@ -826,7 +826,7 @@ public class DependencyGraphTests
     /// Tests "replacing" a nodes dependees (none) with many dependees. Effectively making the method an add all nodes method.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependees_ReplaceNoDependeesWithManyDependees()
+    public void DependencyGraphReplaceDependees_ReplaceNoDependeesWithManyDependees_ChangesDependencyGraph()
     {
         DependencyGraph graph = new ();
         List<string> replacementDependees = new ();
@@ -852,7 +852,7 @@ public class DependencyGraphTests
     ///  Tests that size updates after adding dependencies.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterAdding()
+    public void DependencyGraphSize_TestSizeAfterAdding_SizeIncreases()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -866,7 +866,7 @@ public class DependencyGraphTests
     /// Tests that size updates after adding and then removing dependencies.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterAddingAndRemoving()
+    public void DependencyGraphSize_TestSizeAfterAddingAndRemoving_SizeIncreasesThenDecreases()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -882,7 +882,7 @@ public class DependencyGraphTests
     /// Test that size updates after replacing dependents. (Adding more).
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterReplacingDependentsMore()
+    public void DependencyGraphSize_TestSizeAfterReplacingDependentsMore_SizeIncreases()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -900,7 +900,7 @@ public class DependencyGraphTests
     /// Tests that size updates after replacing dependees. (Adding more).
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterReplacingDependeesMore()
+    public void DependencyGraphSize_TestSizeAfterReplacingDependeesMore_SizeIncreases()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -918,7 +918,7 @@ public class DependencyGraphTests
     /// Test that size updates after replacing dependents. (Adding less).
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterReplacingDependentsLess()
+    public void DependencyGraphSize_TestSizeAfterReplacingDependentsLess_SizeDecreases()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -934,7 +934,7 @@ public class DependencyGraphTests
     /// Tests that size updates after replacing dependees. (Adding less).
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterReplacingDependeesLess()
+    public void DependencyGraphSize_TestSizeAfterReplacingDependeesLess_SizeDecreases()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -950,7 +950,7 @@ public class DependencyGraphTests
     /// Tests that size updates properly after removing the same node twice.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterRemovingSameNodeTwice()
+    public void DependencyGraphSize_TestSizeAfterRemovingSameNodeTwice_SizeDecreasesThenRemainsUnchanged()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -965,7 +965,7 @@ public class DependencyGraphTests
     /// Tests that size updates properly after adding same node twice.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterAddingSameNodeTwice()
+    public void DependencyGraphSize_TestSizeAfterAddingSameNodeTwice_SizeIncreasesThenRemainsUnchanged()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -1003,7 +1003,7 @@ public class DependencyGraphTests
     /// Tests that size updates properly after removing a dependency that does not exist.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterRemovingNodeThatDoesNotExist()
+    public void DependencyGraphSize_TestSizeAfterRemovingNodeThatDoesNotExist_NoChange()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -1014,25 +1014,10 @@ public class DependencyGraphTests
     }
 
     /// <summary>
-    /// Tests that size updates after replacing something with nothing. For a ReplaceDependees call.
-    /// </summary>
-    [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterReplacingSomethingWithNothingRemovesDependee()
-    {
-        DependencyGraph graph = new DependencyGraph();
-        graph.AddDependency("b", "a");
-        graph.AddDependency("q", "a");
-        graph.AddDependency("d", "a");
-        List<string> replacementDependees = new ();
-        graph.ReplaceDependees("a", replacementDependees);
-        Assert.IsTrue(graph.Size == 0);
-    }
-
-    /// <summary>
     /// Tests that size updates after replacing something with nothing. For a ReplaceDependents call.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterReplacingSomethingWithNothingDependents()
+    public void DependencyGraphSize_TestSizeAfterReplacingSomethingWithNothingDependents_SizeDecreases()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("a", "q");
@@ -1047,7 +1032,7 @@ public class DependencyGraphTests
     /// Tests that size updates after replacing something with nothing. For a ReplaceDependees call.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterReplacingSomethingWithNothingDependees()
+    public void DependencyGraphSize_TestSizeAfterReplacingSomethingWithNothingDependees_SizeDecreases()
     {
         DependencyGraph graph = new DependencyGraph();
         graph.AddDependency("b", "a");
@@ -1062,7 +1047,7 @@ public class DependencyGraphTests
     /// Tests that size updates after replacing nothing with something. For a ReplaceDependents call.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterReplacingNothingWithSomethingDependents()
+    public void DependencyGraphSize_TestSizeAfterReplacingNothingWithSomethingDependents_SizeIncreases()
     {
         DependencyGraph graph = new DependencyGraph();
         List<string> replacementDependents = new ();
@@ -1075,7 +1060,7 @@ public class DependencyGraphTests
     /// Tests that size updates after replacing nothing with something. For a ReplaceDependees call.
     /// </summary>
     [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterReplacingNothingWithSomethingDependees()
+    public void DependencyGraphSize_TestSizeAfterReplacingNothingWithSomethingDependees_SizeIncreases()
     {
         DependencyGraph graph = new DependencyGraph();
         List<string> replacementDependees = new ();
