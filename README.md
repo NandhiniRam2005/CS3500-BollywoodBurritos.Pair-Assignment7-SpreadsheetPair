@@ -20,4 +20,4 @@ evaluate formulas and much more...
 
     1. Assignment One:   Predicted Hours:          8        Actual Hours:   6.5
     2. Assignment Two:   Predicted Hours:          17       Actual Hours:   8.5
-    3. Assignment Three: Predicted Hours:          15       Actual Hours:   8.5
+    3. Assignment Three: Predicted Hours:          15       Actual Hours:   9.0
