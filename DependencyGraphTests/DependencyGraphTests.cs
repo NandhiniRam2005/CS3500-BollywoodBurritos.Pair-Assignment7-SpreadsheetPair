@@ -1084,6 +1084,50 @@ public class DependencyGraphTests
         Assert.IsTrue(graph.Size == 1);
     }
 
+    // AddDependency Tests (Most tests are included in other tests)
+
+    /// <summary>
+    /// Tests a simple case where adding a node does add the node to our DependencyGraph.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphAddDependency_TestAdding_Adds()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("a", "b");
+        HashSet<string> actualDependents = graph.GetDependents("a").ToHashSet();
+        HashSet<string> actualDependees = graph.GetDependees("b").ToHashSet();
+        HashSet<string> expectedDependents = new HashSet<string>();
+        HashSet<string> expectedDependees = new HashSet<string>();
+        expectedDependents.Add("b");
+        expectedDependees.Add("a");
+        bool sameContents1 = actualDependents.SetEquals(expectedDependents);
+        bool sameContents2 = actualDependees.SetEquals(expectedDependees);
+        Assert.IsTrue(sameContents1);
+        Assert.IsTrue(sameContents2);
+    }
+
+    /// <summary>
+    /// Tests the case where we attempt to add the same node twice. We expected only one pair
+    /// to be added.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphAddDependency_TestAddingDuplicates_DoesNotAdd()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("a", "b");
+        graph.AddDependency("a", "b");
+        HashSet<string> actualDependents = graph.GetDependents("a").ToHashSet();
+        HashSet<string> actualDependees = graph.GetDependees("b").ToHashSet();
+        HashSet<string> expectedDependents = new HashSet<string>();
+        HashSet<string> expectedDependees = new HashSet<string>();
+        expectedDependents.Add("b");
+        expectedDependees.Add("a");
+        bool sameContents1 = actualDependents.SetEquals(expectedDependents);
+        bool sameContents2 = actualDependees.SetEquals(expectedDependees);
+        Assert.IsTrue(sameContents1);
+        Assert.IsTrue(sameContents2);
+    }
+
     // Stress Tests -------------------------
 
     /// <summary>
@@ -1097,7 +1141,7 @@ public class DependencyGraphTests
     {
         DependencyGraph dg = new ();
 
-        // A bunch of strings to use
+        // A bunch of strings to use for adding dependents and dependees
         const int SIZE = 200;
         string[] letters = new string[SIZE];
         for (int i = 0; i < SIZE; i++)
@@ -1105,7 +1149,8 @@ public class DependencyGraphTests
             letters[i] = string.Empty + ((char)('a' + i));
         }
 
-        // The correct answers gets what the correct dependencies should be.
+        // The correct answers. This block of code gets what the correct dependencies should be.
+        // This will be used later to determine if our method is correct.
         HashSet<string>[] dependents = new HashSet<string>[SIZE];
         HashSet<string>[] dependees = new HashSet<string>[SIZE];
         for (int i = 0; i < SIZE; i++)
@@ -1119,9 +1164,10 @@ public class DependencyGraphTests
         {
             for (int j = i + 1; j < SIZE; j++)
             {
-                dg.AddDependency(letters[i], letters[j]);
-                dependents[i].Add(letters[j]);
-                dependees[j].Add(letters[i]);
+                dg.AddDependency(letters[i], letters[j]); // Adds the dependencies and uses a nested for loop to ensure we
+                                                          // get a lot of dependencies.
+                dependents[i].Add(letters[j]);  // correct answers
+                dependees[j].Add(letters[i]); // correct answers
             }
         }
 
@@ -1130,9 +1176,9 @@ public class DependencyGraphTests
         {
             for (int j = i + 4; j < SIZE; j += 4)
             {
-                dg.RemoveDependency(letters[i], letters[j]);
-                dependents[i].Remove(letters[j]);
-                dependees[j].Remove(letters[i]);
+                dg.RemoveDependency(letters[i], letters[j]); // Removes dependencies appropriately (only removes dependencies that exist)
+                dependents[i].Remove(letters[j]); // corrects correct answers
+                dependees[j].Remove(letters[i]); // corrects correct answers
             }
         }
 
@@ -1141,7 +1187,8 @@ public class DependencyGraphTests
         {
             for (int j = i + 1; j < SIZE; j += 2)
             {
-                dg.AddDependency(letters[i], letters[j]);
+                dg.AddDependency(letters[i], letters[j]);// Adds the dependencies and uses a nested for loop to ensure we
+                                                         // get a lot of dependencies.
                 dependents[i].Add(letters[j]);
                 dependees[j].Add(letters[i]);
             }
@@ -1152,13 +1199,14 @@ public class DependencyGraphTests
         {
             for (int j = i + 3; j < SIZE; j += 3)
             {
-                dg.RemoveDependency(letters[i], letters[j]);
+                dg.RemoveDependency(letters[i], letters[j]); // Same as above removes some more.
                 dependents[i].Remove(letters[j]);
                 dependees[j].Remove(letters[i]);
             }
         }
 
-        // Make sure everything is right
+        // Make sure everything is right. Now we are using the dependents and dependees HashSets we created to
+        // to ensure that everything is correct.
         for (int i = 0; i < SIZE; i++)
         {
             Assert.IsTrue(dependents[i].SetEquals(new HashSet<string>(dg.GetDependents(letters[i]))));
@@ -1169,7 +1217,7 @@ public class DependencyGraphTests
     /// <summary>
     ///  The following test is a stress test which tests how fast our DependencyGraph is able to add and remove
     ///  then add some back and remove some dependency pairs. The test must complete in less than three seconds
-    ///  and must also be correct. This is a very intense stress test..
+    ///  and must also be correct. This is a very intense stress test.
     /// </summary>
     [TestMethod]
     [Timeout(3000)]

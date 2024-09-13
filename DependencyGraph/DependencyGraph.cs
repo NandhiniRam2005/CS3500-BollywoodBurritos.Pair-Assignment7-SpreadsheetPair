@@ -249,6 +249,8 @@ public class DependencyGraph
     {
         if (this.dependents.ContainsKey(nodeName))
         {
+            // Removes all references to of nodeName from the dependees to make sure we are updating
+            // both data structures.
             HashSet<string> nodesOriginalDependents = (HashSet<string>)this.GetDependents(nodeName);
             foreach (string dependent in nodesOriginalDependents)
             {
@@ -294,6 +296,8 @@ public class DependencyGraph
     {
         if (this.dependees.ContainsKey(nodeName))
         {
+            // Removes all references to of nodeName from the dependents to make sure we are updating
+            // both data structures.
             HashSet<string> nodesOriginalDependees = (HashSet<string>)this.GetDependees(nodeName);
             foreach (string dependee in nodesOriginalDependees)
             {
