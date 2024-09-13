@@ -1206,7 +1206,7 @@ public class DependencyGraphTests
     /// </summary>
     [TestMethod]
     [Timeout(3000)]
-    public void IntenseStressTest()
+    public void IntenseStressTest_OverallScenario_Outcome()
     {
         DependencyGraph dg = new ();
 
