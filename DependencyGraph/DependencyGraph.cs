@@ -74,9 +74,14 @@ namespace CS3500.DependencyGraph;
 /// </summary>
 public class DependencyGraph
 {
-    private Dictionary<string, HashSet<string>> dependents; // The node and all of the nodes that depend on it.
-    private Dictionary<string, HashSet<string>> dependees; // The node and all nodes it depends on.
-    private int sizeOfGraph;
+    // The node and all of the nodes that depend on it.
+    private readonly Dictionary<string, HashSet<string>> dependents;
+
+    // The node and all nodes it depends on.
+    private readonly Dictionary<string, HashSet<string>> dependees;
+
+    // The size of the graph. The number of Dependency pairs in the graph.
+    private readonly int sizeOfGraph; 
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="DependencyGraph"/> class.
