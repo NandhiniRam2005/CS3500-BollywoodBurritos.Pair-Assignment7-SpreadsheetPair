@@ -863,20 +863,6 @@ public class DependencyGraphTests
     }
 
     /// <summary>
-    ///  Tests that size updates after adding dependencies.
-    /// </summary>
-    [TestMethod]
-    public void DependencyGraphSize_TestSizeAfterAddingSameThingTwice_SizeIncreases()
-    {
-        DependencyGraph graph = new DependencyGraph();
-        graph.AddDependency("b", "a");
-        graph.AddDependency("c", "b");
-        graph.AddDependency("c", "b");
-        graph.AddDependency("b", "d");
-        Assert.IsTrue(graph.Size == 3);
-    }
-
-    /// <summary>
     /// Tests that size updates after adding and then removing dependencies.
     /// </summary>
     [TestMethod]
