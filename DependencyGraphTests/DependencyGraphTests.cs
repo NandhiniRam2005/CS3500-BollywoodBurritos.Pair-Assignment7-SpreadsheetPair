@@ -355,7 +355,7 @@ public class DependencyGraphTests
         IEnumerable<string> actualDependees = graph.GetDependees("a");
         HashSet<string> hashActualDependees = actualDependees.ToHashSet();
         HashSet<string> expectedDependees = new ();
-        IEnumerable<string> actualDependents = graph.GetDependents("a");
+        IEnumerable<string> actualDependents = graph.GetDependents("b");
         HashSet<string> hashActualDependents = actualDependents.ToHashSet();
         HashSet<string> expectedDependents = new ();
 
@@ -860,6 +860,20 @@ public class DependencyGraphTests
         graph.AddDependency("d", "c");
         graph.AddDependency("b", "d");
         Assert.IsTrue(graph.Size == 4);
+    }
+
+    /// <summary>
+    ///  Tests that size updates after adding dependencies.
+    /// </summary>
+    [TestMethod]
+    public void DependencyGraphSize_TestSizeAfterAddingSameThingTwice_SizeIncreases()
+    {
+        DependencyGraph graph = new DependencyGraph();
+        graph.AddDependency("b", "a");
+        graph.AddDependency("c", "b");
+        graph.AddDependency("c", "b");
+        graph.AddDependency("b", "d");
+        Assert.IsTrue(graph.Size == 3);
     }
 
     /// <summary>
