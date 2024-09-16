@@ -73,6 +73,38 @@ public class EvaluationTests
     }
 
     /// <summary>
+    /// This test ensures that evaluating when a divide by 0 happens through a number that Evaluate returns a Formula Error.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_DivideByZero_ReturnsFormulaError()
+    {
+        Formula.Lookup provideVariableValue = (name) => 5;
+
+        Formula f = new ("2/0");
+
+        FormulaError actualOutput = (FormulaError)f.Evaluate(provideVariableValue);
+        FormulaError expectedOutput = new FormulaError("Divide by 0 is NOT allowed!");
+
+        Assert.AreEqual(expectedOutput.ToString(), actualOutput.ToString());
+    }
+
+    /// <summary>
+    /// This test ensures that evaluating when a divide by 0 happens through a variable that Evaluate returns a Formula Error.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_DivideByZeroVariable_ReturnsFormulaError()
+    {
+        Formula.Lookup provideVariableValue = (name) => 0;
+
+        Formula f = new ("2/x2");
+
+        FormulaError actualOutput = (FormulaError)f.Evaluate(provideVariableValue);
+        FormulaError expectedOutput = new FormulaError("Divide by 0 is NOT allowed!");
+
+        Assert.AreEqual(expectedOutput.ToString(), actualOutput.ToString());
+    }
+
+    /// <summary>
     /// This test ensures that when an invalid variable (variable does not exist) that FormulaError
     /// is thrown.
     /// </summary>
@@ -232,6 +264,105 @@ public class EvaluationTests
 
         Assert.AreEqual(10.0, f.Evaluate(provideVariableValue));
     }
+
+    /// <summary>
+    /// Tests that the evaluate method can evaluate a formula which is divided by a variable.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_DividingAVariable_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("2+2/x2");
+
+        Assert.AreEqual(4.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests that the evaluate method can evaluate a formula has a multiplication before parentheses appear.
+    /// Basically checks that PEMDAS works.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_MultiplyBeforeParenthesis_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("2+2*(6+2)");
+
+        Assert.AreEqual(18.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests that the evaluate method can evaluate a formula has a division before parentheses appear.
+    /// Basically checks that PEMDAS works.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_DivideBeforeParenthesis_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("2+2/(6+2)");
+
+        Assert.AreEqual(2.25, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests that the evaluate method can evaluate a formula has a division before parentheses appear.
+    /// And on top of that makes sure it can still catch a divide by 0.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_DivideBeforeParenthesisLeadsToDivideBy0_ReturnsFormulaError()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("2/(6-6)");
+
+        FormulaError actualOutput = (FormulaError)f.Evaluate(provideVariableValue);
+        FormulaError expectedOutput = new FormulaError("Divide by 0 is NOT allowed!");
+
+        Assert.AreEqual(expectedOutput.ToString(), actualOutput.ToString());
+    }
+
+    /// <summary>
+    /// Tests that the evaluate method can evaluate a formula has a division before parentheses appear.
+    /// Checks PEMDAS.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_AddBeforeParenthesisLeadsToDivideBy0_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("2+(6-6)");
+
+        Assert.AreEqual(2.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Checks to make sure that variables can be multiplied with each other.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_MultiplyVariablesLikeCrazy_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("x2 * v3 * b7 * v3");
+
+        Assert.AreEqual(1.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Checks to make sure that variables can be multiplied with each other once.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_MultiplyVariablesOnce_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("x2 / v3");
+
+        Assert.AreEqual(1.0, f.Evaluate(provideVariableValue));
+    }
+
 
     // == Operator Tests ---------------------------------------
 
@@ -474,9 +605,12 @@ public class EvaluationTests
     [TestMethod]
     public void FormulaGetHashCode_TwoEquivalentFormulas_ReturnSameHashCode()
     {
-        Formula simpleFormulaOne = new ("2+2");
-        Formula simpleFormulaTwo = new ("2+2");
-        Assert.IsTrue(simpleFormulaOne.GetHashCode == simpleFormulaTwo.GetHashCode);
+        Formula complexFormulaOne = new("2.0000+2.0*2.000+e3/6.00000");
+        Formula complexFormulaTwo = new("2+2*2+e3/6");
+        int c1 = complexFormulaOne.GetHashCode();
+        int c2 = complexFormulaTwo.GetHashCode();
+
+        Assert.IsTrue(c1 == c2);
     }
 
     /// <summary>
@@ -487,7 +621,10 @@ public class EvaluationTests
     {
         Formula complexFormulaOne = new ("2.0000+20e-1*2.000+e3/6.00000");
         Formula complexFormulaTwo = new ("2000+221231*2213+e3/6431");
-        Assert.IsTrue(complexFormulaOne.GetHashCode != complexFormulaTwo.GetHashCode);
+        int c1 = complexFormulaOne.GetHashCode();
+        int c2 = complexFormulaTwo.GetHashCode();
+
+        Assert.IsTrue(c1 != c2);
     }
 
     /// <summary>
@@ -498,7 +635,10 @@ public class EvaluationTests
     {
         Formula complexFormulaOne = new ("2.0000+2.0*2.000+e3/6.00000");
         Formula complexFormulaTwo = new ("2+2*2+e3/6");
-        Assert.IsTrue(complexFormulaOne.GetHashCode == complexFormulaTwo.GetHashCode);
+        int c1 = complexFormulaOne.GetHashCode();
+        int c2 = complexFormulaTwo.GetHashCode();
+
+        Assert.IsTrue(c1 == c2);
     }
 
     /// <summary>
@@ -510,6 +650,10 @@ public class EvaluationTests
     {
         Formula complexFormulaOne = new ("2+2*4+3-7");
         Formula complexFormulaTwo = new ("2+4");
-        Assert.IsTrue(complexFormulaOne.GetHashCode != complexFormulaTwo.GetHashCode);
+
+        int c1 = complexFormulaOne.GetHashCode();
+        int c2 = complexFormulaTwo.GetHashCode();
+
+        Assert.IsTrue(c1 != c2);
     }
 }

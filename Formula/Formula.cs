@@ -500,7 +500,7 @@ public class Formula
                     {
                         double firstPopped = Convert.ToDouble(valueStack.Pop());
                         double secondPopped = Convert.ToDouble(valueStack.Pop());
-                        if (secondPopped == 0)
+                        if (firstPopped == 0)
                         {
                             return new FormulaError("Divide by 0 is NOT allowed!");
                         }
