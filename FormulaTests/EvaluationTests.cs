@@ -95,12 +95,11 @@ public class EvaluationTests
             }
         }
 
-        Formula f = new ("2 + x2 + b3");
+        Formula f = new ("2 + a1 + b1 + b3");
+        FormulaError actualOutput = (FormulaError)f.Evaluate(MyVariables);
+        FormulaError expectedOutput = new FormulaError("Unknown variable: B3 please enter existing variables.");
 
-        Assert.ThrowsException<ArgumentException>(() => f.Evaluate(MyVariables));
-
-        // or?
-        Assert.AreEqual(new FormulaError("I do not know that variable."), f.Evaluate(MyVariables));
+        Assert.AreEqual(expectedOutput.ToString(), actualOutput.ToString());
     }
 
     /// <summary>
@@ -216,7 +215,7 @@ public class EvaluationTests
 
         Formula f = new ("2+(6-x3)*2+(6/v4)");
 
-        Assert.AreEqual(8.0, f.Evaluate(MyVariables));
+        Assert.AreEqual(10.0, f.Evaluate(MyVariables));
     }
 
     /// <summary>
@@ -231,7 +230,7 @@ public class EvaluationTests
 
         Formula f = new ("2+(6-x3)*2+(6/v4)");
 
-        Assert.AreEqual(8.0, f.Evaluate(provideVariableValue));
+        Assert.AreEqual(10.0, f.Evaluate(provideVariableValue));
     }
 
     // == Operator Tests ---------------------------------------

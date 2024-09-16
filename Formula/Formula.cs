@@ -296,7 +296,7 @@ public class Formula
     /// </returns>
     public override bool Equals(object? obj)
     {
-        if (obj.Equals(null) || obj != typeof(Formula))
+        if (!(obj is Formula))
         {
             return false;
         }
@@ -383,7 +383,47 @@ public class Formula
 
             if (IsVar(token))
             {
+                try
+                {
+                    lookup(token);
+                }
+                catch (ArgumentException _)
+                {
+                    return new FormulaError("Unknown variable: " + token + " please enter existing variables.");
+                }
 
+                if (operatorStack.Count != 0 && (IsDivide(operatorStack.Peek()) || IsMultiply(operatorStack.Peek())))
+                {
+                    string valueToPush = string.Empty;
+                    if (operatorStack.Count != 0 && IsMultiply(operatorStack.Peek()))
+                    {
+                        double value = Convert.ToDouble(valueStack.Pop()) * lookup(token);  // May need to switch order
+                        valueToPush = value.ToString();
+                    }
+                    else if (operatorStack.Count != 0 && IsDivide(operatorStack.Peek()))
+                    {
+                        if (Convert.ToDouble(lookup(token)) == 0)
+                        {
+                            return new FormulaError("Divide by 0 is NOT allowed!");
+                        }
+                        else
+                        {
+                            double value = Convert.ToDouble(valueStack.Pop()) / lookup(token);
+                            valueToPush = value.ToString();
+                        }
+                    }
+
+                    if (!valueToPush.Equals(string.Empty))
+                    {
+                        operatorStack.Pop();
+                    }
+
+                    valueStack.Push(valueToPush);
+                }
+                else
+                {
+                    valueStack.Push(lookup(token).ToString());
+                }
             }
 
             if (IsPlus(token) || IsMinus(token))

@@ -29,3 +29,5 @@ List any peers (or other people) in the class (or outside for that matter) that 
     1. Iteration statements - for, foreach, do, and while - https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/iteration-statements#the-foreach-statement
     2. Convert String to Double in C# - https://www.educba.com/convert-string-to-double-in-c-sharp/
     3. Create and Throw Exceptions - https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/creating-and-throwing-exceptions
+    4. Is Operator - https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/is
+    5. How to Get Hash Code of a String in C# - https://www.educative.io/answers/how-to-get-the-hash-code-of-a-string-in-c-sharp
