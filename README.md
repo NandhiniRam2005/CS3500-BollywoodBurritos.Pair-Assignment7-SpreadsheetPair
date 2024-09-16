@@ -20,3 +20,4 @@ that will be used in the future for variables. Future extensions are to add a wa
     1. Assignment One:   Predicted Hours:          8        Actual Hours:   6.5
     2. Assignment Two:   Predicted Hours:          17       Actual Hours:   8.5
     3. Assignment Three: Predicted Hours:          15       Actual Hours:   9.2
+    3. Assignment Four:  Predicted Hours:          16       Actual Hours:   2
