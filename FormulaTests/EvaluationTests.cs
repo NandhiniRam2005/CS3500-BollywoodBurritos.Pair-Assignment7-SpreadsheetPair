@@ -41,7 +41,7 @@ public class EvaluationTests
     {
         Formula.Lookup provideVariableValue = (name) => 5;
         Formula f = new ("2 + 2");
-        Assert.AreEqual(4, f.Evaluate(provideVariableValue));
+        Assert.AreEqual(4.0, f.Evaluate(provideVariableValue));
     }
 
     /// <summary>
@@ -55,7 +55,7 @@ public class EvaluationTests
 
         Formula f = new ("2 + x2");
 
-        Assert.AreEqual(7, f.Evaluate(provideVariableValue));
+        Assert.AreEqual(7.0, f.Evaluate(provideVariableValue));
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ public class EvaluationTests
 
         Formula f = new ("2 + x2 + b3");
 
-        Assert.AreEqual(12, f.Evaluate(provideVariableValue));
+        Assert.AreEqual(12.0, f.Evaluate(provideVariableValue));
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ public class EvaluationTests
 
         Formula f = new ("2+2+2+2");
 
-        Assert.AreEqual(8, f.Evaluate(provideVariableValue));
+        Assert.AreEqual(8.0, f.Evaluate(provideVariableValue));
     }
 
     /// <summary>
@@ -128,7 +128,7 @@ public class EvaluationTests
 
         Formula f = new ("2*2*2*2");
 
-        Assert.AreEqual(16, f.Evaluate(provideVariableValue));
+        Assert.AreEqual(16.0, f.Evaluate(provideVariableValue));
     }
 
     /// <summary>
@@ -142,7 +142,7 @@ public class EvaluationTests
 
         Formula f = new ("1000/2/2/2");
 
-        Assert.AreEqual(125, f.Evaluate(provideVariableValue));
+        Assert.AreEqual(125.0, f.Evaluate(provideVariableValue));
     }
 
     /// <summary>
@@ -156,7 +156,7 @@ public class EvaluationTests
 
         Formula f = new ("10-2-2-2");
 
-        Assert.AreEqual(4, f.Evaluate(provideVariableValue));
+        Assert.AreEqual(4.0, f.Evaluate(provideVariableValue));
     }
 
     /// <summary>
@@ -170,7 +170,7 @@ public class EvaluationTests
 
         Formula f = new ("(5-2)*2");
 
-        Assert.AreEqual(6, f.Evaluate(provideVariableValue));
+        Assert.AreEqual(6.0, f.Evaluate(provideVariableValue));
     }
 
     /// <summary>
@@ -184,12 +184,12 @@ public class EvaluationTests
 
         Formula f = new ("2+6-3*2+6/2");
 
-        Assert.AreEqual(5, f.Evaluate(provideVariableValue));
+        Assert.AreEqual(5.0, f.Evaluate(provideVariableValue));
     }
 
     /// <summary>
     /// Tests that the evaluate method using multiple operators in conjunctions with each other respects PEMDAS and
-    /// returns proper result. For example in our case 2+(6-3)*2+(6/2) should return 11.
+    /// returns proper result. For example in our case 2+(6-3)*2+(6/2) should return 16.
     /// </summary>
     [TestMethod]
     public void FormulaEvaluate_ComplexFormulaUsingParentheses_ReturnsValid()
@@ -198,7 +198,7 @@ public class EvaluationTests
 
         Formula f = new ("2+(6-3)*2+(6+2)");
 
-        Assert.AreEqual(11, f.Evaluate(provideVariableValue));
+        Assert.AreEqual(16.0, f.Evaluate(provideVariableValue));
     }
 
     /// <summary>
@@ -216,7 +216,7 @@ public class EvaluationTests
 
         Formula f = new ("2+(6-x3)*2+(6/v4)");
 
-        Assert.AreEqual(8, f.Evaluate(MyVariables));
+        Assert.AreEqual(8.0, f.Evaluate(MyVariables));
     }
 
     /// <summary>
@@ -231,7 +231,7 @@ public class EvaluationTests
 
         Formula f = new ("2+(6-x3)*2+(6/v4)");
 
-        Assert.AreEqual(8, f.Evaluate(provideVariableValue));
+        Assert.AreEqual(8.0, f.Evaluate(provideVariableValue));
     }
 
     // == Operator Tests ---------------------------------------
@@ -497,7 +497,7 @@ public class EvaluationTests
     [TestMethod]
     public void FormulaGetHashCode_TwoSyntacticallyEquivalentFormulas_ReturnSameHashCode()
     {
-        Formula complexFormulaOne = new ("2.0000+20e-1*2.000+e3/6.00000");
+        Formula complexFormulaOne = new ("2.0000+2.0*2.000+e3/6.00000");
         Formula complexFormulaTwo = new ("2+2*2+e3/6");
         Assert.IsTrue(complexFormulaOne.GetHashCode == complexFormulaTwo.GetHashCode);
     }

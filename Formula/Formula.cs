@@ -347,16 +347,15 @@ public class Formula
         {
             if (IsNum(token))
             {
-                if (IsDivide(token) || IsMultiply(token))
+                if (operatorStack.Count != 0 && (IsDivide(operatorStack.Peek()) || IsMultiply(operatorStack.Peek())))
                 {
                     string valueToPush = string.Empty;
-                    if (IsMultiply(operatorStack.Peek()))
+                    if (operatorStack.Count != 0 && IsMultiply(operatorStack.Peek()))
                     {
                         double value = Convert.ToDouble(valueStack.Pop()) * Convert.ToDouble(token);  // May need to switch order
                         valueToPush = value.ToString();
-                        operatorStack.Pop();
                     }
-                    else if (IsDivide(operatorStack.Peek()))
+                    else if (operatorStack.Count != 0 && IsDivide(operatorStack.Peek()))
                     {
                         if (Convert.ToDouble(token) == 0)
                         {
@@ -366,8 +365,12 @@ public class Formula
                         {
                             double value = Convert.ToDouble(valueStack.Pop()) / Convert.ToDouble(token);
                             valueToPush = value.ToString();
-                            operatorStack.Pop();
                         }
+                    }
+
+                    if (!valueToPush.Equals(string.Empty))
+                    {
+                        operatorStack.Pop();
                     }
 
                     valueStack.Push(valueToPush);
@@ -386,20 +389,25 @@ public class Formula
             if (IsPlus(token) || IsMinus(token))
             {
                 string valueToPush = string.Empty;
-                if (IsPlus(operatorStack.Peek()))
+                if (operatorStack.Count != 0 && IsPlus(operatorStack.Peek()))
                 {
                     double value = Convert.ToDouble(valueStack.Pop()) + Convert.ToDouble(valueStack.Pop());
                     valueToPush = value.ToString();
-                    operatorStack.Pop();
                 }
-                else if (IsMinus(operatorStack.Peek()))
+                else if (operatorStack.Count != 0 && IsMinus(operatorStack.Peek()))
                 {
-                    double value = Convert.ToDouble(valueStack.Pop()) - Convert.ToDouble(valueStack.Pop());
+                    double firstPopped = Convert.ToDouble(valueStack.Pop());
+                    double secondPopped = Convert.ToDouble(valueStack.Pop());
+                    double value = secondPopped - firstPopped;
                     valueToPush = value.ToString();
-                    operatorStack.Pop();
                 }
 
-                valueStack.Push(valueToPush);
+                if (!valueToPush.Equals(string.Empty))
+                {
+                    operatorStack.Pop();
+                    valueStack.Push(valueToPush);
+                }
+
                 operatorStack.Push(token);
             }
 
@@ -415,51 +423,60 @@ public class Formula
 
             if (IsClosingParenthesis(token))
             {
-                string valueToPush = string.Empty;
-                if (IsPlus(operatorStack.Peek()))
+                if (operatorStack.Count != 0 && (IsPlus(operatorStack.Peek()) || IsMinus(operatorStack.Peek())))
                 {
-                    double value = Convert.ToDouble(valueStack.Pop()) + Convert.ToDouble(valueStack.Pop());
-                    valueToPush = value.ToString();
-                    operatorStack.Pop();
-                }
-                else if (IsMinus(operatorStack.Peek()))
-                {
-                    double value = Convert.ToDouble(valueStack.Pop()) - Convert.ToDouble(valueStack.Pop());
-                    valueToPush = value.ToString();
-                    operatorStack.Pop();
-                }
-
-                valueStack.Push(valueToPush);
-            }
-
-            operatorStack.Pop(); // pops "("
-
-            if (IsDivide(token) || IsMultiply(token))
-            {
-                string valueToPush = string.Empty;
-                if (IsMultiply(operatorStack.Peek()))
-                {
-                    double value = Convert.ToDouble(valueStack.Pop()) * Convert.ToDouble(valueStack.Pop());  // May need to switch order
-                    valueToPush = value.ToString();
-                    operatorStack.Pop();
-                }
-                else if (IsDivide(operatorStack.Peek()))
-                {
-                    double firstPopped = Convert.ToDouble(valueStack.Pop());
-                    double secondPopped = Convert.ToDouble(valueStack.Pop());
-                    if (secondPopped == 0)
+                    string valueToPush = string.Empty;
+                    if (operatorStack.Count != 0 && IsPlus(operatorStack.Peek()))
                     {
-                        return new FormulaError("Divide by 0 is NOT allowed!");
-                    }
-                    else
-                    {
-                        double value = firstPopped / secondPopped;
+                        double value = Convert.ToDouble(valueStack.Pop()) + Convert.ToDouble(valueStack.Pop());
                         valueToPush = value.ToString();
+                    }
+                    else if (operatorStack.Count != 0 && IsMinus(operatorStack.Peek()))
+                    {
+                        double firstPopped = Convert.ToDouble(valueStack.Pop());
+                        double secondPopped = Convert.ToDouble(valueStack.Pop());
+                        double value = secondPopped - firstPopped;
+                        valueToPush = value.ToString();
+                    }
+
+                    if (!valueToPush.Equals(string.Empty))
+                    {
                         operatorStack.Pop();
+                        valueStack.Push(valueToPush);
                     }
                 }
 
-                valueStack.Push(valueToPush);
+                operatorStack.Pop(); // pops "("
+
+                if (operatorStack.Count != 0 && (IsDivide(operatorStack.Peek()) || IsMultiply(operatorStack.Peek())))
+                {
+                    string valueToPush = string.Empty;
+                    if (operatorStack.Count != 0 && IsMultiply(operatorStack.Peek()))
+                    {
+                        double value = Convert.ToDouble(valueStack.Pop()) * Convert.ToDouble(valueStack.Pop());  // May need to switch order
+                        valueToPush = value.ToString();
+                    }
+                    else if (operatorStack.Count != 0 && IsDivide(operatorStack.Peek()))
+                    {
+                        double firstPopped = Convert.ToDouble(valueStack.Pop());
+                        double secondPopped = Convert.ToDouble(valueStack.Pop());
+                        if (secondPopped == 0)
+                        {
+                            return new FormulaError("Divide by 0 is NOT allowed!");
+                        }
+                        else
+                        {
+                            double value = secondPopped / firstPopped;
+                            valueToPush = value.ToString();
+                        }
+                    }
+
+                    if (!valueToPush.Equals(string.Empty))
+                    {
+                        operatorStack.Pop();
+                        valueStack.Push(valueToPush);
+                    }
+                }
             }
         }
 
@@ -475,7 +492,9 @@ public class Formula
             }
             else if (IsMinus(operatorStack.Peek()))
             {
-                value = Convert.ToDouble(valueStack.Pop()) - Convert.ToDouble(valueStack.Pop());
+                double firstPopped = Convert.ToDouble(valueStack.Pop());
+                double secondPopped = Convert.ToDouble(valueStack.Pop());
+                value = secondPopped - firstPopped;
                 operatorStack.Pop();
             }
 
@@ -483,7 +502,7 @@ public class Formula
         }
         else
         {
-            return valueStack.Pop();
+            return Convert.ToDouble(valueStack.Pop());
         }
     }
 
@@ -780,13 +799,11 @@ public class FormulaFormatException : Exception
     {
         // All this does is call the base constructor. No extra code needed.
     }
-
-    // FIXME: add this code to your Formula Project as well!
-
-    /// <summary>
-    /// Used as a possible return value of the Formula.Evaluate method.
-    /// </summary>
 }
+
+/// <summary>
+/// Used as a possible return value of the Formula.Evaluate method.
+/// </summary>
 public class FormulaError
 {
     /// <summary>
