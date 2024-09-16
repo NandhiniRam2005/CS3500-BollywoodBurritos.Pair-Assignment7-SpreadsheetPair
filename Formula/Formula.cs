@@ -247,7 +247,14 @@ public class Formula
     /// <returns> true if the two formulas are the same.</returns>
     public static bool operator ==(Formula f1, Formula f2)
     {
-        // FIXME: Write this method
+        if (f1.Equals(f2))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>
@@ -260,7 +267,14 @@ public class Formula
     /// <returns> true if the two formulas are not equal to each other.</returns>
     public static bool operator !=(Formula f1, Formula f2)
     {
-        // FIXME: Write this method
+        if (f1.Equals(f2))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     /// <summary>
@@ -282,8 +296,19 @@ public class Formula
     /// </returns>
     public override bool Equals(object? obj)
     {
-        // FIXME: write this method
-        return true;
+        if (obj.Equals(null) || obj != typeof(Formula))
+        {
+            return false;
+        }
+
+        Formula givenFormula = (Formula)obj;
+
+        if (this.ToString().Equals(givenFormula.ToString()))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -315,7 +340,151 @@ public class Formula
     /// <returns> Either a double or a formula error, based on evaluating the formula.</returns>
     public object Evaluate(Lookup lookup)
     {
-        //FIXME: Implement the required algorithm here.
+        Stack<string> valueStack = new Stack<string>();
+        Stack<string> operatorStack = new Stack<string>();
+
+        foreach (string token in this.orderedFormula)
+        {
+            if (IsNum(token))
+            {
+                if (IsDivide(token) || IsMultiply(token))
+                {
+                    string valueToPush = string.Empty;
+                    if (IsMultiply(operatorStack.Peek()))
+                    {
+                        double value = Convert.ToDouble(valueStack.Pop()) * Convert.ToDouble(token);  // May need to switch order
+                        valueToPush = value.ToString();
+                        operatorStack.Pop();
+                    }
+                    else if (IsDivide(operatorStack.Peek()))
+                    {
+                        if (Convert.ToDouble(token) == 0)
+                        {
+                            return new FormulaError("Divide by 0 is NOT allowed!");
+                        }
+                        else
+                        {
+                            double value = Convert.ToDouble(valueStack.Pop()) / Convert.ToDouble(token);
+                            valueToPush = value.ToString();
+                            operatorStack.Pop();
+                        }
+                    }
+
+                    valueStack.Push(valueToPush);
+                }
+                else
+                {
+                    valueStack.Push(token);
+                }
+            }
+
+            if (IsVar(token))
+            {
+
+            }
+
+            if (IsPlus(token) || IsMinus(token))
+            {
+                string valueToPush = string.Empty;
+                if (IsPlus(operatorStack.Peek()))
+                {
+                    double value = Convert.ToDouble(valueStack.Pop()) + Convert.ToDouble(valueStack.Pop());
+                    valueToPush = value.ToString();
+                    operatorStack.Pop();
+                }
+                else if (IsMinus(operatorStack.Peek()))
+                {
+                    double value = Convert.ToDouble(valueStack.Pop()) - Convert.ToDouble(valueStack.Pop());
+                    valueToPush = value.ToString();
+                    operatorStack.Pop();
+                }
+
+                valueStack.Push(valueToPush);
+                operatorStack.Push(token);
+            }
+
+            if (IsDivide(token) || IsMultiply(token))
+            {
+                operatorStack.Push(token);
+            }
+
+            if (IsOpeningParenthesis(token))
+            {
+                operatorStack.Push(token);
+            }
+
+            if (IsClosingParenthesis(token))
+            {
+                string valueToPush = string.Empty;
+                if (IsPlus(operatorStack.Peek()))
+                {
+                    double value = Convert.ToDouble(valueStack.Pop()) + Convert.ToDouble(valueStack.Pop());
+                    valueToPush = value.ToString();
+                    operatorStack.Pop();
+                }
+                else if (IsMinus(operatorStack.Peek()))
+                {
+                    double value = Convert.ToDouble(valueStack.Pop()) - Convert.ToDouble(valueStack.Pop());
+                    valueToPush = value.ToString();
+                    operatorStack.Pop();
+                }
+
+                valueStack.Push(valueToPush);
+            }
+
+            operatorStack.Pop(); // pops "("
+
+            if (IsDivide(token) || IsMultiply(token))
+            {
+                string valueToPush = string.Empty;
+                if (IsMultiply(operatorStack.Peek()))
+                {
+                    double value = Convert.ToDouble(valueStack.Pop()) * Convert.ToDouble(valueStack.Pop());  // May need to switch order
+                    valueToPush = value.ToString();
+                    operatorStack.Pop();
+                }
+                else if (IsDivide(operatorStack.Peek()))
+                {
+                    double firstPopped = Convert.ToDouble(valueStack.Pop());
+                    double secondPopped = Convert.ToDouble(valueStack.Pop());
+                    if (secondPopped == 0)
+                    {
+                        return new FormulaError("Divide by 0 is NOT allowed!");
+                    }
+                    else
+                    {
+                        double value = firstPopped / secondPopped;
+                        valueToPush = value.ToString();
+                        operatorStack.Pop();
+                    }
+                }
+
+                valueStack.Push(valueToPush);
+            }
+        }
+
+        if (operatorStack.Count != 0)
+        {
+            string valueToPush = string.Empty;
+            double value = 0;
+
+            if (IsPlus(operatorStack.Peek()))
+            {
+                value = Convert.ToDouble(valueStack.Pop()) + Convert.ToDouble(valueStack.Pop());
+                operatorStack.Pop();
+            }
+            else if (IsMinus(operatorStack.Peek()))
+            {
+                value = Convert.ToDouble(valueStack.Pop()) - Convert.ToDouble(valueStack.Pop());
+                operatorStack.Pop();
+            }
+
+            return value;
+        }
+        else
+        {
+            return valueStack.Pop();
+        }
     }
 
     /// <summary>
@@ -328,7 +497,9 @@ public class Formula
     /// <returns> The hashcode for the object. </returns>
     public override int GetHashCode()
     {
-        // FIXME: Implement the required algorithm here.
+        string currentForumulasString = this.ToString();
+
+        return currentForumulasString.GetHashCode();
     }
 
     /// <summary>
@@ -381,6 +552,66 @@ public class Formula
     }
 
     /// <summary>
+    /// This method processes a token to see if its contents can be processed as a +.
+    /// </summary>
+    /// <param name="token"> The token that is being checked for being a operator.</param>
+    /// <returns> A bool that represents whether or not the token can be represented as a +.</returns>
+    private static bool IsPlus(string token)
+    {
+        if (token.Equals("+"))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// This method processes a token to see if its contents can be processed as a -.
+    /// </summary>
+    /// <param name="token"> The token that is being checked for being a operator.</param>
+    /// <returns> A bool that represents whether or not the token can be represented as a -.</returns>
+    private static bool IsMinus(string token)
+    {
+        if (token.Equals("-"))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// This method processes a token to see if its contents can be processed as a *.
+    /// </summary>
+    /// <param name="token"> The token that is being checked for being a operator.</param>
+    /// <returns> A bool that represents whether or not the token can be represented as a *.</returns>
+    private static bool IsMultiply(string token)
+    {
+        if (token.Equals("*"))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// This method processes a token to see if its contents can be processed as a /.
+    /// </summary>
+    /// <param name="token"> The token that is being checked for being a operator.</param>
+    /// <returns> A bool that represents whether or not the token can be represented as a /.</returns>
+    private static bool IsDivide(string token)
+    {
+        if (token.Equals("/"))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// A private helper method that "normalizes" tokens. For example 5.00000 and 50e-1 turns into 5. Variables
     /// such as x1 turn into X1.
     /// </summary>
@@ -404,6 +635,36 @@ public class Formula
         {
             return token;
         }
+    }
+
+    /// <summary>
+    /// This method processes a token to see if its contents can be processed as a (.
+    /// </summary>
+    /// <param name="token"> The token that is being checked for being a operator.</param>
+    /// <returns> A bool that represents whether or not the token can be represented as a (.</returns>
+    private static bool IsOpeningParenthesis(string token)
+    {
+        if (token.Equals("("))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// This method processes a token to see if its contents can be processed as a ).
+    /// </summary>
+    /// <param name="token"> The token that is being checked for being a operator.</param>
+    /// <returns> A bool that represents whether or not the token can be represented as a ).</returns>
+    private static bool IsClosingParenthesis(string token)
+    {
+        if (token.Equals(")"))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>
