@@ -1280,4 +1280,27 @@ public class DependencyGraphTests
             Assert.IsTrue(dependees[i].SetEquals(new HashSet<string>(dg.GetDependees(letters[i]))));
         }
     }
+
+    /// <summary>
+    ///    Test that the replace method works properly including
+    ///    replacing with an empty list, and "replacing" something
+    ///    that previously had no values.
+    /// </summary>
+    [TestMethod]
+    [Timeout(2000)]
+    [TestCategory("34")]
+    public void ReplaceDependentsDependees_MultipleReplaces_FinalSizeFour()
+    {
+        DependencyGraph t = new ();
+        t.AddDependency("x", "b");
+        t.AddDependency("a", "z");
+        t.ReplaceDependents("b", []);
+        t.AddDependency("y", "b");
+        t.ReplaceDependents("a", ["c"]);
+        t.AddDependency("w", "d");
+        t.ReplaceDependees("b", ["a", "c"]);
+        t.ReplaceDependees("d", ["b"]);
+        Assert.AreEqual(4, t.Size);
+    }
+
 }

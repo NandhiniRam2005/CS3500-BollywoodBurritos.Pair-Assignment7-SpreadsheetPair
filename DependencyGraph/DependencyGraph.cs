@@ -178,28 +178,50 @@ public class DependencyGraph
     {
         int dependentCount = this.dependents.Count;
         int dependeeCount = this.dependees.Count;
+        bool increaseSize = false;
 
         if (!this.dependents.ContainsKey(dependee))
         {
             this.dependents.Add(dependee, new HashSet<string>());
+            int ogCount = this.dependents[dependee].Count;
             this.dependents[dependee].Add(dependent);
+            if (this.dependents[dependee].Count != ogCount)
+            {
+                increaseSize = true;
+            }
+
         }
         else
         {
+            int ogCount = this.dependents[dependee].Count;
             this.dependents[dependee].Add(dependent);
+            if (this.dependents[dependee].Count != ogCount)
+            {
+                increaseSize = true;
+            }
         }
 
         if (!this.dependees.ContainsKey(dependent))
         {
             this.dependees.Add(dependent, new HashSet<string>());
+            int ogCount = this.dependees[dependent].Count;
             this.dependees[dependent].Add(dependee);
+            if (this.dependees[dependent].Count != ogCount)
+            {
+                increaseSize = true;
+            }
         }
         else
         {
+            int ogCount = this.dependees[dependent].Count;
             this.dependees[dependent].Add(dependee);
+            if (this.dependees[dependent].Count != ogCount)
+            {
+                increaseSize = true;
+            }
         }
 
-        if (dependentCount != this.dependents.Count || dependeeCount != this.dependees.Count)
+        if (increaseSize)
         {
             this.sizeOfGraph++;
         }
