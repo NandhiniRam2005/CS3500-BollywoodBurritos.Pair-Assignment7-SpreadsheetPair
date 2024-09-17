@@ -347,16 +347,20 @@ public class Formula
         {
             if (IsNum(token))
             {
+                // If the operator stack is not empty and there is a divide or operator token at the top of the operator stack
+                // we will pop an operator from the operatorStack and a value from the value stack and apply that operator to the
+                // the popped value and the current token.
                 if (operatorStack.Count != 0 && (IsDivide(operatorStack.Peek()) || IsMultiply(operatorStack.Peek())))
                 {
                     string valueToPush = string.Empty;
                     if (operatorStack.Count != 0 && IsMultiply(operatorStack.Peek()))
                     {
-                        double value = Convert.ToDouble(valueStack.Pop()) * Convert.ToDouble(token);  // May need to switch order
+                        double value = Convert.ToDouble(valueStack.Pop()) * Convert.ToDouble(token);
                         valueToPush = value.ToString();
                     }
                     else if (operatorStack.Count != 0 && IsDivide(operatorStack.Peek()))
                     {
+                        // Prevents division of zero
                         if (Convert.ToDouble(token) == 0)
                         {
                             return new FormulaError("Divide by 0 is NOT allowed!");
@@ -368,6 +372,7 @@ public class Formula
                         }
                     }
 
+                    // If a value is going to be pushed we also pop the operator that was used.
                     if (!valueToPush.Equals(string.Empty))
                     {
                         operatorStack.Pop();
@@ -392,12 +397,15 @@ public class Formula
                     return new FormulaError("Unknown variable: " + token + " please enter existing variables.");
                 }
 
+                // If the operator stack is not empty and there is a divide or multiplication operator token at the top of the operator stack
+                // we will pop an operator from the operatorStack and a value from the value stack and apply that operator to the
+                // the popped value and the current token.
                 if (operatorStack.Count != 0 && (IsDivide(operatorStack.Peek()) || IsMultiply(operatorStack.Peek())))
                 {
                     string valueToPush = string.Empty;
                     if (operatorStack.Count != 0 && IsMultiply(operatorStack.Peek()))
                     {
-                        double value = Convert.ToDouble(valueStack.Pop()) * lookup(token);  // May need to switch order
+                        double value = Convert.ToDouble(valueStack.Pop()) * lookup(token);
                         valueToPush = value.ToString();
                     }
                     else if (operatorStack.Count != 0 && IsDivide(operatorStack.Peek()))
@@ -413,6 +421,7 @@ public class Formula
                         }
                     }
 
+                    // If a value is going to be pushed we also pop the operator that was used.
                     if (!valueToPush.Equals(string.Empty))
                     {
                         operatorStack.Pop();
@@ -428,6 +437,9 @@ public class Formula
 
             if (IsPlus(token) || IsMinus(token))
             {
+                // If the operator stack is not empty and there is an add or subtract operator token at the top of the operator stack
+                // we will pop an operator from the operatorStack and two values from the value stack and apply that operator to the
+                // the two popped values.
                 string valueToPush = string.Empty;
                 if (operatorStack.Count != 0 && IsPlus(operatorStack.Peek()))
                 {
@@ -436,12 +448,15 @@ public class Formula
                 }
                 else if (operatorStack.Count != 0 && IsMinus(operatorStack.Peek()))
                 {
+                    // For subtraction the order of the popped variables matters so we need to clarify which is first and which is second.
                     double firstPopped = Convert.ToDouble(valueStack.Pop());
                     double secondPopped = Convert.ToDouble(valueStack.Pop());
                     double value = secondPopped - firstPopped;
                     valueToPush = value.ToString();
                 }
 
+                // We do not want to push an empty string to our value stack or pop an operator off if it was never used. So
+                // this if statement ensures we do not.
                 if (!valueToPush.Equals(string.Empty))
                 {
                     operatorStack.Pop();
@@ -463,6 +478,9 @@ public class Formula
 
             if (IsClosingParenthesis(token))
             {
+                // If the operator stack is not empty and there is an add or subtract operator token at the top of the operator stack
+                // we will pop an operator from the operatorStack and two values from the value stack and apply that operator to the
+                // the two popped values.
                 if (operatorStack.Count != 0 && (IsPlus(operatorStack.Peek()) || IsMinus(operatorStack.Peek())))
                 {
                     string valueToPush = string.Empty;
@@ -479,6 +497,8 @@ public class Formula
                         valueToPush = value.ToString();
                     }
 
+                    // We do not want to push an empty string to our value stack or pop an operator off if it was never used. So
+                    // this if statement ensures we do not.
                     if (!valueToPush.Equals(string.Empty))
                     {
                         operatorStack.Pop();
@@ -486,8 +506,11 @@ public class Formula
                     }
                 }
 
-                operatorStack.Pop(); // pops "("
+                operatorStack.Pop(); // Pops "(" since parentheses should be removed together.
 
+                // If the operator stack is not empty and there is a divide or multiplication operator token at the top of the operator stack
+                // we will pop an operator from the operatorStack and two values from the value stack and apply that operator to the
+                // the two popped values.
                 if (operatorStack.Count != 0 && (IsDivide(operatorStack.Peek()) || IsMultiply(operatorStack.Peek())))
                 {
                     string valueToPush = string.Empty;
@@ -498,6 +521,7 @@ public class Formula
                     }
                     else if (operatorStack.Count != 0 && IsDivide(operatorStack.Peek()))
                     {
+                        // For division the order of the popped variables matters so we need to clarify which is first and which is second.
                         double firstPopped = Convert.ToDouble(valueStack.Pop());
                         double secondPopped = Convert.ToDouble(valueStack.Pop());
                         if (firstPopped == 0)
@@ -511,6 +535,8 @@ public class Formula
                         }
                     }
 
+                    // We do not want to push an empty string to our value stack or pop an operator off if it was never used. So
+                    // this if statement ensures we do not.
                     if (!valueToPush.Equals(string.Empty))
                     {
                         operatorStack.Pop();
