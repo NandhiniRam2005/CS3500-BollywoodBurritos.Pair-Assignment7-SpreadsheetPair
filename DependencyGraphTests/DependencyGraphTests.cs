@@ -1302,5 +1302,4 @@ public class DependencyGraphTests
         t.ReplaceDependees("d", ["b"]);
         Assert.AreEqual(4, t.Size);
     }
-
 }

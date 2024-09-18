@@ -131,6 +131,7 @@ public class EvaluationTests
         FormulaError actualOutput = (FormulaError)f.Evaluate(MyVariables);
         FormulaError expectedOutput = new FormulaError("Unknown variable: B3 please enter existing variables.");
 
+        Assert.IsInstanceOfType(f.Evaluate(MyVariables), typeof(FormulaError));
         Assert.AreEqual(expectedOutput.ToString(), actualOutput.ToString());
     }
 
@@ -320,6 +321,7 @@ public class EvaluationTests
         FormulaError actualOutput = (FormulaError)f.Evaluate(provideVariableValue);
         FormulaError expectedOutput = new FormulaError("Divide by 0 is NOT allowed!");
 
+        Assert.IsInstanceOfType(f.Evaluate(provideVariableValue), typeof(FormulaError));
         Assert.AreEqual(expectedOutput.ToString(), actualOutput.ToString());
     }
 
@@ -605,8 +607,8 @@ public class EvaluationTests
     [TestMethod]
     public void FormulaGetHashCode_TwoEquivalentFormulas_ReturnSameHashCode()
     {
-        Formula complexFormulaOne = new("2.0000+2.0*2.000+e3/6.00000");
-        Formula complexFormulaTwo = new("2+2*2+e3/6");
+        Formula complexFormulaOne = new ("2.0000+2.0*2.000+e3/6.00000");
+        Formula complexFormulaTwo = new ("2+2*2+e3/6");
         int c1 = complexFormulaOne.GetHashCode();
         int c2 = complexFormulaTwo.GetHashCode();
 

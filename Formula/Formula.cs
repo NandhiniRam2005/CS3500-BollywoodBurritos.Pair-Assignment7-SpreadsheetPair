@@ -480,7 +480,7 @@ public class Formula
             {
                 // If the operator stack is not empty and there is an add or subtract operator token at the top of the operator stack
                 // we will pop an operator from the operatorStack and two values from the value stack and apply that operator to the
-                // the two popped values.
+                // the two popped values. 
                 if (operatorStack.Count != 0 && (IsPlus(operatorStack.Peek()) || IsMinus(operatorStack.Peek())))
                 {
                     string valueToPush = string.Empty;

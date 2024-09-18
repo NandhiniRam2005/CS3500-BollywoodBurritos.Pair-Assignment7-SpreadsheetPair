@@ -5,7 +5,7 @@ Start Date: 29-Aug-2024
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  joel-rodriguez
 Repo:      https://github.com/uofu-cs3500-20-fall2024/spreadsheet-joel-rodriguez
-Commit Date: 06-September-2024 Time (of when submission is ready to be evaluated)
+Commit Date: 20-September-2024 10:00 PM
 Project:   Formula
 Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use in Academic Coursework.```
 ```
@@ -16,7 +16,10 @@ piazza (private question 158) to not worry about this style warning but to NOT d
 since it was given to us. 
 
 # Assignment Specific Topics
-There was no assignment specific topics for this assignment.
+Assignment 2: In this assignment I learned a lot about regular expressions and their efficiency along with XML's and good
+software practice.
+Assignment 4: In this assignment I learned a lot about delegates and funcs and how powerful they can be. I was also able to 
+learn more about good testing practices. I was also able to learn more about stacks in C#.
 
 # Consulted Peers:
 

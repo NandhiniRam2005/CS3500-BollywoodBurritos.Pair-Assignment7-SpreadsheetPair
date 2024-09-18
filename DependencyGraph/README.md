@@ -5,7 +5,7 @@ Start Date: 08-September-2024
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  joel-rodriguez
 Repo:      https://github.com/uofu-cs3500-20-fall2024/spreadsheet-joel-rodriguez
-Commit Date: 13-September-2024 Time (of when submission is ready to be evaluated)
+Commit Date: 20-September-2024 10:00 PM
 Project:   DependencyGraph
 Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use in Academic Coursework.```
 ```
@@ -18,7 +18,8 @@ There is a warning because of copyright settings. I was told on piazza that it d
 to remove nodes from my data structures if they no longer had dependees or dependents.
 
 # Assignment Specific Topics
-There was no assignment specific topics for this assignment.
+Assignment 3: In this assignment we were able to learn more about the power of efficient data structures and how this 
+can affect the usablity of your program.
 
 # Consulted Peers:
 

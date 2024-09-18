@@ -5,7 +5,7 @@ Start Date: 08-September-2024
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  joel-rodriguez
 Repo:      https://github.com/uofu-cs3500-20-fall2024/spreadsheet-joel-rodriguez
-Commit Date: 13-September-2024 Time (of when submission is ready to be evaluated)
+Commit Date: 20-September-2024 10:00 PM
 Project:   DependencyGraphTests
 Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use in Academic Coursework.```
 ```
@@ -21,7 +21,8 @@ I was told on piazza that it didn't matter. Also on piazza I was told to remove 
 if they no longer had dependees or dependents.
 
 # Assignment Specific Topics
-There was no assignment specific topics for this assignment. 
+Assignment 3: In this assignment I was able to learn more about the C# testing environment and proper names for tests according
+to MS. We also learned about the concept of stress tests.
 
 # Consulted Peers:
 

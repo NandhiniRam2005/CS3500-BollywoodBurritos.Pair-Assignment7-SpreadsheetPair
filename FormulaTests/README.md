@@ -5,7 +5,7 @@ Start Date: 20-Aug-2024
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  joel-rodriguez
 Repo:      https://github.com/uofu-cs3500-20-fall2024/spreadsheet-joel-rodriguez
-Commit Date: 06-September-2024 (of when submission is ready to be evaluated)
+Commit Date: 20-September-2024 10:00 PM
 Project:   FormulaTests
 Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use in Academic Coursework.
 ```
@@ -14,7 +14,9 @@ Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use i
 No comments there is nothing special.
 
 # Assignment Specific Topics
-There was no assignment specific topics for this assignment.
+Assignment 1: In this assignment I learned the basics of TDD and testing in Visual Studio.
+Assignment 2: In this assignment I was able to learn more about Assert statements in C#.
+Assignment 4: In this assignment I was able to learn more about how to test using delegates and funcs.
 
 # Consulted Peers:
 
