@@ -528,13 +528,13 @@ public class EvaluationTests
     {
         Formula.Lookup provideVariableValue = (name) => 1;
 
-        Formula f = new ("x2 / v3");
+        Formula f = new ("x2 * v3");
 
         Assert.AreEqual(1.0, f.Evaluate(provideVariableValue));
     }
 
     /// <summary>
-    /// Checks to make sure that variables can be multiplied with each other once. Also uses lambdas.
+    /// Checks to make sure that variables can be divided with each other once. Also uses lambdas.
     /// </summary>
     [TestMethod]
     public void FormulaEvaluate_SimpleFormulaUsingLambda_ReturnsValid()
@@ -542,6 +542,54 @@ public class EvaluationTests
         Formula f = new ("x2 / v3");
 
         Assert.AreEqual(1.0, f.Evaluate((name) => 5));
+    }
+
+    /// <summary>
+    /// Checks to make sure that variables can be multiplied with each other once. Also uses lambdas. ANd on top of that
+    /// the variable is a decimal.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_VariableReturnsDecimalMultiplication_ReturnsValid()
+    {
+        Formula f = new ("x2 * v3");
+
+        Assert.AreEqual(0.25, f.Evaluate((name) => 0.5));
+    }
+
+    /// <summary>
+    /// Checks to make sure that variables can be added with each other once. Also uses lambdas. ANd on top of that
+    /// the variable is a decimal.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_VariableReturnsDecimalAddition_ReturnsValid()
+    {
+        Formula f = new ("x2 + v3");
+
+        Assert.AreEqual(1.0, f.Evaluate((name) => 0.5));
+    }
+
+    /// <summary>
+    /// Checks to make sure that variables can be subtracted with each other once. Also uses lambdas. ANd on top of that
+    /// the variable is a decimal.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_VariableReturnsDecimalSubtraction_ReturnsValid()
+    {
+        Formula f = new ("x2 - v3");
+
+        Assert.AreEqual(0.0, f.Evaluate((name) => 0.5));
+    }
+
+    /// <summary>
+    /// Checks to make sure that variables can be divided with each other once. Also uses lambdas. ANd on top of that
+    /// the variable is a decimal.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_VariableReturnsDecimalDivision_ReturnsValid()
+    {
+        Formula f = new ("x2 / v3");
+
+        Assert.AreEqual(1.0, f.Evaluate((name) => 0.5));
     }
 
     // == Operator Tests ---------------------------------------
@@ -590,6 +638,18 @@ public class EvaluationTests
     public void FormulaEqualEqual_SimpleFormulaNotEqual_ReturnsFalse()
     {
         Formula simpleFormulaOne = new ("3+20e-1");
+        Formula simpleFormulaTwo = new ("2+2");
+        Assert.IsFalse(simpleFormulaOne == simpleFormulaTwo);
+    }
+
+    /// <summary>
+    /// Tests that two formulas that are simple and not equal are  not equal according to the == operator.
+    /// Even though the value is the same. Therefore returning False.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEqualEqual_SimpleFormulaValueEqual_ReturnsFalse()
+    {
+        Formula simpleFormulaOne = new ("4");
         Formula simpleFormulaTwo = new ("2+2");
         Assert.IsFalse(simpleFormulaOne == simpleFormulaTwo);
     }
@@ -661,6 +721,18 @@ public class EvaluationTests
     public void FormulaNotEqual_SimpleFormulaNotEqual_ReturnsTrue()
     {
         Formula simpleFormulaOne = new ("3+20e-1");
+        Formula simpleFormulaTwo = new ("2+2");
+        Assert.IsTrue(simpleFormulaOne != simpleFormulaTwo);
+    }
+
+    /// <summary>
+    /// Tests that two formulas that are simple and not equal are not equal according to the != operator.
+    /// Even when the end value IS equal. Therefore returning true.
+    /// </summary>
+    [TestMethod]
+    public void FormulaNotEqual_SimpleFormulaEqualValueNotEqual_ReturnsTrue()
+    {
+        Formula simpleFormulaOne = new ("4");
         Formula simpleFormulaTwo = new ("2+2");
         Assert.IsTrue(simpleFormulaOne != simpleFormulaTwo);
     }

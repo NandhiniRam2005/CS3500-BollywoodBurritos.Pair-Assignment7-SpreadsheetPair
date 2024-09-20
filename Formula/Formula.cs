@@ -63,7 +63,7 @@ public class Formula
     private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
 
     // The ordered formula as a list.
-    private readonly List<string> orderedFormula = new();
+    private readonly List<string> orderedFormula = new ();
 
     // The formula as a string this will be canonical for any equal string.
     private readonly string formulaString = string.Empty;
@@ -97,7 +97,7 @@ public class Formula
     /// <param name="formula"> The string representation of the formula to be created.</param>
     public Formula(string formula)
     {
-        this.orderedFormula = new();
+        this.orderedFormula = new ();
 
         int closingParenthesis = 0;
         int openingParenthesis = 0;
@@ -172,6 +172,22 @@ public class Formula
 
         this.formulaString = formulaStringBuilder.ToString();
     }
+
+    /// <summary>
+    ///   Any method meeting this type signature can be used for
+    ///   looking up the value of a variable.  In general the expected behavior is that
+    ///   the Lookup method will "know" about all variables in a formula
+    ///   and return their appropriate value.
+    /// </summary>
+    /// <exception cref="ArgumentException">
+    ///   If a variable name is provided that is not recognized by the implementing method,
+    ///   then the method should throw an ArgumentException.
+    /// </exception>
+    /// <param name="variableName">
+    ///   The name of the variable (e.g., "A1") to lookup.
+    /// </param>
+    /// <returns> The value of the given variable (if one exists). </returns>
+    public delegate double Lookup(string variableName);
 
     /// <summary>
     ///   <para>
@@ -354,7 +370,7 @@ public class Formula
                 {
                     lookup(token);
                 }
-                catch (ArgumentException _)
+                catch (ArgumentException)
                 {
                     return new FormulaError("Unknown variable: " + token + " please enter existing variables.");
                 }
@@ -891,7 +907,7 @@ public class Formula
     /// <returns> The ordered list of tokens in the formula. </returns>
     private static List<string> GetTokens(string formula)
     {
-        List<string> results = new();
+        List<string> results = new ();
 
         string lpPattern = @"\(";
         string rpPattern = @"\)";
@@ -920,22 +936,6 @@ public class Formula
 
         return results;
     }
-
-    /// <summary>
-    ///   Any method meeting this type signature can be used for
-    ///   looking up the value of a variable.  In general the expected behavior is that
-    ///   the Lookup method will "know" about all variables in a formula
-    ///   and return their appropriate value.
-    /// </summary>
-    /// <exception cref="ArgumentException">
-    ///   If a variable name is provided that is not recognized by the implementing method,
-    ///   then the method should throw an ArgumentException.
-    /// </exception>
-    /// <param name="variableName">
-    ///   The name of the variable (e.g., "A1") to lookup.
-    /// </param>
-    /// <returns> The value of the given variable (if one exists). </returns>
-    public delegate double Lookup(string variableName);
 }
 
 /// <summary>

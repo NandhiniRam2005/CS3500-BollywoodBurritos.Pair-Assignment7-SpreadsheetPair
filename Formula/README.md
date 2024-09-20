@@ -34,3 +34,4 @@ List any peers (or other people) in the class (or outside for that matter) that 
     3. Create and Throw Exceptions - https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/creating-and-throwing-exceptions
     4. Is Operator - https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/is
     5. How to Get Hash Code of a String in C# - https://www.educative.io/answers/how-to-get-the-hash-code-of-a-string-in-c-sharp
+    6. Delegates in C# - https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/delegates/
