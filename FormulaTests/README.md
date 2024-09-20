@@ -22,7 +22,7 @@ Assignment 4: In this assignment I was able to learn more about how to test usin
 # Consulted Peers:
 
 1. Nandhini Ramanathan
-2. Jacob
+2. Jacob Anderson
 
 # References:
 
