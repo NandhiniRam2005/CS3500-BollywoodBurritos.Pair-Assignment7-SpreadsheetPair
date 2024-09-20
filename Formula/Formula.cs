@@ -358,6 +358,7 @@ public class Formula
         {
             if (IsNum(token))
             {
+                // This method does the multiples and or divide and will also tell us if we need to return a FormulaError
                 if (MultiplyOrDivideUnderNumber(valueStack, operatorStack, token))
                 {
                     return new FormulaError("Divide by 0 is NOT allowed!");
@@ -375,6 +376,8 @@ public class Formula
                     return new FormulaError("Unknown variable: " + token + " please enter existing variables.");
                 }
 
+                // This method does the multiples and or divide and will also tell us if we need to return a FormulaError
+                // However this method does it with the conditions of the variable.
                 if (MultiplyOrDivideClosingUnderVariables(valueStack, operatorStack, token, lookup))
                 {
                     return new FormulaError("Divide by 0 is NOT allowed!");
@@ -383,6 +386,7 @@ public class Formula
 
             if (IsPlus(token) || IsMinus(token))
             {
+                // Completes add or subtract as specified look to method header for more information.
                 AddOrSubtract(valueStack, operatorStack, token);
             }
 
@@ -437,6 +441,7 @@ public class Formula
     /// <returns>The final value for the Evaluate method.</returns>
     private static double GetFinalValue(Stack<string> valueStack, Stack<string> operatorStack)
     {
+        // If stuff remains in the stack keep do this special implementation which involves add/subtract
         if (operatorStack.Count != 0)
         {
             string valueToPush = string.Empty;
