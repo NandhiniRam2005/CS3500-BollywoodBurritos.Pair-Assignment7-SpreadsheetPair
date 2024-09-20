@@ -4,7 +4,7 @@
 // <summary>
 // Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
 // Partner:   None
-// Date:      September 12, 2024
+// Date:      September 20, 2024
 // Course:    CS 3500, University of Utah, School of Computing
 // Copyright: CS 3500 and [Joel Rodriguez] - This work may not
 //            be copied for use in Academic Coursework.
@@ -305,6 +305,174 @@ public class EvaluationTests
         Formula f = new ("2+2/(6+2)");
 
         Assert.AreEqual(2.25, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests that the evaluate method can evaluate a formula has a division before parentheses appear.
+    /// Also there is a subtract in the parenthesis Basically checks that PEMDAS works.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_DivideBeforeParenthesisAndSubtractInside_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("2+2/(6-2)");
+
+        Assert.AreEqual(2.5, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests that the evaluate method can evaluate a formula has a division before parentheses appear.
+    /// Also there is a subtract in the parenthesis Basically checks that PEMDAS works.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_AddBeforeParenthesisAndSubtractInside_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("2+2-(6-2)+3");
+
+        Assert.AreEqual(3.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests that the evaluate method can evaluate a formula has a division before parentheses appear.
+    /// Also there is a subtract in the parenthesis Basically checks that PEMDAS works.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_IntenseEquation_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("2+2-(6-2)+3-(32*4)+(20-10)-(2/2)+2-5");
+
+        Assert.AreEqual(-119.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests to make sure that when the formula has multiple things in the parenthesis that Evaluate is able to
+    /// successfully solve the equation.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_MultipleThingsInParenthesis_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("2*(2+2+2-2)");
+
+        Assert.AreEqual(8.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests to make sure that a simple equation with parenthesis and add still works as expected with the 
+    /// Evaluate method.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_SimpleParenthesisAdd_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("(2+2)");
+
+        Assert.AreEqual(4.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests to make sure that a simple equation with parenthesis and subtract still works as expected with the
+    /// Evaluate method.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_SimpleParenthesisSub_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("(2-2)");
+
+        Assert.AreEqual(0.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests to make sure that a simple equation with parenthesis and divide still works as expected with the
+    /// Evaluate method.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_SimpleParenthesisDiv_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("(2/2)");
+
+        Assert.AreEqual(1.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests to make sure that a simple equation with parenthesis and multiply still works as expected with the
+    /// Evaluate method.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_SimpleParenthesisMultiply_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("(2*2)");
+
+        Assert.AreEqual(4.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests to make sure that a simple equation with parenthesis and no operator and a number still works as expected with the
+    /// Evaluate method.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_SimpleNumberParenthesis_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("(2)");
+
+        Assert.AreEqual(2.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests to make sure that a simple equation with parenthesis and no operator and a var still works as expected with the
+    /// Evaluate method.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_SimpleVarParenthesis_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("(x2)");
+
+        Assert.AreEqual(1.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests to make sure that a simple equation with no operator and a var still works as expected with the
+    /// Evaluate method.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_SimpleVar_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("x2");
+
+        Assert.AreEqual(1.0, f.Evaluate(provideVariableValue));
+    }
+
+    /// <summary>
+    /// Tests to make sure that a simple equation with just a number and no operator still works as expected with the
+    /// Evaluate method.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_SimpleNumber_ReturnsValid()
+    {
+        Formula.Lookup provideVariableValue = (name) => 1;
+
+        Formula f = new ("2");
+
+        Assert.AreEqual(2.0, f.Evaluate(provideVariableValue));
     }
 
     /// <summary>

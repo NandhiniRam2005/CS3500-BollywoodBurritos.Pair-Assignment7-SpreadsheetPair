@@ -175,6 +175,46 @@ public class Formula
 
     /// <summary>
     ///   <para>
+    ///     Reports whether f1 == f2, using the notion of equality from the <see cref="Equals"/> method.
+    ///   </para>
+    /// </summary>
+    /// <param name="f1"> The first of two formula objects. </param>
+    /// <param name="f2"> The second of two formula objects. </param>
+    /// <returns> true if the two formulas are the same.</returns>
+    public static bool operator ==(Formula f1, Formula f2)
+    {
+        if (f1.Equals(f2))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Reports whether f1 != f2, using the notion of equality from the <see cref="Equals"/> method.
+    ///   </para>
+    /// </summary>
+    /// <param name="f1"> The first of two formula objects. </param>
+    /// <param name="f2"> The second of two formula objects. </param>
+    /// <returns> true if the two formulas are not equal to each other.</returns>
+    public static bool operator !=(Formula f1, Formula f2)
+    {
+        if (f1.Equals(f2))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    ///   <para>
     ///     Returns a set of all the variables in the formula.
     ///   </para>
     ///   <remarks>
@@ -235,46 +275,6 @@ public class Formula
     public override string ToString()
     {
         return this.formulaString;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Reports whether f1 == f2, using the notion of equality from the <see cref="Equals"/> method.
-    ///   </para>
-    /// </summary>
-    /// <param name="f1"> The first of two formula objects. </param>
-    /// <param name="f2"> The second of two formula objects. </param>
-    /// <returns> true if the two formulas are the same.</returns>
-    public static bool operator ==(Formula f1, Formula f2)
-    {
-        if (f1.Equals(f2))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Reports whether f1 != f2, using the notion of equality from the <see cref="Equals"/> method.
-    ///   </para>
-    /// </summary>
-    /// <param name="f1"> The first of two formula objects. </param>
-    /// <param name="f2"> The second of two formula objects. </param>
-    /// <returns> true if the two formulas are not equal to each other.</returns>
-    public static bool operator !=(Formula f1, Formula f2)
-    {
-        if (f1.Equals(f2))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
     }
 
     /// <summary>
@@ -353,12 +353,12 @@ public class Formula
                 if (operatorStack.Count != 0 && (IsDivide(operatorStack.Peek()) || IsMultiply(operatorStack.Peek())))
                 {
                     string valueToPush = string.Empty;
-                    if (operatorStack.Count != 0 && IsMultiply(operatorStack.Peek()))
+                    if (IsMultiply(operatorStack.Peek()))
                     {
                         double value = Convert.ToDouble(valueStack.Pop()) * Convert.ToDouble(token);
                         valueToPush = value.ToString();
                     }
-                    else if (operatorStack.Count != 0 && IsDivide(operatorStack.Peek()))
+                    else if (IsDivide(operatorStack.Peek()))
                     {
                         // Prevents division of zero
                         if (Convert.ToDouble(token) == 0)
@@ -403,12 +403,12 @@ public class Formula
                 if (operatorStack.Count != 0 && (IsDivide(operatorStack.Peek()) || IsMultiply(operatorStack.Peek())))
                 {
                     string valueToPush = string.Empty;
-                    if (operatorStack.Count != 0 && IsMultiply(operatorStack.Peek()))
+                    if (IsMultiply(operatorStack.Peek()))
                     {
                         double value = Convert.ToDouble(valueStack.Pop()) * lookup(token);
                         valueToPush = value.ToString();
                     }
-                    else if (operatorStack.Count != 0 && IsDivide(operatorStack.Peek()))
+                    else if (IsDivide(operatorStack.Peek()))
                     {
                         if (Convert.ToDouble(lookup(token)) == 0)
                         {
@@ -478,18 +478,18 @@ public class Formula
 
             if (IsClosingParenthesis(token))
             {
-                // If the operator stack is not empty and there is an add or subtract operator token at the top of the operator stack
+                // If there is an add or subtract operator token at the top of the operator stack
                 // we will pop an operator from the operatorStack and two values from the value stack and apply that operator to the
-                // the two popped values. 
-                if (operatorStack.Count != 0 && (IsPlus(operatorStack.Peek()) || IsMinus(operatorStack.Peek())))
+                // the two popped values. The operator stack CANNOT be empty at this point as there must be a "(" in there.
+                if (IsPlus(operatorStack.Peek()) || IsMinus(operatorStack.Peek()))
                 {
                     string valueToPush = string.Empty;
-                    if (operatorStack.Count != 0 && IsPlus(operatorStack.Peek()))
+                    if (IsPlus(operatorStack.Peek()))
                     {
                         double value = Convert.ToDouble(valueStack.Pop()) + Convert.ToDouble(valueStack.Pop());
                         valueToPush = value.ToString();
                     }
-                    else if (operatorStack.Count != 0 && IsMinus(operatorStack.Peek()))
+                    else if (IsMinus(operatorStack.Peek()))
                     {
                         double firstPopped = Convert.ToDouble(valueStack.Pop());
                         double secondPopped = Convert.ToDouble(valueStack.Pop());
@@ -514,12 +514,12 @@ public class Formula
                 if (operatorStack.Count != 0 && (IsDivide(operatorStack.Peek()) || IsMultiply(operatorStack.Peek())))
                 {
                     string valueToPush = string.Empty;
-                    if (operatorStack.Count != 0 && IsMultiply(operatorStack.Peek()))
+                    if (IsMultiply(operatorStack.Peek()))
                     {
                         double value = Convert.ToDouble(valueStack.Pop()) * Convert.ToDouble(valueStack.Pop());  // May need to switch order
                         valueToPush = value.ToString();
                     }
-                    else if (operatorStack.Count != 0 && IsDivide(operatorStack.Peek()))
+                    else if (IsDivide(operatorStack.Peek()))
                     {
                         // For division the order of the popped variables matters so we need to clarify which is first and which is second.
                         double firstPopped = Convert.ToDouble(valueStack.Pop());
