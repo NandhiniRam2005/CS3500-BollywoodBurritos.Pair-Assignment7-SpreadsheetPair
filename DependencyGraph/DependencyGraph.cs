@@ -189,7 +189,6 @@ public class DependencyGraph
             {
                 increaseSize = true;
             }
-
         }
         else
         {

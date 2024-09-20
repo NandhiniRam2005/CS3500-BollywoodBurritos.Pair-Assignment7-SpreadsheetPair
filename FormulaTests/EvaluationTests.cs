@@ -364,7 +364,7 @@ public class EvaluationTests
     }
 
     /// <summary>
-    /// Tests to make sure that a simple equation with parenthesis and add still works as expected with the 
+    /// Tests to make sure that a simple equation with parenthesis and add still works as expected with the
     /// Evaluate method.
     /// </summary>
     [TestMethod]
@@ -532,7 +532,6 @@ public class EvaluationTests
 
         Assert.AreEqual(1.0, f.Evaluate(provideVariableValue));
     }
-
 
     // == Operator Tests ---------------------------------------
 
