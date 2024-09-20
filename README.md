@@ -10,6 +10,10 @@ Solution:   Spreadsheet
 Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use in Academic Coursework.
 ```
 
+# Assignment Specific Topics
+Throughout all the assignments we have learned about delegates, funcs, extension classes, unit testing in visual studio, debugging, and many other 
+helpful tools to become a more efficient programmer in c#. We will soon learn more about GUIs and abstract classes.
+
 # Overview of the Spreadsheet functionality
 
 The Spreadsheet program is currently capable of assessing the syntax of formulas and checking whether or not a formula is correct 
@@ -46,8 +50,8 @@ value of the cell).
                                                                                    Debugging:       3
                                                                                    Learning Tools:  2
 
-    4. Assignment 4: Formula Evaluate Extension     Predicted Hours:  16       Actual Hours:   6.5
+    4. Assignment 4: Formula Evaluate Extension     Predicted Hours:  16       Actual Hours:   10
                                                                                 Hours Spent - 
-                                                                                   Effectively:     3
+                                                                                   Effectively:     6.5
                                                                                    Debugging:       3
                                                                                    Learning Tools:  0.5

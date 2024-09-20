@@ -13,7 +13,7 @@ Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use i
 # Comments to Evaluators:
 On the first line there is a warning SA1636 which is a style warning that came preloaded with the starter code. I was told on 
 piazza (private question 158) to not worry about this style warning but to NOT delete it from my assignment
-since it was given to us. 
+since it was given to us.
 
 # Assignment Specific Topics
 Assignment 2: In this assignment I learned a lot about regular expressions and their efficiency along with XML's and good

@@ -11,7 +11,8 @@ Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use i
 ```
 
 # Comments to Evaluators:
-No comments there is nothing special.
+In the EvaluationTests class I use funcs and lambdas to test my Evaluate method as described in class. There is also a warning with the copyright
+I was told not to remove
 
 # Assignment Specific Topics
 Assignment 1: In this assignment I learned the basics of TDD and testing in Visual Studio.
@@ -20,7 +21,8 @@ Assignment 4: In this assignment I was able to learn more about how to test usin
 
 # Consulted Peers:
 
-I did not consult any peers for the FormulaTests class because I felt that sharing tests would be too close to Academic Misconduct.
+1. Nandhini Ramanathan
+2. Jacob
 
 # References:
 

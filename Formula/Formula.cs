@@ -4,7 +4,7 @@
 // <summary>
 // Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
 // Partner:   None
-// Date:      September 6, 2024
+// Date:      September 20, 2024
 // Course:    CS 3500, University of Utah, School of Computing
 // Copyright: CS 3500 and [Joel Rodriguez] - This work may not
 //            be copied for use in Academic Coursework.
@@ -63,7 +63,7 @@ public class Formula
     private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
 
     // The ordered formula as a list.
-    private readonly List<string> orderedFormula = new ();
+    private readonly List<string> orderedFormula = new();
 
     // The formula as a string this will be canonical for any equal string.
     private readonly string formulaString = string.Empty;
@@ -97,7 +97,7 @@ public class Formula
     /// <param name="formula"> The string representation of the formula to be created.</param>
     public Formula(string formula)
     {
-        this.orderedFormula = new ();
+        this.orderedFormula = new();
 
         int closingParenthesis = 0;
         int openingParenthesis = 0;
@@ -303,12 +303,7 @@ public class Formula
 
         Formula givenFormula = (Formula)obj;
 
-        if (this.ToString().Equals(givenFormula.ToString()))
-        {
-            return true;
-        }
-
-        return false;
+        return this.ToString().Equals(givenFormula.ToString());
     }
 
     /// <summary>
@@ -896,7 +891,7 @@ public class Formula
     /// <returns> The ordered list of tokens in the formula. </returns>
     private static List<string> GetTokens(string formula)
     {
-        List<string> results = new ();
+        List<string> results = new();
 
         string lpPattern = @"\(";
         string rpPattern = @"\)";

@@ -533,6 +533,17 @@ public class EvaluationTests
         Assert.AreEqual(1.0, f.Evaluate(provideVariableValue));
     }
 
+    /// <summary>
+    /// Checks to make sure that variables can be multiplied with each other once. Also uses lambdas.
+    /// </summary>
+    [TestMethod]
+    public void FormulaEvaluate_SimpleFormulaUsingLambda_ReturnsValid()
+    {
+        Formula f = new ("x2 / v3");
+
+        Assert.AreEqual(1.0, f.Evaluate((name) => 5));
+    }
+
     // == Operator Tests ---------------------------------------
 
     /// <summary>
