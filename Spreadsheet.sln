@@ -13,9 +13,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormulaTests", "FormulaTests\FormulaTests.csproj", "{897B3E7B-A5BA-4FCB-BE1B-87E07C54EC92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyGraph", "DependencyGraph\DependencyGraph.csproj", "{3F0524D0-F3AC-4562-A3CF-698E432F4CFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyGraph", "DependencyGraph\DependencyGraph.csproj", "{3F0524D0-F3AC-4562-A3CF-698E432F4CFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyGraphTests", "DependencyGraphTests\DependencyGraphTests.csproj", "{9BCA13BF-B9BA-4989-B4E6-3F5BB45FADE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyGraphTests", "DependencyGraphTests\DependencyGraphTests.csproj", "{9BCA13BF-B9BA-4989-B4E6-3F5BB45FADE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spreadsheet", "Spreadsheet\Spreadsheet.csproj", "{EB9FD2E7-A3AE-436B-B786-201EF84FE00C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{192E365E-2C37-4BA6-9269-AC4491409839} = {192E365E-2C37-4BA6-9269-AC4491409839}
+		{3F0524D0-F3AC-4562-A3CF-698E432F4CFD} = {3F0524D0-F3AC-4562-A3CF-698E432F4CFD}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetTests", "SpreadsheetTests\SpreadsheetTests.csproj", "{92202820-A461-4966-A81E-C9A6E8642A29}"
+	ProjectSection(ProjectDependencies) = postProject
+		{192E365E-2C37-4BA6-9269-AC4491409839} = {192E365E-2C37-4BA6-9269-AC4491409839}
+		{EB9FD2E7-A3AE-436B-B786-201EF84FE00C} = {EB9FD2E7-A3AE-436B-B786-201EF84FE00C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +51,14 @@ Global
 		{9BCA13BF-B9BA-4989-B4E6-3F5BB45FADE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BCA13BF-B9BA-4989-B4E6-3F5BB45FADE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BCA13BF-B9BA-4989-B4E6-3F5BB45FADE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB9FD2E7-A3AE-436B-B786-201EF84FE00C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB9FD2E7-A3AE-436B-B786-201EF84FE00C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB9FD2E7-A3AE-436B-B786-201EF84FE00C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB9FD2E7-A3AE-436B-B786-201EF84FE00C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92202820-A461-4966-A81E-C9A6E8642A29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92202820-A461-4966-A81E-C9A6E8642A29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92202820-A461-4966-A81E-C9A6E8642A29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92202820-A461-4966-A81E-C9A6E8642A29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

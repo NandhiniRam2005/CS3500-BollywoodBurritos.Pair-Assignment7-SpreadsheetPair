@@ -33,6 +33,11 @@ Future extensions of the Spreadsheet program include creating a GUI for the spre
 delegate in the Formula class to accurately evaluate Formulas with variables (actually go into the spreadsheet and get the 
 value of the cell).
 
+# Examples of Good Software Practice (GSP).  
+1. Code Reuse - 
+2. Testing strategies - 
+3. Self Documenting Code - 
+
 # Time Expenditures:
 
     1. Assignment 1: Test Driven Development        Predicted Hours:  8        Actual Hours:   6.5
@@ -55,3 +60,10 @@ value of the cell).
                                                                                    Effectively:     6.5
                                                                                    Debugging:       3
                                                                                    Learning Tools:  0.5
+
+    5. Assignment 5: Onward to a Spreadsheet        Predicted Hours:  16       Actual Hours:   0
+                                                                                Hours Spent - 
+                                                                                   Effectively:     0
+                                                                                   Debugging:       0
+                                                                                   Learning Tools:  0
+
