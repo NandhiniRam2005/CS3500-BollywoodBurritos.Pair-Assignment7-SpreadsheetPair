@@ -298,6 +298,9 @@ public class Spreadsheet
                 throw new CircularException();
             }
 
+            this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
+            this.dependencyGraph.ReplaceDependents(nameOfCell, new HashSet<string>());
+
             foreach (string dependee in formulaVariables)
             {
                 this.dependencyGraph.AddDependency(dependee, nameOfCell);

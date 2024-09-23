@@ -250,6 +250,21 @@ public class SpreadsheetTests
     }
 
     /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for doubles returns the proper
+    /// list of cells affected. Even when a cell has been replaced with other contents.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsDouble_OverwritingCell_ReturnsListOfOneElement()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("x2", 2.2);
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", 5.0);
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
+    }
+
+    /// <summary>
     /// Test that ensures that when adding to a sheet the SetCellContents method for doubles returns the proper
     /// list of cells affected only directly.
     /// </summary>
@@ -298,13 +313,7 @@ public class SpreadsheetTests
         expectedList.Add("X2");
         expectedList.Add("B2");
         expectedList.Add("A2");
-
-        List<string> expectedList2 = new List<string>();
-        expectedList2.Add("X2");
-        expectedList2.Add("A2");
-        expectedList2.Add("B2");
-
-        Assert.IsTrue(actualList.SequenceEqual(expectedList) || actualList.SequenceEqual(expectedList2));
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
     /// <summary>
@@ -330,6 +339,21 @@ public class SpreadsheetTests
     public void SpreadSheetSetCellContentsString_AffectsNothing_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", "Hi");
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for strings returns the proper
+    /// list of cells affected. Even when a cell's contents have been replaced.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsString_OverwritingCell_ReturnsListOfOneElement()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("x2", "Goober");
         List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", "Hi");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
@@ -386,12 +410,7 @@ public class SpreadsheetTests
         expectedList.Add("B2");
         expectedList.Add("A2");
 
-        List<string> expectedList2 = new List<string>();
-        expectedList2.Add("X2");
-        expectedList2.Add("A2");
-        expectedList2.Add("B2");
-
-        Assert.IsTrue(actualList.SequenceEqual(expectedList) || actualList.SequenceEqual(expectedList2));
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
     /// <summary>
@@ -418,6 +437,64 @@ public class SpreadsheetTests
     {
         Spreadsheet spreadsheet = new Spreadsheet();
         List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// list of cells affected. Even when a cell has been replaced with SetCellContents.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsFormula_OverwritingCell_ReturnsListOfOneElement()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("X2", new Formula("2004"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas and overwriting a valid cell with a 
+    /// cell that causes a Circular exception leads to Circular Exception.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(CircularException))]
+    public void SpreadSheetSetCellContentsFormula_OverwritingCellWithVariablesThatDoCircular_ThrowsException()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("X2", new Formula("2004"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("X2+2"));
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// list of cells affected. Even when a cell has been replaced with SetCellContents.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsFormula_OverwritingCellWithValidVariables_ReturnsListOfOneElement()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("X2", new Formula("2004"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("y2+z2"));
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// list of cells affected. Even when a cell has been replaced with SetCellContents.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsFormula_OverwritingCellWithValidVariablesWithDifferentVariables_ReturnsListOfOneElement()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("X2", new Formula("b3 + g6"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("y2+z2"));
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
@@ -472,13 +549,7 @@ public class SpreadsheetTests
         expectedList.Add("X2");
         expectedList.Add("B2");
         expectedList.Add("A2");
-
-        List<string> expectedList2 = new List<string>();
-        expectedList2.Add("X2");
-        expectedList2.Add("A2");
-        expectedList2.Add("B2");
-
-        Assert.IsTrue(actualList.SequenceEqual(expectedList) || actualList.SequenceEqual(expectedList2));
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
     /// <summary>
