@@ -49,7 +49,7 @@ public class SpreadsheetTests
         sheet.SetCellContents("x2", 2.0);
         HashSet<string> actualNames = sheet.GetNamesOfAllNonemptyCells().ToHashSet();
         HashSet<string> expectedNames = new HashSet<string>();
-        expectedNames.Add("x2");
+        expectedNames.Add("X2");
         Assert.IsTrue(actualNames.SetEquals(expectedNames));
     }
 
@@ -81,11 +81,11 @@ public class SpreadsheetTests
         sheet.SetCellContents("f2", 9.0);
         HashSet<string> actualNames = sheet.GetNamesOfAllNonemptyCells().ToHashSet();
         HashSet<string> expectedNames = new HashSet<string>();
-        expectedNames.Add("x2");
-        expectedNames.Add("b2");
-        expectedNames.Add("a2");
-        expectedNames.Add("s2");
-        expectedNames.Add("f2");
+        expectedNames.Add("X2");
+        expectedNames.Add("B2");
+        expectedNames.Add("A2");
+        expectedNames.Add("S2");
+        expectedNames.Add("F2");
         Assert.IsTrue(actualNames.SetEquals(expectedNames));
     }
 
@@ -105,10 +105,10 @@ public class SpreadsheetTests
         sheet.SetCellContents("f2", string.Empty);
         HashSet<string> actualNames = sheet.GetNamesOfAllNonemptyCells().ToHashSet();
         HashSet<string> expectedNames = new HashSet<string>();
-        expectedNames.Add("x2");
-        expectedNames.Add("b2");
-        expectedNames.Add("a2");
-        expectedNames.Add("s2");
+        expectedNames.Add("X2");
+        expectedNames.Add("B2");
+        expectedNames.Add("A2");
+        expectedNames.Add("S2");
         Assert.IsTrue(actualNames.SetEquals(expectedNames));
     }
 
@@ -146,8 +146,8 @@ public class SpreadsheetTests
         sheet.SetCellContents("a2", string.Empty);
         HashSet<string> actualNames = sheet.GetNamesOfAllNonemptyCells().ToHashSet();
         HashSet<string> expectedNames = new HashSet<string>();
-        expectedNames.Add("x2");
-        expectedNames.Add("s2");
+        expectedNames.Add("X2");
+        expectedNames.Add("S2");
         Assert.IsTrue(actualNames.SetEquals(expectedNames));
     }
 
@@ -208,7 +208,6 @@ public class SpreadsheetTests
     /// Test that ensures the GetCellContents can return an empty string when the given cell name is empty.
     /// </summary>
     [TestMethod]
-    [ExpectedException(typeof(InvalidNameException))]
     public void SpreadsheetGetCellContents_ValidNameThatIsEmpty_ReturnsEmptyString()
     {
         Spreadsheet sheet = new Spreadsheet();
@@ -226,7 +225,6 @@ public class SpreadsheetTests
     /// is empty.
     /// </summary>
     [TestMethod]
-    [ExpectedException(typeof(InvalidNameException))]
     public void SpreadsheetGetCellContents_ValidNameEmptySheet_ReturnsEmptyString()
     {
         Spreadsheet sheet = new Spreadsheet();
@@ -245,9 +243,9 @@ public class SpreadsheetTests
     public void SpreadSheetSetCellContentsDouble_AffectsNothing_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2", 2.2);
-        LinkedList<string> expectedList = new LinkedList<string>();
-        expectedList.AddFirst("x2");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", 2.2);
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
@@ -260,10 +258,10 @@ public class SpreadsheetTests
     {
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2", 2.2);
-        LinkedList<string> expectedList = new LinkedList<string>();
-        expectedList.AddFirst("a2");
-        expectedList.AddFirst("x2");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", 2.2);
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("A2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
@@ -277,11 +275,11 @@ public class SpreadsheetTests
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
         spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2", 2.2);
-        LinkedList<string> expectedList = new LinkedList<string>();
-        expectedList.AddFirst("b2");
-        expectedList.AddFirst("a2");
-        expectedList.AddFirst("x2");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", 2.2);
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("A2");
+        expectedList.Add("B2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
@@ -295,16 +293,16 @@ public class SpreadsheetTests
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
         spreadsheet.SetCellContents("b2", new Formula("x2 + 5"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2", 2.2);
-        LinkedList<string> expectedList = new LinkedList<string>();
-        expectedList.AddFirst("b2");
-        expectedList.AddFirst("a2");
-        expectedList.AddFirst("x2");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", 2.2);
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("B2");
+        expectedList.Add("A2");
 
-        LinkedList<string> expectedList2 = new LinkedList<string>();
-        expectedList.AddFirst("a2");
-        expectedList.AddFirst("b2");
-        expectedList.AddFirst("x2");
+        List<string> expectedList2 = new List<string>();
+        expectedList2.Add("X2");
+        expectedList2.Add("A2");
+        expectedList2.Add("B2");
 
         Assert.IsTrue(actualList.SequenceEqual(expectedList) || actualList.SequenceEqual(expectedList2));
     }
@@ -319,7 +317,7 @@ public class SpreadsheetTests
     {
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("2fdasd", 2.2);
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("2fdasd", 2.2);
     }
 
     // --------------- SetCellContents string tests -------------------
@@ -332,9 +330,9 @@ public class SpreadsheetTests
     public void SpreadSheetSetCellContentsString_AffectsNothing_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2", "Hi");
-        LinkedList<string> expectedList = new LinkedList<string>();
-        expectedList.AddFirst("x2");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", "Hi");
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
@@ -347,10 +345,10 @@ public class SpreadsheetTests
     {
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2", "Lol");
-        LinkedList<string> expectedList = new LinkedList<string>();
-        expectedList.AddFirst("a2");
-        expectedList.AddFirst("x2");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", "Lol");
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("A2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
@@ -364,11 +362,11 @@ public class SpreadsheetTests
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
         spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2", "Hello");
-        LinkedList<string> expectedList = new LinkedList<string>();
-        expectedList.AddFirst("b2");
-        expectedList.AddFirst("a2");
-        expectedList.AddFirst("x2");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", "Hello");
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("A2");
+        expectedList.Add("B2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
@@ -382,16 +380,16 @@ public class SpreadsheetTests
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
         spreadsheet.SetCellContents("b2", new Formula("x2 + 5"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2", "Totally Tubular");
-        LinkedList<string> expectedList = new LinkedList<string>();
-        expectedList.AddFirst("b2");
-        expectedList.AddFirst("a2");
-        expectedList.AddFirst("x2");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", "Totally Tubular");
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("B2");
+        expectedList.Add("A2");
 
-        LinkedList<string> expectedList2 = new LinkedList<string>();
-        expectedList.AddFirst("a2");
-        expectedList.AddFirst("b2");
-        expectedList.AddFirst("x2");
+        List<string> expectedList2 = new List<string>();
+        expectedList2.Add("X2");
+        expectedList2.Add("A2");
+        expectedList2.Add("B2");
 
         Assert.IsTrue(actualList.SequenceEqual(expectedList) || actualList.SequenceEqual(expectedList2));
     }
@@ -406,7 +404,7 @@ public class SpreadsheetTests
     {
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("2fdasd", "Bro, this is invalid Hawk");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("2fdasd", "Bro, this is invalid Hawk");
     }
 
     // --------------- SetCellContents Formula tests -------------------
@@ -419,9 +417,9 @@ public class SpreadsheetTests
     public void SpreadSheetSetCellContentsFormula_AffectsNothing_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
-        LinkedList<string> expectedList = new LinkedList<string>();
-        expectedList.AddFirst("x2");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
@@ -434,10 +432,10 @@ public class SpreadsheetTests
     {
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2",  new Formula("2+2"));
-        LinkedList<string> expectedList = new LinkedList<string>();
-        expectedList.AddFirst("a2");
-        expectedList.AddFirst("x2");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2",  new Formula("2+2"));
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("A2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
@@ -451,11 +449,11 @@ public class SpreadsheetTests
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
         spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2",  new Formula("2+2"));
-        LinkedList<string> expectedList = new LinkedList<string>();
-        expectedList.AddFirst("b2");
-        expectedList.AddFirst("a2");
-        expectedList.AddFirst("x2");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2",  new Formula("2+2"));
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("A2");
+        expectedList.Add("B2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
@@ -469,16 +467,16 @@ public class SpreadsheetTests
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
         spreadsheet.SetCellContents("b2", new Formula("x2 + 5"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2",  new Formula("2+2"));
-        LinkedList<string> expectedList = new LinkedList<string>();
-        expectedList.AddFirst("b2");
-        expectedList.AddFirst("a2");
-        expectedList.AddFirst("x2");
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2",  new Formula("2+2"));
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("B2");
+        expectedList.Add("A2");
 
-        LinkedList<string> expectedList2 = new LinkedList<string>();
-        expectedList.AddFirst("a2");
-        expectedList.AddFirst("b2");
-        expectedList.AddFirst("x2");
+        List<string> expectedList2 = new List<string>();
+        expectedList2.Add("X2");
+        expectedList2.Add("A2");
+        expectedList2.Add("B2");
 
         Assert.IsTrue(actualList.SequenceEqual(expectedList) || actualList.SequenceEqual(expectedList2));
     }
@@ -493,7 +491,7 @@ public class SpreadsheetTests
     {
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("2fdasd",  new Formula("2+2"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("2fdasd",  new Formula("2+2"));
     }
 
     /// <summary>
@@ -506,7 +504,7 @@ public class SpreadsheetTests
     {
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2", new Formula("x2+2"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("x2+2"));
     }
 
     /// <summary>
@@ -520,7 +518,7 @@ public class SpreadsheetTests
     {
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2", new Formula("a2+2"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("a2+2"));
     }
 
     /// <summary>
@@ -535,7 +533,7 @@ public class SpreadsheetTests
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("b2", new Formula("a2 +1"));
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        LinkedList<string> actualList = (LinkedList<string>)spreadsheet.SetCellContents("x2", new Formula("b2+2"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("b2+2"));
     }
 
 }

@@ -24,6 +24,9 @@ namespace CS3500.Spreadsheet;
 
 using CS3500.Formula;
 using CS3500.DependencyGraph;
+using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Net.Mime.MediaTypeNames;
 
 /// <summary>
 ///   <para>
@@ -99,6 +102,16 @@ public class InvalidNameException : Exception
 /// </summary>
 public class Spreadsheet
 {
+    private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
+    private DependencyGraph dependencyGraph;
+    private Dictionary<string, Cell> nonEmptyCells;
+
+    public Spreadsheet()
+    {
+        this.dependencyGraph = new DependencyGraph();
+        this.nonEmptyCells = new Dictionary<string, Cell>();
+}
+
     /// <summary>
     ///   Provides a copy of the names of all of the cells in the spreadsheet
     ///   that contain information (i.e., not empty cells).
@@ -108,7 +121,13 @@ public class Spreadsheet
     /// </returns>
     public ISet<string> GetNamesOfAllNonemptyCells()
     {
-        throw new NotImplementedException();
+        HashSet<string> namesOfNonEmpty = new HashSet<string>();
+        foreach (string nameOfCell in this.nonEmptyCells.Keys)
+        {
+            namesOfNonEmpty.Add(nameOfCell);
+        }
+
+        return namesOfNonEmpty;
     }
 
     /// <summary>
@@ -126,7 +145,18 @@ public class Spreadsheet
     /// </returns>
     public object GetCellContents(string name)
     {
-        throw new NotImplementedException();
+        string nameOfCell = NormalizeToken(name);
+        if (!IsVar(name))
+        {
+            throw new InvalidNameException();
+        }
+        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
+        {
+            return string.Empty;
+        }
+
+        object cellContents = this.nonEmptyCells[nameOfCell].GetContent();
+        return cellContents;
     }
 
     /// <summary>
@@ -158,7 +188,22 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, double number)
     {
-        throw new NotImplementedException();
+        if (!IsVar(name))
+        {
+            throw new InvalidNameException();
+        }
+
+        string nameOfCell = NormalizeToken(name);
+        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
+        {
+            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, number));
+        }
+        else
+        {
+            this.nonEmptyCells[nameOfCell].SetContent(number);
+        }
+
+        return this.GetCellsToRecalculate(nameOfCell).ToList();
     }
 
     /// <summary>
@@ -175,7 +220,30 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, string text)
     {
-        throw new NotImplementedException();
+        string nameOfCell = NormalizeToken(name);
+        if (!IsVar(name))
+        {
+            throw new InvalidNameException();
+        }
+
+        if (text.Equals(string.Empty))
+        {
+            this.nonEmptyCells.Remove(nameOfCell);
+            this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
+            this.dependencyGraph.ReplaceDependents(nameOfCell, new HashSet<string>());
+            return this.GetCellsToRecalculate(nameOfCell).ToList();
+        }
+
+        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
+        {
+            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, text));
+        }
+        else
+        {
+            this.nonEmptyCells[nameOfCell].SetContent(text);
+        }
+
+        return this.GetCellsToRecalculate(nameOfCell).ToList();
     }
 
     /// <summary>
@@ -200,7 +268,46 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, Formula formula)
     {
-        throw new NotImplementedException();
+        if (!IsVar(name))
+        {
+            throw new InvalidNameException();
+        }
+
+        string nameOfCell = NormalizeToken(name);
+        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
+        {
+            HashSet<string> formulaVariables = formula.GetVariables().ToHashSet();
+            if (formulaVariables.Contains(nameOfCell))
+            {
+                throw new CircularException();
+            }
+
+            foreach (string dependee in formulaVariables)
+            {
+                this.dependencyGraph.AddDependency(dependee, nameOfCell);
+            }
+
+            this.GetCellsToRecalculate(nameOfCell);
+            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, formula));
+        }
+        else
+        {
+            HashSet<string> formulaVariables = formula.GetVariables().ToHashSet();
+            if (formulaVariables.Contains(nameOfCell))
+            {
+                throw new CircularException();
+            }
+
+            foreach (string dependee in formulaVariables)
+            {
+                this.dependencyGraph.AddDependency(dependee, nameOfCell);
+            }
+
+            this.GetCellsToRecalculate(nameOfCell);
+            this.nonEmptyCells[nameOfCell].SetContent(formula);
+        }
+
+        return this.GetCellsToRecalculate(nameOfCell).ToList();
     }
 
     /// <summary> 
@@ -224,7 +331,8 @@ public class Spreadsheet
     /// </returns>
     private IEnumerable<string> GetDirectDependents(string name)
     {
-        throw new NotImplementedException();
+        string nameOfCell = NormalizeToken(name);
+        return this.dependencyGraph.GetDependents(nameOfCell);
     }
 
     /// <summary>
@@ -311,5 +419,68 @@ public class Spreadsheet
 
         changed.AddFirst(name); // Once we reach this point it means that the cell we are currently on (name) has to be changed due to the new cell contents.
                                 // We add it to a linked list so we maintain the order of the dependents needing to be changed.
+    }
+
+    /// <summary>
+    ///   Reports whether "token" is a variable.  It must be one or more letters
+    ///   followed by one or more numbers.
+    /// </summary>
+    /// <param name="token"> A token that may be a variable. </param>
+    /// <returns> true if the string matches the requirements, e.g., A1 or a1. </returns>
+    private static bool IsVar(string token)
+    {
+        // notice the use of ^ and $ to denote that the entire string being matched is just the variable
+        string standaloneVarPattern = $"^{VariableRegExPattern}$";
+        return Regex.IsMatch(token, standaloneVarPattern);
+    }
+
+    /// <summary>
+    /// A private helper method that "normalizes" tokens. Names such as 
+    /// such as x1 turn into X1.
+    /// </summary>
+    /// <param name="nameOfCell"> The token to be normalized.</param>
+    /// <returns>A normalized token. Refer to method summary on what normalizing is.</returns>
+    private static string NormalizeToken(string nameOfCell)
+    {
+        string normalizedNameOfCell = nameOfCell.ToUpper();
+        return normalizedNameOfCell;
+    }
+}
+
+/// <summary>
+/// A general idea of what a cell is in a Spreadsheet.
+/// </summary>
+public class Cell
+{
+    private string name;
+    private object content;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Cell"/> class.
+    /// </summary>
+    /// <param name="name"> The name of the cell</param>
+    /// <param name="content">The content in the cell which can be a double, string, or formula.</param>
+    public Cell(string name, object content)
+    {
+       this.name = name;
+       this.content = content;
+    }
+
+    /// <summary>
+    /// Method to get the content of a cell.
+    /// </summary>
+    /// <returns> The content of the cell whether it be a formula, string, or double.</returns>
+    public object GetContent()
+    {
+        return this.content;
+    }
+
+    /// <summary>
+    /// Method to get the content of a cell.
+    /// </summary>
+    /// <param name="givenContent"> The new content for this cell.</param>
+    public void SetContent(object givenContent)
+    {
+        this.content = givenContent;
     }
 }
