@@ -347,6 +347,26 @@ public class SpreadsheetTests
 
     /// <summary>
     /// Test that ensures that when adding to an empty sheet the SetCellContents method for strings returns the proper
+    /// list of cells affected. Even after a cell has been overwritten with nothing therefore drastically affecting 
+    /// the whole spreadsheet.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsString_OverwriteWithNothing_ReturnsListOfOneElement()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("X2", new Formula("b3 + g6"));
+        spreadsheet.SetCellContents("b3", new Formula("c5 + 2"));
+        spreadsheet.SetCellContents("g6", new Formula("c8 + bp0"));
+        spreadsheet.SetCellContents("v4", new Formula("x2 + 3"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", string.Empty);
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("V4");
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for strings returns the proper
     /// list of cells affected. Even when a cell's contents have been replaced.
     /// </summary>
     [TestMethod]
@@ -501,6 +521,26 @@ public class SpreadsheetTests
     }
 
     /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// list of cells affected. Even when a cell has been replaced with SetCellContents in a very meaningful way which
+    /// affects cells directly and indirectly.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsFormula_ExtremelyMeaningfulCascadingOverwritingOfCell_ReturnsListOfOneElement()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("X2", new Formula("b3 + g6"));
+        spreadsheet.SetCellContents("b3", new Formula("c5 + 2"));
+        spreadsheet.SetCellContents("g6", new Formula("c8 + bp0"));
+        spreadsheet.SetCellContents("v4", new Formula("x2 + 3"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+z2"));
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("V4");
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
+    }
+
+    /// <summary>
     /// Test that ensures that when adding to a sheet the SetCellContents method for formulas returns the proper
     /// list of cells affected only directly.
     /// </summary>
@@ -550,6 +590,50 @@ public class SpreadsheetTests
         expectedList.Add("B2");
         expectedList.Add("A2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// list of cells affected both indirectly and directly.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsFormula_AddingOfDirectCircularExpressionDoesNotChangeSpreadsheet_ReturnsListOfElements()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
+        spreadsheet.SetCellContents("b2", new Formula("x2 + 5"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        try
+        {
+            spreadsheet.SetCellContents("a2", new Formula("a2+2"));
+        }
+        catch (CircularException)
+        {
+        }
+
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// list of cells affected both indirectly and directly.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsFormula_AddingOfIndirectCircularExpressionDoesNotChangeSpreadsheet_ReturnsListOfElements()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
+        spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        try
+        {
+            spreadsheet.SetCellContents("a2", new Formula("b2+2"));
+        }
+        catch (CircularException)
+        {
+        }
+
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
     }
 
     /// <summary>

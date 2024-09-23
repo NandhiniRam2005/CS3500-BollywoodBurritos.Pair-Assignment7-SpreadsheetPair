@@ -230,7 +230,6 @@ public class Spreadsheet
         {
             this.nonEmptyCells.Remove(nameOfCell);
             this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
-            this.dependencyGraph.ReplaceDependents(nameOfCell, new HashSet<string>());
             return this.GetCellsToRecalculate(nameOfCell).ToList();
         }
 
@@ -292,6 +291,8 @@ public class Spreadsheet
         }
         else
         {
+            Formula ogFormula = (Formula)this.nonEmptyCells[nameOfCell].GetContent();
+
             HashSet<string> formulaVariables = formula.GetVariables().ToHashSet();
             if (formulaVariables.Contains(nameOfCell))
             {
@@ -299,14 +300,22 @@ public class Spreadsheet
             }
 
             this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
-            this.dependencyGraph.ReplaceDependents(nameOfCell, new HashSet<string>());
 
             foreach (string dependee in formulaVariables)
             {
                 this.dependencyGraph.AddDependency(dependee, nameOfCell);
             }
 
-            this.GetCellsToRecalculate(nameOfCell);
+            try
+            {
+                this.GetCellsToRecalculate(nameOfCell);
+            }
+            catch (CircularException)
+            {
+                this.SetCellContents(nameOfCell, ogFormula);
+                throw new CircularException();
+            }
+
             this.nonEmptyCells[nameOfCell].SetContent(formula);
         }
 
