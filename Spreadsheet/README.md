@@ -1,7 +1,7 @@
 ﻿```
 Author:     Joel Rodriguez
 Partner:    None
-Start Date: 20-Seo-2024
+Start Date: 20-Sep-2024
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  joel-rodriguez
 Repo:      https://github.com/uofu-cs3500-20-fall2024/spreadsheet-joel-rodriguez
@@ -11,7 +11,8 @@ Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use i
 ```
 
 # Comments to Evaluators:
-None for now...
+I added a constructor to the spreadsheet and a cell class. I did this because in the assignment details it advised to create a cell class. The constructor 
+was advised to be created in piazza question @402.
 
 # Assignment Specific Topics
 Assignment 5: Learn to utilize/combine the appropriate existing functionality to generate a more powerful combination.
@@ -27,4 +28,4 @@ List any peers (or other people) in the class (or outside for that matter) that 
 
 # References:
 
-    1. 
+    1. IList Interface - https://learn.microsoft.com/en-us/dotnet/api/system.collections.ilist?view=net-8.0

@@ -106,11 +106,14 @@ public class Spreadsheet
     private DependencyGraph dependencyGraph;
     private Dictionary<string, Cell> nonEmptyCells;
 
+    /// <summary>
+    ///  Initializes a new instance of the <see cref="Spreadsheet"/> class.
+    /// </summary>
     public Spreadsheet()
     {
         this.dependencyGraph = new DependencyGraph();
         this.nonEmptyCells = new Dictionary<string, Cell>();
-}
+    }
 
     /// <summary>
     ///   Provides a copy of the names of all of the cells in the spreadsheet
@@ -150,6 +153,7 @@ public class Spreadsheet
         {
             throw new InvalidNameException();
         }
+
         if (!this.nonEmptyCells.ContainsKey(nameOfCell))
         {
             return string.Empty;
@@ -226,6 +230,7 @@ public class Spreadsheet
             throw new InvalidNameException();
         }
 
+        // If the given string is empty that means the cell is empty and we need to remove it from our dependency graph and nonEmptyCells dictionary.
         if (text.Equals(string.Empty))
         {
             this.nonEmptyCells.Remove(nameOfCell);
@@ -275,6 +280,7 @@ public class Spreadsheet
         string nameOfCell = NormalizeToken(name);
         if (!this.nonEmptyCells.ContainsKey(nameOfCell))
         {
+            // Checks to see if any of the variables in the given formula cause a direct circular exception.
             HashSet<string> formulaVariables = formula.GetVariables().ToHashSet();
             if (formulaVariables.Contains(nameOfCell))
             {
@@ -286,13 +292,24 @@ public class Spreadsheet
                 this.dependencyGraph.AddDependency(dependee, nameOfCell);
             }
 
-            this.GetCellsToRecalculate(nameOfCell);
+            // This checks to see if the addition caused a circular dependency and reverts the set content cells if it did.
+            try
+            {
+                this.GetCellsToRecalculate(nameOfCell);
+            }
+            catch (CircularException)
+            {
+                this.SetCellContents(nameOfCell, string.Empty);
+                throw new CircularException();
+            }
+
             this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, formula));
         }
         else
         {
             Formula ogFormula = (Formula)this.nonEmptyCells[nameOfCell].GetContent();
 
+            // Checks if any direct relationships cause a circular exception.
             HashSet<string> formulaVariables = formula.GetVariables().ToHashSet();
             if (formulaVariables.Contains(nameOfCell))
             {
@@ -306,6 +323,7 @@ public class Spreadsheet
                 this.dependencyGraph.AddDependency(dependee, nameOfCell);
             }
 
+            // This checks to see if the addition caused a circular dependency and reverts the set content cells if it did.
             try
             {
                 this.GetCellsToRecalculate(nameOfCell);
@@ -319,10 +337,36 @@ public class Spreadsheet
             this.nonEmptyCells[nameOfCell].SetContent(formula);
         }
 
+        // Returns the cells in the order they need to be evaluated in.
         return this.GetCellsToRecalculate(nameOfCell).ToList();
     }
 
-    /// <summary> 
+    /// <summary>
+    ///   Reports whether "token" is a variable.  It must be one or more letters
+    ///   followed by one or more numbers.
+    /// </summary>
+    /// <param name="token"> A token that may be a variable. </param>
+    /// <returns> true if the string matches the requirements, e.g., A1 or a1. </returns>
+    private static bool IsVar(string token)
+    {
+        // notice the use of ^ and $ to denote that the entire string being matched is just the variable
+        string standaloneVarPattern = $"^{VariableRegExPattern}$";
+        return Regex.IsMatch(token, standaloneVarPattern);
+    }
+
+    /// <summary>
+    /// A private helper method that "normalizes" tokens. Names such as
+    /// such as x1 turn into X1.
+    /// </summary>
+    /// <param name="nameOfCell"> The token to be normalized.</param>
+    /// <returns>A normalized token. Refer to method summary on what normalizing is.</returns>
+    private static string NormalizeToken(string nameOfCell)
+    {
+        string normalizedNameOfCell = nameOfCell.ToUpper();
+        return normalizedNameOfCell;
+    }
+
+    /// <summary>
     ///   Returns an enumeration, without duplicates, of the names of all cells whose
     ///   values depend directly on the value of the named cell.
     /// </summary>
@@ -432,31 +476,6 @@ public class Spreadsheet
         changed.AddFirst(name); // Once we reach this point it means that the cell we are currently on (name) has to be changed due to the new cell contents.
                                 // We add it to a linked list so we maintain the order of the dependents needing to be changed.
     }
-
-    /// <summary>
-    ///   Reports whether "token" is a variable.  It must be one or more letters
-    ///   followed by one or more numbers.
-    /// </summary>
-    /// <param name="token"> A token that may be a variable. </param>
-    /// <returns> true if the string matches the requirements, e.g., A1 or a1. </returns>
-    private static bool IsVar(string token)
-    {
-        // notice the use of ^ and $ to denote that the entire string being matched is just the variable
-        string standaloneVarPattern = $"^{VariableRegExPattern}$";
-        return Regex.IsMatch(token, standaloneVarPattern);
-    }
-
-    /// <summary>
-    /// A private helper method that "normalizes" tokens. Names such as 
-    /// such as x1 turn into X1.
-    /// </summary>
-    /// <param name="nameOfCell"> The token to be normalized.</param>
-    /// <returns>A normalized token. Refer to method summary on what normalizing is.</returns>
-    private static string NormalizeToken(string nameOfCell)
-    {
-        string normalizedNameOfCell = nameOfCell.ToUpper();
-        return normalizedNameOfCell;
-    }
 }
 
 /// <summary>
@@ -470,7 +489,7 @@ public class Cell
     /// <summary>
     /// Initializes a new instance of the <see cref="Cell"/> class.
     /// </summary>
-    /// <param name="name"> The name of the cell</param>
+    /// <param name="name"> The name of the cell.</param>
     /// <param name="content">The content in the cell which can be a double, string, or formula.</param>
     public Cell(string name, object content)
     {

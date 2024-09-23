@@ -5,7 +5,7 @@ Start Date: 20-Aug-2024
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  joel-rodriguez
 Repo:      https://github.com/uofu-cs3500-20-fall2024/spreadsheet-joel-rodriguez
-Commit Date: 20-September-2024 10:20PM
+Commit Date: 27-September-2024 10:20PM
 Solution:   Spreadsheet
 Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use in Academic Coursework.
 ```
@@ -34,9 +34,12 @@ delegate in the Formula class to accurately evaluate Formulas with variables (ac
 value of the cell).
 
 # Examples of Good Software Practice (GSP).  
-1. Code Reuse - 
-2. Testing strategies - 
-3. Self Documenting Code - 
+1. Code Reuse - I am not using the same code over and over again. Instead I reuse code through the use of helper methods. For example my Spreadsheet project has
+   a NormalizeToken private helper method because this code is used multiple times throughout the project.
+2. Testing strategies - I use multiple testing strategies including the Test Driven Development strategy and regression testing. I frequently run my tests after
+   I add anything in my code to ensure I have not harmed my solution. I also practice TDD which helps me get the solution right the first time.
+3. Self Documenting Code - My code uses good variable names and easy to read syntax. For example I vouch for using for each statements with good variable names 
+   to ensure my code is easy to read even without comments.
 
 # Time Expenditures:
 
@@ -61,9 +64,9 @@ value of the cell).
                                                                                    Debugging:       3
                                                                                    Learning Tools:  0.5
 
-    5. Assignment 5: Onward to a Spreadsheet        Predicted Hours:  16       Actual Hours:   0
+    5. Assignment 5: Onward to a Spreadsheet        Predicted Hours:  16       Actual Hours:   6
                                                                                 Hours Spent - 
-                                                                                   Effectively:     0
-                                                                                   Debugging:       0
-                                                                                   Learning Tools:  0
+                                                                                   Effectively:     3
+                                                                                   Debugging:       2.8
+                                                                                   Learning Tools:  0.2
 

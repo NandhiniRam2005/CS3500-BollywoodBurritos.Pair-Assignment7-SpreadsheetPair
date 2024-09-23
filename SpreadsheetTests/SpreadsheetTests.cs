@@ -347,7 +347,7 @@ public class SpreadsheetTests
 
     /// <summary>
     /// Test that ensures that when adding to an empty sheet the SetCellContents method for strings returns the proper
-    /// list of cells affected. Even after a cell has been overwritten with nothing therefore drastically affecting 
+    /// list of cells affected. Even after a cell has been overwritten with nothing therefore drastically affecting
     /// the whole spreadsheet.
     /// </summary>
     [TestMethod]
@@ -478,7 +478,7 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas and overwriting a valid cell with a 
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas and overwriting a valid cell with a
     /// cell that causes a Circular exception leads to Circular Exception.
     /// </summary>
     [TestMethod]
@@ -616,10 +616,10 @@ public class SpreadsheetTests
 
     /// <summary>
     /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
-    /// list of cells affected both indirectly and directly.
+    /// list of cells affected both indirectly and directly. And does not change.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_AddingOfIndirectCircularExpressionDoesNotChangeSpreadsheet_ReturnsListOfElements()
+    public void SpreadSheetSetCellContentsFormula_AddingOfIndirectCircularExpression_DoesNotChangeSpreadsheet()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
@@ -634,6 +634,29 @@ public class SpreadsheetTests
         }
 
         Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// list of cells affected both indirectly and directly.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsFormula_AddingOfIndirectCircularExpressionInNewCell_DoesNotChangeSpreadsheet()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
+        spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
+        try
+        {
+            spreadsheet.SetCellContents("x2", new Formula("b2+a2"));
+        }
+        catch (CircularException)
+        {
+        }
+
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
+        Assert.AreEqual(spreadsheet.GetCellContents("b2"), new Formula("a2 + 5"));
+        Assert.AreEqual(spreadsheet.GetCellContents("x2"), string.Empty);
     }
 
     /// <summary>
@@ -690,5 +713,4 @@ public class SpreadsheetTests
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
         List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("b2+2"));
     }
-
 }
