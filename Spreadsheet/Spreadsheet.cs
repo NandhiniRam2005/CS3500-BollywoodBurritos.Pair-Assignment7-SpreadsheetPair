@@ -460,22 +460,30 @@ public class Spreadsheet
     /// <exception cref="CircularException"> This exception is to be thrown if a circular dependency is found. </exception>
     private void Visit(string start, string name, ISet<string> visited, LinkedList<string> changed)
     {
-        visited.Add(name); // Adds the name of the cell we are currently on to the visited list
-        foreach (string dependent in this.GetDirectDependents(name)) // For each cell that is a direct dependent on the name cell.
+        // Adds the name of the cell we are currently on to the visited list
+        visited.Add(name);
+
+        // For each cell that is a direct dependent on the name cell.
+        foreach (string dependent in this.GetDirectDependents(name))
         {
-            if (dependent.Equals(start)) // If that dependent is equal to the dependent that we started on this means a circular exception has occurred.
+            // If that dependent is equal to the dependent that we started on this means a circular exception has occurred.
             {
-                throw new CircularException();
-            }
-            else if (!visited.Contains(dependent)) // Else if the visited list does not contain the dependent that means that it and its dependents have not been checked so we must go down its path.
-            {
-                this.Visit(start, dependent, visited, changed); // Recursion
+                if (dependent.Equals(start))
+                {
+                    throw new CircularException();
+                }
+
+                // Else if the visited list does not contain the dependent that means that it and its dependents have not been checked so we must go down its path.
+                else if (!visited.Contains(dependent))
+                {
+                    this.Visit(start, dependent, visited, changed);
+                }
             }
         }
 
-        changed.AddFirst(name); // Once we reach this point it means that the cell we are currently on (name) has to be changed due to the new cell contents.
-
-                                // We add it to a linked list so we maintain the order of the dependents needing to be changed.
+        // Once we reach this point it means that the cell we are currently on (name) has to be changed due to the new cell contents
+        // We add it to a linked list so we maintain the order of the dependents needing to be changed.
+        changed.AddFirst(name);
     }
 }
 

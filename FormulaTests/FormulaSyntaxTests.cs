@@ -155,6 +155,7 @@ public class FormulaSyntaxTests
     /// <summary>
     ///   <para>
     ///     Make sure an unrecognized tokens are recognized as invalid.
+    ///   </para>
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(FormulaFormatException))]
@@ -191,11 +192,11 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///   <para>
-    ///     Make sure an invalid token "&" is recognized as invalid when mixed with other valid tokens.
+    ///     Make sure an invalid token ampersand is recognized as invalid when mixed with other valid tokens.
     ///   </para>
     ///   <remarks>
     ///     This is an example of a test that is expected to throw an exception, i.e., it fails.
-    ///     In other words, the formula "62+11+x2+7&-12+&" is not a valid formula which should cause an error.
+    ///     In other words, the formula "62+11+x2+7ampersand-12+ampersand" is not a valid formula which should cause an error.
     ///   </remarks>
     /// </summary>
     [TestMethod]
