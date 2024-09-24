@@ -976,7 +976,7 @@ public class FormulaError
     /// <param name="message"> Contains a message for why the error occurred.</param>
     public FormulaError(string message)
     {
-        Reason = message;
+        this.Reason = message;
     }
 
     /// <summary>

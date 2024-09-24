@@ -1,5 +1,5 @@
 // <copyright file="DependencyGraphTests.cs" company="UofU-CS3500">
-// Copyright (c) 2024 UofU-CS3500 All rights reserved.
+// Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
 // <summary>
 // Author:    Joel Rodriguez
@@ -1150,6 +1150,7 @@ public class DependencyGraphTests
             for (int j = i + 1; j < SIZE; j++)
             {
                 dg.AddDependency(letters[i], letters[j]); // Adds the dependencies and uses a nested for loop to ensure we
+
                                                           // get a lot of dependencies.
                 dependents[i].Add(letters[j]);  // correct answers
                 dependees[j].Add(letters[i]); // correct answers
@@ -1173,6 +1174,7 @@ public class DependencyGraphTests
             for (int j = i + 1; j < SIZE; j += 2)
             {
                 dg.AddDependency(letters[i], letters[j]); // Adds the dependencies and uses a nested for loop to ensure we
+
                                                          // get a lot of dependencies.
                 dependents[i].Add(letters[j]);
                 dependees[j].Add(letters[i]);

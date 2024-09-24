@@ -1,5 +1,5 @@
 ﻿// <copyright file="DependencyGraph.cs" company="UofU-CS3500">
-// Copyright (c) 2024 UofU-CS3500 All rights reserved.
+// Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
 // Skeleton implementation written by Joe Zachary for CS 3500, September 2013.
 // Version 1.1 (Fixed error in comment for RemoveDependency.)
