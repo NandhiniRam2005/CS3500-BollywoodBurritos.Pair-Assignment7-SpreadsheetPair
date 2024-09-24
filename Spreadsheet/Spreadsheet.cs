@@ -445,7 +445,7 @@ public class Spreadsheet
     {
         LinkedList<string> changed = new ();
         HashSet<string> visited = new ();
-        Visit(name, name, visited, changed);
+        this.Visit(name, name, visited, changed);
         return changed;
     }
 
@@ -461,7 +461,7 @@ public class Spreadsheet
     private void Visit(string start, string name, ISet<string> visited, LinkedList<string> changed)
     {
         visited.Add(name); // Adds the name of the cell we are currently on to the visited list
-        foreach (string dependent in GetDirectDependents(name)) // For each cell that is a direct dependent on the name cell.
+        foreach (string dependent in this.GetDirectDependents(name)) // For each cell that is a direct dependent on the name cell.
         {
             if (dependent.Equals(start)) // If that dependent is equal to the dependent that we started on this means a circular exception has occurred.
             {
@@ -469,11 +469,12 @@ public class Spreadsheet
             }
             else if (!visited.Contains(dependent)) // Else if the visited list does not contain the dependent that means that it and its dependents have not been checked so we must go down its path.
             {
-                Visit(start, dependent, visited, changed); // Recursion
+                this.Visit(start, dependent, visited, changed); // Recursion
             }
         }
 
         changed.AddFirst(name); // Once we reach this point it means that the cell we are currently on (name) has to be changed due to the new cell contents.
+
                                 // We add it to a linked list so we maintain the order of the dependents needing to be changed.
     }
 }
@@ -481,7 +482,7 @@ public class Spreadsheet
 /// <summary>
 /// A general idea of what a cell is in a Spreadsheet.
 /// </summary>
-public class Cell
+internal class Cell
 {
     private string name;
     private object content;
@@ -493,8 +494,8 @@ public class Cell
     /// <param name="content">The content in the cell which can be a double, string, or formula.</param>
     public Cell(string name, object content)
     {
-       this.name = name;
-       this.content = content;
+        this.name = name;
+        this.content = content;
     }
 
     /// <summary>
