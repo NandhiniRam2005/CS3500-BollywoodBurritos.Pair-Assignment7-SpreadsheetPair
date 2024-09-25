@@ -660,6 +660,66 @@ public class SpreadsheetTests
     }
 
     /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// list of cells affected both indirectly and directly specifically when a CircularExceptionOccurred and we are overwriting
+    /// via our SetCellContents.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsFormula_AddingOverWriteAfterCircularExceptionWorks_DoesNotThrowException()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
+        spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
+        try
+        {
+            spreadsheet.SetCellContents("x2", new Formula("b2+a2"));
+        }
+        catch (CircularException)
+        {
+        }
+
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
+        Assert.AreEqual(spreadsheet.GetCellContents("b2"), new Formula("a2 + 5"));
+        Assert.AreEqual(spreadsheet.GetCellContents("x2"), string.Empty);
+
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("A2");
+        expectedList.Add("B2");
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// list of cells affected both indirectly and directly specifically when a CircularExceptionOccurred the add does not
+    /// overwrite.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsFormula_AddingAfterCircularExceptionWorks_DoesNotThrowException()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
+        spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
+        try
+        {
+            spreadsheet.SetCellContents("x2", new Formula("b2+a2"));
+        }
+        catch (CircularException)
+        {
+        }
+
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
+        Assert.AreEqual(spreadsheet.GetCellContents("b2"), new Formula("a2 + 5"));
+        Assert.AreEqual(spreadsheet.GetCellContents("x2"), string.Empty);
+
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("f2", new Formula("2+2"));
+        List<string> expectedList = new List<string>();
+        expectedList.Add("F2");
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
+    }
+
+    /// <summary>
     /// Test that ensures that when adding to a sheet the SetCellContents method for formulas is able to
     /// throw the correct InvalidNameException when the name is not a variable.
     /// </summary>
