@@ -102,8 +102,14 @@ public class InvalidNameException : Exception
 /// </summary>
 public class Spreadsheet
 {
+    // A regular expression that is used to check if its var.
     private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
+
+    // The dependency graph created that represents this spreadsheet.
     private DependencyGraph dependencyGraph;
+
+    // A representation of all the non empty cells in this spreadsheet it is a hash map where the key is the name of the cell
+    // and the value is a cell object that stores its contents
     private Dictionary<string, Cell> nonEmptyCells;
 
     /// <summary>
