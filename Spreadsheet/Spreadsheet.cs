@@ -198,22 +198,7 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, double number)
     {
-        if (!IsVar(name))
-        {
-            throw new InvalidNameException();
-        }
-
-        string nameOfCell = NormalizeToken(name);
-        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
-        {
-            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, number));
-        }
-        else
-        {
-            this.nonEmptyCells[nameOfCell].SetContent(number);
-        }
-
-        return this.GetCellsToRecalculate(nameOfCell).ToList();
+       return this.SetCellContentsHelper(name, number);
     }
 
     /// <summary>
@@ -230,30 +215,7 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, string text)
     {
-        string nameOfCell = NormalizeToken(name);
-        if (!IsVar(name))
-        {
-            throw new InvalidNameException();
-        }
-
-        // If the given string is empty that means the cell is empty and we need to remove it from our dependency graph and nonEmptyCells dictionary.
-        if (text.Equals(string.Empty))
-        {
-            this.nonEmptyCells.Remove(nameOfCell);
-            this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
-            return this.GetCellsToRecalculate(nameOfCell).ToList();
-        }
-
-        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
-        {
-            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, text));
-        }
-        else
-        {
-            this.nonEmptyCells[nameOfCell].SetContent(text);
-        }
-
-        return this.GetCellsToRecalculate(nameOfCell).ToList();
+        return this.SetCellContentsHelper(name, text);
     }
 
     /// <summary>
@@ -370,6 +332,55 @@ public class Spreadsheet
     {
         string normalizedNameOfCell = nameOfCell.ToUpper();
         return normalizedNameOfCell;
+    }
+
+    /// <summary>
+    ///   Set the contents of the named cell to the given formula.
+    /// </summary>
+    /// <exception cref="InvalidNameException">
+    ///   If the name is invalid, throw an InvalidNameException.
+    /// </exception>
+    /// <exception cref="CircularException">
+    ///   <para>
+    ///     If changing the contents of the named cell to be the formula would
+    ///     cause a circular dependency, throw a CircularException.
+    ///   </para>
+    ///   <para>
+    ///     No change is made to the spreadsheet.
+    ///   </para>
+    /// </exception>
+    /// <param name="name"> The name of the cell. </param>
+    /// <param name="contents"> The new content of the cell. </param>
+    /// <returns>
+    ///   The same list as defined in <see cref="SetCellContents(string, double)"/>.
+    /// </returns>
+    private IList<string> SetCellContentsHelper(string name, object contents)
+    {
+        if (!IsVar(name))
+        {
+            throw new InvalidNameException();
+        }
+
+        string nameOfCell = NormalizeToken(name);
+
+        // If the given object is an empty string that means the cell is empty and we need to remove it from our dependency graph and nonEmptyCells dictionary.
+        if (contents.Equals(string.Empty))
+        {
+            this.nonEmptyCells.Remove(nameOfCell);
+            this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
+            return this.GetCellsToRecalculate(nameOfCell).ToList();
+        }
+
+        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
+        {
+            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, contents));
+        }
+        else
+        {
+            this.nonEmptyCells[nameOfCell].SetContent(contents);
+        }
+
+        return this.GetCellsToRecalculate(nameOfCell).ToList();
     }
 
     /// <summary>
