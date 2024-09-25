@@ -240,73 +240,7 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, Formula formula)
     {
-        if (!IsVar(name))
-        {
-            throw new InvalidNameException();
-        }
-
-        string nameOfCell = NormalizeToken(name);
-        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
-        {
-            // Checks to see if any of the variables in the given formula cause a direct circular exception.
-            HashSet<string> formulaVariables = formula.GetVariables().ToHashSet();
-            if (formulaVariables.Contains(nameOfCell))
-            {
-                throw new CircularException();
-            }
-
-            foreach (string dependee in formulaVariables)
-            {
-                this.dependencyGraph.AddDependency(dependee, nameOfCell);
-            }
-
-            // This checks to see if the addition caused a circular dependency and reverts the set content cells if it did.
-            try
-            {
-                this.GetCellsToRecalculate(nameOfCell);
-            }
-            catch (CircularException)
-            {
-                this.SetCellContents(nameOfCell, string.Empty);
-                throw new CircularException();
-            }
-
-            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, formula));
-        }
-        else
-        {
-            Formula ogFormula = (Formula)this.nonEmptyCells[nameOfCell].GetContent();
-
-            // Checks if any direct relationships cause a circular exception.
-            HashSet<string> formulaVariables = formula.GetVariables().ToHashSet();
-            if (formulaVariables.Contains(nameOfCell))
-            {
-                throw new CircularException();
-            }
-
-            this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
-
-            foreach (string dependee in formulaVariables)
-            {
-                this.dependencyGraph.AddDependency(dependee, nameOfCell);
-            }
-
-            // This checks to see if the addition caused a circular dependency and reverts the set content cells if it did.
-            try
-            {
-                this.GetCellsToRecalculate(nameOfCell);
-            }
-            catch (CircularException)
-            {
-                this.SetCellContents(nameOfCell, ogFormula);
-                throw new CircularException();
-            }
-
-            this.nonEmptyCells[nameOfCell].SetContent(formula);
-        }
-
-        // Returns the cells in the order they need to be evaluated in.
-        return this.GetCellsToRecalculate(nameOfCell).ToList();
+         return SetCellContentsHelper(name, formula);
     }
 
     /// <summary>
@@ -335,7 +269,8 @@ public class Spreadsheet
     }
 
     /// <summary>
-    ///   Set the contents of the named cell to the given formula.
+    ///   Set the contents of the named cell to the given object. This is a helper method which is able to do any
+    ///   SetCellContents.
     /// </summary>
     /// <exception cref="InvalidNameException">
     ///   If the name is invalid, throw an InvalidNameException.
@@ -373,11 +308,78 @@ public class Spreadsheet
 
         if (!this.nonEmptyCells.ContainsKey(nameOfCell))
         {
-            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, contents));
+            if (contents is Formula)
+            {
+                Formula formula = (Formula)contents;
+
+                // Checks to see if any of the variables in the given formula cause a direct circular exception.
+                HashSet<string> formulaVariables = formula.GetVariables().ToHashSet();
+                if (formulaVariables.Contains(nameOfCell))
+                {
+                    throw new CircularException();
+                }
+
+                foreach (string dependee in formulaVariables)
+                {
+                    this.dependencyGraph.AddDependency(dependee, nameOfCell);
+                }
+
+                // This checks to see if the addition caused a circular dependency and reverts the set content cells if it did.
+                try
+                {
+                    this.GetCellsToRecalculate(nameOfCell);
+                }
+                catch (CircularException)
+                {
+                    this.SetCellContents(nameOfCell, string.Empty);
+                    throw new CircularException();
+                }
+
+                this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, formula));
+            }
+            else
+            {
+                this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, contents));
+            }
         }
         else
         {
-            this.nonEmptyCells[nameOfCell].SetContent(contents);
+            if (contents is Formula)
+            {
+                Formula formula = (Formula)contents;
+                Formula ogFormula = (Formula)this.nonEmptyCells[nameOfCell].GetContent();
+
+                // Checks if any direct relationships cause a circular exception.
+                HashSet<string> formulaVariables = formula.GetVariables().ToHashSet();
+                if (formulaVariables.Contains(nameOfCell))
+                {
+                    throw new CircularException();
+                }
+
+                this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
+
+                foreach (string dependee in formulaVariables)
+                {
+                    this.dependencyGraph.AddDependency(dependee, nameOfCell);
+                }
+
+                // This checks to see if the addition caused a circular dependency and reverts the set content cells if it did.
+                try
+                {
+                    this.GetCellsToRecalculate(nameOfCell);
+                }
+                catch (CircularException)
+                {
+                    this.SetCellContents(nameOfCell, ogFormula);
+                    throw new CircularException();
+                }
+
+                this.nonEmptyCells[nameOfCell].SetContent(formula);
+            }
+            else
+            {
+                this.nonEmptyCells[nameOfCell].SetContent(contents);
+            }
         }
 
         return this.GetCellsToRecalculate(nameOfCell).ToList();
