@@ -168,6 +168,16 @@ public class SpreadsheetTests
     }
 
     /// <summary>
+    /// Test that ensures the GetCellContents can correctly get the contents of a cell which has text.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetGetCellContents_CellWithTferext_ReturnsString()
+    {
+        Spreadsheet sheet = new Spreadsheet();
+        Assert.AreEqual(sheet.GetCellContents("A1"), string.Empty);
+    }
+
+    /// <summary>
     /// Test that ensures the GetCellContents can correctly get the contents of a cell which has a double.
     /// </summary>
     [TestMethod]
