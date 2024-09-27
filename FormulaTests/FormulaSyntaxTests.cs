@@ -1,27 +1,28 @@
 // <copyright file="FormulaSyntaxTests.cs" company="UofU-CS3500">
 //   Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
-// <summary>
-// Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
-// Partner:   None
-// Date:      September 6, 2024
-// Course:    CS 3500, University of Utah, School of Computing
-// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
-//            be copied for use in Academic Coursework.
-//
-// I, Joel Rodriguez, certify that I wrote this code from scratch and
-// did not copy it in part or whole from another source.  All
-// references used in the completion of the assignments are cited
-// in my README file.
-//
-// File Contents
-//
-// This class tests the formula class for consistency and checks the constructor, ToString, and GetVariables.
-// </summary>
 
 namespace CS3500.FormulaTests;
 
 using CS3500.Formula;
+
+/// <summary>
+/// Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
+/// Partner:   None
+/// Date:      September 6, 2024
+/// Course:    CS 3500, University of Utah, School of Computing
+/// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
+///            be copied for use in Academic Coursework.
+///
+/// I, Joel Rodriguez, certify that I wrote this code from scratch and
+/// did not copy it in part or whole from another source.  All
+/// references used in the completion of the assignments are cited
+/// in my README file.
+///
+/// File Contents
+///
+/// This class tests the formula class for consistency and checks the constructor, ToString, and GetVariables.
+/// </summary>
 
 /// <summary>
 ///   <para>

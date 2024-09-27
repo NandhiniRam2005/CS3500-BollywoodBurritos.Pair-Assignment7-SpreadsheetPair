@@ -1,29 +1,30 @@
 ﻿// <copyright file="EvaluationTests.cs" company="UofU-CS3500">
 //   Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
-// <summary>
-// Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
-// Partner:   None
-// Date:      September 20, 2024
-// Course:    CS 3500, University of Utah, School of Computing
-// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
-//            be copied for use in Academic Coursework.
-//
-// I, Joel Rodriguez, certify that I wrote this code from scratch and
-// did not copy it in part or whole from another source.  All
-// references used in the completion of the assignments are cited
-// in my README file.
-//
-// File Contents
-//
-// This class tests the formula class's ability to evaluate a formula. This class does NOT check for syntax.
-//
-// </summary>
 
 namespace CS3500.FormulaTests;
 
 using System;
 using CS3500.Formula;
+
+/// <summary>
+/// Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
+/// Partner:   None
+/// Date:      September 20, 2024
+/// Course:    CS 3500, University of Utah, School of Computing
+/// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
+///            be copied for use in Academic Coursework.
+///
+/// I, Joel Rodriguez, certify that I wrote this code from scratch and
+/// did not copy it in part or whole from another source.  All
+/// references used in the completion of the assignments are cited
+/// in my README file.
+///
+/// File Contents
+///
+/// This class tests the formula class's ability to evaluate a formula. This class does NOT check for syntax.
+///
+/// </summary>
 
 /// <summary>
 ///  This is a test class for the Formula class we will be testing the classes ability to evaluate

@@ -7,28 +7,29 @@
 // Version 1.3 - H. James de St. Germain Fall 2024
 // (Clarified meaning of dependent and dependee.)
 // (Clarified names in solution/project structure.)
-// <summary>
-// Author:    Joel Rodriguez
-// Partner:   None
-// Date:      September 20, 2024
-// Course:    CS 3500, University of Utah, School of Computing
-// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
-//            be copied for use in Academic Coursework.
-//
-// I, Joel Rodriguez, certify that I wrote this code from scratch and
-// did not copy it in part or whole from another source.  All
-// references used in the completion of the assignments are cited
-// in my README file.
-//
-// File Contents
-//
-//  This project is made for the purpose of finding which cells are dependent on other cells in a spreadsheet.
-//  We achieve this through creating a dependency graph which maps out what cells are dependees to their dependents.
-//
-// </summary>
 
 // Ignore Spelling: Dependees dependee
 namespace CS3500.DependencyGraph;
+
+/// <summary>
+/// Author:    Joel Rodriguez
+/// Partner:   None
+/// Date:      September 20, 2024
+/// Course:    CS 3500, University of Utah, School of Computing
+/// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
+///            be copied for use in Academic Coursework.
+///
+/// I, Joel Rodriguez, certify that I wrote this code from scratch and
+/// did not copy it in part or whole from another source.  All
+/// references used in the completion of the assignments are cited
+/// in my README file.
+///
+/// File Contents
+///
+///  This project is made for the purpose of finding which cells are dependent on other cells in a spreadsheet.
+///  We achieve this through creating a dependency graph which maps out what cells are dependees to their dependents.
+///
+/// </summary>
 
 /// <summary>
 ///   <para>

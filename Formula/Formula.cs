@@ -1,31 +1,32 @@
 ﻿// <copyright file="Formula.cs" company="UofU-CS3500">
 // Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
-// <summary>
-// Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
-// Partner:   None
-// Date:      September 20, 2024
-// Course:    CS 3500, University of Utah, School of Computing
-// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
-//            be copied for use in Academic Coursework.
-//
-// I, Joel Rodriguez, certify that I wrote this code from scratch and
-// did not copy it in part or whole from another source.  All
-// references used in the completion of the assignments are cited
-// in my README file.
-//
-// File Contents
-//
-//    This file contains the structure for a what a formula should be within the context of a spreadsheet.
-//    Withing this file we have code  that ensures that formulas are in valid syntax and have 2 other methods
-//    which can be used to turn a formula to a string and get all the variables in a string.
-//
-// </summary>
 
 namespace CS3500.Formula;
 
 using System.Text;
 using System.Text.RegularExpressions;
+
+/// <summary>
+/// Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
+/// Partner:   None
+/// Date:      September 20, 2024
+/// Course:    CS 3500, University of Utah, School of Computing
+/// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
+///            be copied for use in Academic Coursework.
+///
+/// I, Joel Rodriguez, certify that I wrote this code from scratch and
+/// did not copy it in part or whole from another source.  All
+/// references used in the completion of the assignments are cited
+/// in my README file.
+///
+/// File Contents
+///
+///    This file contains the structure for a what a formula should be within the context of a spreadsheet.
+///    Withing this file we have code  that ensures that formulas are in valid syntax and have 2 other methods
+///    which can be used to turn a formula to a string and get all the variables in a string.
+///
+/// </summary>
 
 /// <summary>
 ///   <para>

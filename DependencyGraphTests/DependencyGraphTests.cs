@@ -1,29 +1,30 @@
 // <copyright file="DependencyGraphTests.cs" company="UofU-CS3500">
 // Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
-// <summary>
-// Author:    Joel Rodriguez
-// Partner:   None
-// Date:      September 13, 2024
-// Course:    CS 3500, University of Utah, School of Computing
-// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
-//            be copied for use in Academic Coursework.
-//
-// I, Joel Rodriguez, certify that I wrote this code from scratch and
-// did not copy it in part or whole from another source.  All
-// references used in the completion of the assignments are cited
-// in my README file.
-//
-// File Contents
-//
-//    This project is made to determine the correctness of the DependencyGraph project using various tests.
-//
-// </summary>
 
 // Ignore Spelling: Dependees Dependee
 namespace DependencyGraphTests;
 
 using CS3500.DependencyGraph;
+
+/// <summary>
+/// Author:    Joel Rodriguez
+/// Partner:   None
+/// Date:      September 13, 2024
+/// Course:    CS 3500, University of Utah, School of Computing
+/// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
+///            be copied for use in Academic Coursework.
+///
+/// I, Joel Rodriguez, certify that I wrote this code from scratch and
+/// did not copy it in part or whole from another source.  All
+/// references used in the completion of the assignments are cited
+/// in my README file.
+///
+/// File Contents
+///
+///    This project is made to determine the correctness of the DependencyGraph project using various tests.
+///
+/// </summary>
 
 /// <summary>
 ///   This is a test class for DependencyGraphTest and is intended
