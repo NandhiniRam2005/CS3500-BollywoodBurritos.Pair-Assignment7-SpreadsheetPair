@@ -168,10 +168,11 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures the GetCellContents can correctly get the contents of a cell which has text.
+    /// Test that ensures the GetCellContents can correctly get the contents, which is nothing, if nothing has been added to 
+    /// the spreadsheet.
     /// </summary>
     [TestMethod]
-    public void SpreadsheetGetCellContents_CellWithTferext_ReturnsString()
+    public void SpreadsheetGetCellContents_SheetThatHasNothing_ReturnsStringEmpty()
     {
         Spreadsheet sheet = new Spreadsheet();
         Assert.AreEqual(sheet.GetCellContents("A1"), string.Empty);
