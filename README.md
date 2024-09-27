@@ -43,6 +43,10 @@ value of the cell).
    I add anything in my code to ensure I have not harmed my solution. I also practice TDD which helps me get the solution right the first time.
 3. Self Documenting Code - My code uses good variable names and easy to read syntax. For example I vouch for using for each statements with good variable names 
    to ensure my code is easy to read even without comments.
+In additon to these GSP's I also have
+4. DRY
+5. Style
+6. XML Documentation
 
 # Time Expenditures:
 
