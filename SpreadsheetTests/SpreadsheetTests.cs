@@ -37,6 +37,17 @@ using CS3500.Formula;
 [TestClass]
 public class SpreadsheetTests
 {
+    // --------------- Spreadsheet Constructor test ----------------------
+
+    /// <summary>
+    /// Test that ensures the spreadsheet constructor can be used and does not thrown an exception of any kind.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetConstructor_NewConstructor_DoesNotThrowException()
+    {
+        Spreadsheet sheet = new Spreadsheet();
+    }
+
     // --------------- GetNamesOfAllNonEmptyCells tests -------------------
 
     /// <summary>
