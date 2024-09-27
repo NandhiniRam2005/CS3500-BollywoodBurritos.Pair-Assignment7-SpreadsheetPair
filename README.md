@@ -29,6 +29,9 @@ We have now extended the Spreadsheet program to be able to evaluate formulas tha
 The == and != operators have also been overwritten so that they make more sense in the context of comparing formula objects.
 We have also modified the hash code and Equals methods.
 
+The spreadsheet solution has been extended to include an abstract idea of what spreadsheet is. We have ways to manage dependencies and find
+circular dependencies or invalid names. Eventually we will be able to actually evaluate what is inside of our cells.
+
 Future extensions of the Spreadsheet program include creating a GUI for the spreadsheet and strategically using the Lookup 
 delegate in the Formula class to accurately evaluate Formulas with variables (actually go into the spreadsheet and get the 
 value of the cell).
@@ -64,9 +67,9 @@ value of the cell).
                                                                                    Debugging:       3
                                                                                    Learning Tools:  0.5
 
-    5. Assignment 5: Onward to a Spreadsheet        Predicted Hours:  16       Actual Hours:   6
+    5. Assignment 5: Onward to a Spreadsheet        Predicted Hours:  16       Actual Hours:   9
                                                                                 Hours Spent - 
                                                                                    Effectively:     3
-                                                                                   Debugging:       2.8
+                                                                                   Debugging:       5.8
                                                                                    Learning Tools:  0.2
 

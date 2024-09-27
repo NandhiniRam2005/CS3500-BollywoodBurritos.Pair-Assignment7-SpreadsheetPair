@@ -1,32 +1,33 @@
 // <copyright file="SpreadsheetTests.cs" company="UofU-CS3500">
 //   Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
-// <summary>
-// Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
-// Partner:   None
-// Date:      September 20, 2024
-// Course:    CS 3500, University of Utah, School of Computing
-// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
-//            be copied for use in Academic Coursework.
-//
-// I, Joel Rodriguez, certify that I wrote this code from scratch and
-// did not copy it in part or whole from another source.  All
-// references used in the completion of the assignments are cited
-// in my README file.
-//
-// File Contents
-//
-//  This is a test class for the Spreadsheet class we will be testing the classes ability to find
-//  circular dependencies. Find invalid names. And correctly assess which cells are direct dependents or
-//  cells that need to be changed.
-//
-// </summary>
 
 namespace CS3500.SpreadsheetTests;
 
 using System;
 using CS3500.Spreadsheet;
 using CS3500.Formula;
+
+/// <summary>
+/// Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
+/// Partner:   None
+/// Date:      September 20, 2024
+/// Course:    CS 3500, University of Utah, School of Computing
+/// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
+///            be copied for use in Academic Coursework.
+///
+/// I, Joel Rodriguez, certify that I wrote this code from scratch and
+/// did not copy it in part or whole from another source.  All
+/// references used in the completion of the assignments are cited
+/// in my README file.
+///
+/// File Contents
+///
+///  This is a test class for the Spreadsheet class we will be testing the classes ability to find
+///  circular dependencies. Find invalid names. And correctly assess which cells are direct dependents or
+///  cells that need to be changed.
+///
+/// </summary>
 
 /// <summary>
 ///  This is a test class for the Spreadsheet class we will be testing the classes ability to find
@@ -549,7 +550,7 @@ public class SpreadsheetTests
     {
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2",  new Formula("2+2"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("A2");
@@ -566,7 +567,7 @@ public class SpreadsheetTests
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
         spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2",  new Formula("2+2"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("A2");
@@ -584,7 +585,7 @@ public class SpreadsheetTests
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
         spreadsheet.SetCellContents("b2", new Formula("x2 + 5"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2",  new Formula("2+2"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("B2");
@@ -729,7 +730,7 @@ public class SpreadsheetTests
     {
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("2fdasd",  new Formula("2+2"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("2fdasd", new Formula("2+2"));
     }
 
     /// <summary>

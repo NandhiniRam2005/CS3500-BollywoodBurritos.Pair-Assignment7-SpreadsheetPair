@@ -12,7 +12,8 @@ Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use i
 
 # Comments to Evaluators:
 I added a constructor to the spreadsheet and a cell class. I did this because in the assignment details it advised to create a cell class. The constructor 
-was advised to be created in piazza question @402.
+was advised to be created in piazza question @402. I created a helper method for all three SetCellContents that way it is easier to understand what is 
+happening at each stage. 
 
 # Assignment Specific Topics
 Assignment 5: Learn to utilize/combine the appropriate existing functionality to generate a more powerful combination.

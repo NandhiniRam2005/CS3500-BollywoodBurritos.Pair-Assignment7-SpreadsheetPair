@@ -1,24 +1,6 @@
 ﻿// <copyright file="Spreadsheet.cs" company="UofU-CS3500">
 // Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
-// <summary>
-// Author:    Joel Rodriguez,  Profs Joe, Professor Kopta, and Professor Jim.
-// Partner:   None
-// Date:      September 27, 2024
-// Course:    CS 3500, University of Utah, School of Computing
-// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
-//            be copied for use in Academic Coursework.
-//
-// I, Joel Rodriguez, certify that I wrote this code from scratch and
-// did not copy it in part or whole from another source.  All
-// references used in the completion of the assignments are cited
-// in my README file.
-//
-// File Contents
-//
-//    This file contains ...
-//
-// </summary>
 
 namespace CS3500.Spreadsheet;
 
@@ -27,6 +9,27 @@ using CS3500.DependencyGraph;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Net.Mime.MediaTypeNames;
+
+/// <summary>
+/// Author:    Joel Rodriguez,  Profs Joe, Professor Kopta, and Professor Jim.
+/// Partner:   None
+/// Date:      September 27, 2024
+/// Course:    CS 3500, University of Utah, School of Computing
+/// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
+///            be copied for use in Academic Coursework.
+///
+/// I, Joel Rodriguez, certify that I wrote this code from scratch and
+/// did not copy it in part or whole from another source.  All
+/// references used in the completion of the assignments are cited
+/// in my README file.
+///
+/// File Contents
+///
+///    This file contains the basic structure and idea of a spreadsheet it contains the idea of cells and ways to fill those cells in an
+///    actual spreadsheet. This file is the Model in MVC for our spreadsheet project. We also have ways of handling circular dependencies
+///    and invalid names.
+///
+/// </summary>
 
 /// <summary>
 ///   <para>
