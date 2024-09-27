@@ -168,7 +168,7 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures the GetCellContents can correctly get the contents, which is nothing, if nothing has been added to 
+    /// Test that ensures the GetCellContents can correctly get the contents, which is nothing, if nothing has been added to
     /// the spreadsheet.
     /// </summary>
     [TestMethod]

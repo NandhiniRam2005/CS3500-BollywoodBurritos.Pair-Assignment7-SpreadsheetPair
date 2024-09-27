@@ -346,7 +346,7 @@ public class Spreadsheet
 
     /// <summary>
     /// This private helper method checks to see if the addition of a new Formula object to our spreadsheet would cause
-    /// a circular dependency to occur. If one does occur we will revert the value in that cell to what it was before the 
+    /// a circular dependency to occur. If one does occur we will revert the value in that cell to what it was before the
     /// addition of the new formula object.
     /// </summary>
     /// <param name="nameOfCell">The name of the cell which we will be checking for circular dependencies.</param>
