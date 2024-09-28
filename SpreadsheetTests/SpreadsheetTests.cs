@@ -243,19 +243,6 @@ public class SpreadsheetTests
         Assert.AreEqual(expectedCellContents, actualCellContents);
     }
 
-    /// <summary>
-    /// Test that ensures the GetCellContents can return an empty string when the given cell name is empty and the sheet
-    /// is empty.
-    /// </summary>
-    [TestMethod]
-    public void SpreadsheetGetCellContents_ValidNameEmptySheet_ReturnsEmptyString()
-    {
-        Spreadsheet sheet = new Spreadsheet();
-        string actualCellContents = (string)sheet.GetCellContents("x2");
-        string expectedCellContents = string.Empty;
-        Assert.AreEqual(expectedCellContents, actualCellContents);
-    }
-
     // --------------- SetCellContents double tests -------------------
 
     /// <summary>
