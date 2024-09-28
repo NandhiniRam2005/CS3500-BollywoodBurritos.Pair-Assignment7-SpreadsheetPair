@@ -487,6 +487,24 @@ public class SpreadsheetTests
 
     /// <summary>
     /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// list of cells affected. When something has changed which results to indirect having to change to.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetCellContentsFormula_ChangingReturnsProperListNestedStuff_ReturnsListOfOneElement()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetCellContents("b2", new Formula("x2+3"));
+        spreadsheet.SetCellContents("a3", new Formula("b2+x2"));
+        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        List<string> expectedList = new List<string>();
+        expectedList.Add("X2");
+        expectedList.Add("B2");
+        expectedList.Add("A3");
+        Assert.IsTrue(actualList.SequenceEqual(expectedList));
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
     /// list of cells affected. Even when a cell has been replaced with SetCellContents.
     /// </summary>
     [TestMethod]
