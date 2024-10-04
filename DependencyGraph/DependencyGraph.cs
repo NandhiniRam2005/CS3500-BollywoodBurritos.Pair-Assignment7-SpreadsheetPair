@@ -276,38 +276,15 @@ public class DependencyGraph
     {
         if (this.dependents.ContainsKey(nodeName))
         {
-            // Removes all references to of nodeName from the dependees to make sure we are updating
-            // both data structures.
-            HashSet<string> nodesOriginalDependents = (HashSet<string>)this.GetDependents(nodeName);
-            foreach (string dependent in nodesOriginalDependents)
+            foreach (string oldDependent in this.dependents[nodeName])
             {
-                this.dependees[dependent].Remove(nodeName);
-                if (this.dependees[dependent].Count == 0)
-                {
-                    this.dependees.Remove(dependent);
-                }
-            }
-
-            int sizeOfNodeSet = this.dependents[nodeName].Count;
-            this.sizeOfGraph -= sizeOfNodeSet;
-            this.dependents[nodeName].Clear();
-            foreach (string newDependent in newDependents)
-            {
-                this.AddDependency(nodeName, newDependent);
-            }
-        }
-        else
-        {
-            this.dependents.Add(nodeName, new HashSet<string>());
-            foreach (string newDependent in newDependents)
-            {
-                this.AddDependency(nodeName, newDependent);
+                RemoveDependency(nodeName, oldDependent);
             }
         }
 
-        if (this.dependents[nodeName].Count == 0)
+        foreach(string newDependent in newDependents)
         {
-            this.dependents.Remove(nodeName);
+            AddDependency(nodeName, newDependent);
         }
     }
 
@@ -323,38 +300,15 @@ public class DependencyGraph
     {
         if (this.dependees.ContainsKey(nodeName))
         {
-            // Removes all references to of nodeName from the dependents to make sure we are updating
-            // both data structures.
-            HashSet<string> nodesOriginalDependees = (HashSet<string>)this.GetDependees(nodeName);
-            foreach (string dependee in nodesOriginalDependees)
+            foreach (string oldDependee in this.dependees[nodeName])
             {
-                this.dependents[dependee].Remove(nodeName);
-                if (this.dependents[dependee].Count == 0)
-                {
-                    this.dependents.Remove(dependee);
-                }
-            }
-
-            int sizeOfNodeSet = this.dependees[nodeName].Count;
-            this.sizeOfGraph -= sizeOfNodeSet;
-            this.dependees[nodeName].Clear();
-            foreach (string newDependee in newDependees)
-            {
-                this.AddDependency(newDependee, nodeName);
-            }
-        }
-        else
-        {
-            this.dependees.Add(nodeName, new HashSet<string>());
-            foreach (string newDependee in newDependees)
-            {
-                this.AddDependency(newDependee, nodeName);
+                RemoveDependency(oldDependee, nodeName);
             }
         }
 
-        if (this.dependees[nodeName].Count == 0)
+        foreach (string newDependee in newDependees)
         {
-            this.dependees.Remove(nodeName);
+            AddDependency(newDependee, nodeName);
         }
     }
 }

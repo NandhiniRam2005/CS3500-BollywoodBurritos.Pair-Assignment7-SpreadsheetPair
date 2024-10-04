@@ -136,7 +136,11 @@ public class Spreadsheet
         HashSet<string> namesOfNonEmpty = new HashSet<string>();
         foreach (string nameOfCell in this.nonEmptyCells.Keys)
         {
-            namesOfNonEmpty.Add(nameOfCell);
+            if (!nameOfCell.Equals(string.Empty))
+            {
+                namesOfNonEmpty.Add(nameOfCell);
+            }
+
         }
 
         return namesOfNonEmpty;
@@ -201,7 +205,20 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, double number)
     {
-       return this.SetCellContentsHelper(name, number);
+        string nameOfCell = NormalizeToken(name);
+        if (!IsVar(nameOfCell))
+        {
+            throw new InvalidNameException();
+        }
+
+        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
+        {
+            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, number));
+        }
+
+        this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
+        this.nonEmptyCells[nameOfCell].SetContent(number);
+        return this.GetCellsToRecalculate(nameOfCell).ToList();
     }
 
     /// <summary>
@@ -218,7 +235,28 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, string text)
     {
-        return this.SetCellContentsHelper(name, text);
+        string nameOfCell = NormalizeToken(name);
+        if (!IsVar(nameOfCell))
+        {
+            throw new InvalidNameException();
+        }
+        this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
+        if (text.Equals(string.Empty))
+        {
+            this.nonEmptyCells.Remove(nameOfCell);
+            return this.GetCellsToRecalculate(nameOfCell).ToList();
+        }
+
+        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
+        {
+            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, text));
+        }
+        else
+        {
+            this.nonEmptyCells[nameOfCell].SetContent(text);
+        }
+
+        return this.GetCellsToRecalculate(nameOfCell).ToList();
     }
 
     /// <summary>
@@ -267,8 +305,7 @@ public class Spreadsheet
     /// <returns>A normalized token. Refer to method summary on what normalizing is.</returns>
     private static string NormalizeToken(string nameOfCell)
     {
-        string normalizedNameOfCell = nameOfCell.ToUpper();
-        return normalizedNameOfCell;
+        return nameOfCell.ToUpper();
     }
 
     /// <summary>
@@ -294,6 +331,7 @@ public class Spreadsheet
     /// </returns>
     private IList<string> SetCellContentsHelper(string name, object contents)
     {
+        // Checking to see if it is a valid name.
         if (!IsVar(name))
         {
             throw new InvalidNameException();
@@ -326,12 +364,17 @@ public class Spreadsheet
         }
         else
         {
+            object ogContents = this.nonEmptyCells[nameOfCell].GetContent();
+            if (ogContents is Formula)
+            {
+                this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
+            }
+
             if (contents is Formula)
             {
                 Formula formula = (Formula)contents;
-                Formula ogFormula = (Formula)this.nonEmptyCells[nameOfCell].GetContent();
 
-                CheckForCircularException(nameOfCell, formula, ogFormula);
+                CheckForCircularException(nameOfCell, formula, ogContents);
 
                 this.nonEmptyCells[nameOfCell].SetContent(formula);
             }
