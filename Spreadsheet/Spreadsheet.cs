@@ -140,7 +140,6 @@ public class Spreadsheet
             {
                 namesOfNonEmpty.Add(nameOfCell);
             }
-
         }
 
         return namesOfNonEmpty;
@@ -240,6 +239,7 @@ public class Spreadsheet
         {
             throw new InvalidNameException();
         }
+
         this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
         if (text.Equals(string.Empty))
         {
@@ -281,7 +281,7 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, Formula formula)
     {
-         return SetCellContentsHelper(name, formula);
+        return SetCellContentsHelper(name, formula);
     }
 
     /// <summary>
@@ -509,8 +509,8 @@ public class Spreadsheet
     /// </returns>
     private IEnumerable<string> GetCellsToRecalculate(string name)
     {
-        LinkedList<string> changed = new ();
-        HashSet<string> visited = new ();
+        LinkedList<string> changed = new();
+        HashSet<string> visited = new();
         this.Visit(name, name, visited, changed);
         return changed;
     }

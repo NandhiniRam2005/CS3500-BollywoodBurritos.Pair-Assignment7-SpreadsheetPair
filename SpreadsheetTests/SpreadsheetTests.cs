@@ -802,6 +802,7 @@ public class SpreadsheetTests
         spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
         List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("b2+2"));
     }
+
     /// <summary>
     ///   Test that the cell naming convention is honored.
     /// </summary>
