@@ -281,7 +281,32 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, Formula formula)
     {
-        return SetCellContentsHelper(name, formula);
+        if (!IsVar(name))
+        {
+            throw new InvalidNameException();
+        }
+
+        string nameOfCell = NormalizeToken(name);
+
+        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
+        {
+            CheckForCircularException(nameOfCell, formula, string.Empty);
+            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, formula));
+        }
+        else
+        {
+            object ogContents = this.nonEmptyCells[nameOfCell].GetContent();
+            if (ogContents is Formula)
+            {
+                this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
+            }
+
+            CheckForCircularException(nameOfCell, formula, ogContents);
+
+            this.nonEmptyCells[nameOfCell].SetContent(formula);
+        }
+
+        return this.GetCellsToRecalculate(nameOfCell).ToList();
     }
 
     /// <summary>
@@ -306,85 +331,6 @@ public class Spreadsheet
     private static string NormalizeToken(string nameOfCell)
     {
         return nameOfCell.ToUpper();
-    }
-
-    /// <summary>
-    ///   Set the contents of the named cell to the given object. This is a helper method which is able to do any
-    ///   SetCellContents.
-    /// </summary>
-    /// <exception cref="InvalidNameException">
-    ///   If the name is invalid, throw an InvalidNameException.
-    /// </exception>
-    /// <exception cref="CircularException">
-    ///   <para>
-    ///     If changing the contents of the named cell to be the formula would
-    ///     cause a circular dependency, throw a CircularException.
-    ///   </para>
-    ///   <para>
-    ///     No change is made to the spreadsheet.
-    ///   </para>
-    /// </exception>
-    /// <param name="name"> The name of the cell. </param>
-    /// <param name="contents"> The new content of the cell. </param>
-    /// <returns>
-    ///   The same list as defined in <see cref="SetCellContents(string, double)"/>.
-    /// </returns>
-    private IList<string> SetCellContentsHelper(string name, object contents)
-    {
-        // Checking to see if it is a valid name.
-        if (!IsVar(name))
-        {
-            throw new InvalidNameException();
-        }
-
-        string nameOfCell = NormalizeToken(name);
-
-        // If the given object is an empty string that means the cell is empty and we need to remove it from our dependency graph and nonEmptyCells dictionary.
-        if (contents.Equals(string.Empty))
-        {
-            this.nonEmptyCells.Remove(nameOfCell);
-            this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
-            return this.GetCellsToRecalculate(nameOfCell).ToList();
-        }
-
-        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
-        {
-            if (contents is Formula)
-            {
-                Formula formula = (Formula)contents;
-
-                CheckForCircularException(nameOfCell, formula, string.Empty);
-
-                this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, formula));
-            }
-            else
-            {
-                this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, contents));
-            }
-        }
-        else
-        {
-            object ogContents = this.nonEmptyCells[nameOfCell].GetContent();
-            if (ogContents is Formula)
-            {
-                this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
-            }
-
-            if (contents is Formula)
-            {
-                Formula formula = (Formula)contents;
-
-                CheckForCircularException(nameOfCell, formula, ogContents);
-
-                this.nonEmptyCells[nameOfCell].SetContent(formula);
-            }
-            else
-            {
-                this.nonEmptyCells[nameOfCell].SetContent(contents);
-            }
-        }
-
-        return this.GetCellsToRecalculate(nameOfCell).ToList();
     }
 
     /// <summary>
@@ -427,10 +373,22 @@ public class Spreadsheet
         }
         catch (CircularException)
         {
-            this.SetCellContentsHelper(nameOfCell, ogContents);
+            if (ogContents is Formula ogFormula)
+            {
+                this.SetCellContents(nameOfCell, ogFormula);
+            }
+            else if (ogContents is string ogString)
+            {
+                this.SetCellContents(nameOfCell, ogString);
+            }
+            else if (ogContents is double ogDouble)
+            {
+                this.SetCellContents(nameOfCell, ogDouble);
+            }
+
             throw new CircularException();
         }
-    }
+}
 
     /// <summary>
     ///   Returns an enumeration, without duplicates, of the names of all cells whose
