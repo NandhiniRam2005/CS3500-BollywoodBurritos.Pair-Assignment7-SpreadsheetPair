@@ -8,7 +8,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{591FB2B1-F089-4D7A-9C48-2AD42ED0D13F}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\Downloads\.editorconfig = ..\..\..\Downloads\.editorconfig
+		Whiteboard\architecture_whiteboard.PNG = Whiteboard\architecture_whiteboard.PNG
+		Whiteboard\dependencygraph_whiteboard.PNG = Whiteboard\dependencygraph_whiteboard.PNG
+		Whiteboard\formula_whiteboard.PNG = Whiteboard\formula_whiteboard.PNG
 		README.md = README.md
+		Whiteboard\spreadsheet_whiteboard.PNG = Whiteboard\spreadsheet_whiteboard.PNG
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormulaTests", "FormulaTests\FormulaTests.csproj", "{897B3E7B-A5BA-4FCB-BE1B-87E07C54EC92}"
@@ -17,13 +21,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyGraph", "Dependen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyGraphTests", "DependencyGraphTests\DependencyGraphTests.csproj", "{9BCA13BF-B9BA-4989-B4E6-3F5BB45FADE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spreadsheet", "Spreadsheet\Spreadsheet.csproj", "{EB9FD2E7-A3AE-436B-B786-201EF84FE00C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spreadsheet", "Spreadsheet\Spreadsheet.csproj", "{EB9FD2E7-A3AE-436B-B786-201EF84FE00C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{192E365E-2C37-4BA6-9269-AC4491409839} = {192E365E-2C37-4BA6-9269-AC4491409839}
 		{3F0524D0-F3AC-4562-A3CF-698E432F4CFD} = {3F0524D0-F3AC-4562-A3CF-698E432F4CFD}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetTests", "SpreadsheetTests\SpreadsheetTests.csproj", "{92202820-A461-4966-A81E-C9A6E8642A29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpreadsheetTests", "SpreadsheetTests\SpreadsheetTests.csproj", "{92202820-A461-4966-A81E-C9A6E8642A29}"
 	ProjectSection(ProjectDependencies) = postProject
 		{192E365E-2C37-4BA6-9269-AC4491409839} = {192E365E-2C37-4BA6-9269-AC4491409839}
 		{EB9FD2E7-A3AE-436B-B786-201EF84FE00C} = {EB9FD2E7-A3AE-436B-B786-201EF84FE00C}
