@@ -5,7 +5,7 @@ Start Date: 20-Aug-2024
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  joel-rodriguez
 Repo:      https://github.com/uofu-cs3500-20-fall2024/spreadsheet-joel-rodriguez
-Commit Date: 27-September-2024 10:20PM
+Commit Date: 18-October-2024 10:20PM
 Solution:   Spreadsheet
 Copyright:  CS 3500 and [Joel Rodriguez] - This work may not be copied for use in Academic Coursework.
 ```
@@ -32,8 +32,14 @@ We have also modified the hash code and Equals methods.
 The spreadsheet solution has been extended to include an abstract idea of what spreadsheet is. We have ways to manage dependencies and find
 circular dependencies or invalid names. Eventually we will be able to actually evaluate what is inside of our cells.
 
-Future extensions of the Spreadsheet program include creating a GUI for the spreadsheet and strategically using the Lookup 
-delegate in the Formula class to accurately evaluate Formulas with variables (actually go into the spreadsheet and get the 
+The spreadsheet solution has now been extended to have a model of the spreadsheet that serves as the connecting pieces between the dependency
+graph, the formulas, and the spreadsheet. This model has also added functionality for the spreadsheet to be saved and loaded using JSON 
+serialization. In addition to that there have also been some Public API additions which allow users to get the values of the cells instead
+of just the contents.
+
+Future extensions of the Spreadsheet program include creating a GUI for the spreadsheet. This GUI will ideally be friendly adaptation of 
+our spreadsheet model that we created in assignment 6.
+and strategically using the Lookup delegate in the Formula class to accurately evaluate Formulas with variables (actually go into the spreadsheet and get the 
 value of the cell).
 
 # Examples of Good Software Practice (GSP).  
@@ -47,6 +53,13 @@ In additon to these GSP's I also have
 4. DRY
 5. Style
 6. XML Documentation
+
+# Time Management Skills
+Throughout this project I have learned many things about time management skills and estimation skills. One of the main things I have learned is 
+that if anything it is best to overestimate how long you think an assignment will take you that way you can plan ahead and have the proper amount
+of time dedicated to it. I have also learned that it is good to not sit down and do all your coding in one sitting. This leads to you missing
+edge cases or possibly forgetting to do certain things in your work. I think I have been getting slowly better with my time estimation skills and will
+continue to get better as the semester continues.
 
 # Time Expenditures:
 
@@ -76,4 +89,9 @@ In additon to these GSP's I also have
                                                                                    Effectively:     3
                                                                                    Debugging:       5.8
                                                                                    Learning Tools:  0.2
+    6. Assignment 6: A Full Spreadsheet Model        Predicted Hours:  15       Actual Hours:   3
+                                                                                Hours Spent - 
+                                                                                   Effectively:     2.5
+                                                                                   Debugging:       0
+                                                                                   Learning Tools:  0.5
 
