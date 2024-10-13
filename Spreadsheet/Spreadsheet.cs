@@ -13,7 +13,7 @@ using static System.Net.Mime.MediaTypeNames;
 /// <summary>
 /// Author:    Joel Rodriguez,  Profs Joe, Professor Kopta, and Professor Jim.
 /// Partner:   None
-/// Date:      September 27, 2024
+/// Date:      October 18, 2024
 /// Course:    CS 3500, University of Utah, School of Computing
 /// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
 ///            be copied for use in Academic Coursework.
@@ -117,21 +117,26 @@ public class Spreadsheet
 
     /// <summary>
     ///  A representation of all the non empty cells in this spreadsheet it is a hash map where the key is the name of the cell
-    /// and the value is a cell object that stores its contents
+    /// and the value is a cell object that stores its contents.
     /// </summary>
     private Dictionary<string, Cell> nonEmptyCells;
 
     /// <summary>
-    /// The name of the spreadsheet object
+    /// The name of the spreadsheet object.
     /// </summary>
     private string name;
+
+    /// <summary>
+    /// Represents if the spreadsheet has been changed since its last load and/or save as field.
+    /// </summary>
+    private bool _changed;
 
     /// <summary>
     ///  Initializes a new instance of the <see cref="Spreadsheet"/> class.
     /// </summary>
     public Spreadsheet()
     {
-        this.name = "unset";
+        this.name = "default";
         this.dependencyGraph = new DependencyGraph();
         this.nonEmptyCells = new Dictionary<string, Cell>();
     }
@@ -139,11 +144,21 @@ public class Spreadsheet
     /// <summary>
     ///  Initializes a new instance of the <see cref="Spreadsheet"/> class but with a set name.
     /// </summary>
+    /// <param name="name"> The given name of the spreadsheet.</param>
     public Spreadsheet(string name)
     {
         this.name = name;
         this.dependencyGraph = new DependencyGraph();
         this.nonEmptyCells = new Dictionary<string, Cell>();
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the field _changed is get or set.
+    /// </summary>
+    public bool Changed
+    {
+        get { return _changed; }
+        set { _changed = value; }
     }
 
     /// <summary>
@@ -173,7 +188,19 @@ public class Spreadsheet
     /// <exception cref="InvalidNameException">
     ///     If the name parameter is invalid, throw an InvalidNameException.
     /// </exception>
-    public object this[string cellName];
+    public object this[string cellName]
+    {
+        get
+        {
+            string nameOfCell = NormalizeToken(cellName);
+            if (!IsValidName(name))
+            {
+                throw new InvalidNameException();
+            }
+
+            return this.GetCellValue(cellName);
+        }
+    }
 
     /// <summary>
     ///   <para>
@@ -281,7 +308,8 @@ public class Spreadsheet
     /// </exception>
     public object GetCellValue(string cellName)
     {
-        throw new NotImplementedException();
+        string normalizedCellName = NormalizeToken(cellName);
+        return this.nonEmptyCells[normalizedCellName].GetValue();
     }
 
     /// <summary>
@@ -349,7 +377,27 @@ public class Spreadsheet
     /// </exception>
     public IList<string> SetContentsOfCell(string name, string content)
     {
-        throw new NotImplementedException();
+        string nameOfCell = NormalizeToken(name);
+        if (!IsValidName(name))
+        {
+            throw new InvalidNameException();
+        }
+
+        if (content.StartsWith("="))
+        {
+            string formulaContent = content.Substring(1);
+
+            Formula formulaToBeAdded = new Formula(formulaContent);
+            return this.SetCellContents(nameOfCell, formulaToBeAdded);
+        }
+
+        bool successfullyParsed = double.TryParse(content, out double doubleToBeAdded);
+        if(successfullyParsed)
+        {
+            return this.SetCellContents(nameOfCell, doubleToBeAdded);
+        }
+
+        return this.SetCellContents(nameOfCell, content);
     }
 
     /// <summary>
@@ -464,11 +512,13 @@ public class Spreadsheet
 
         if (!this.nonEmptyCells.ContainsKey(nameOfCell))
         {
-            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, number));
+            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, number, number));
         }
 
         this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
         this.nonEmptyCells[nameOfCell].SetContent(number);
+        this.nonEmptyCells[nameOfCell].SetValue(number);
+
         return this.GetCellsToRecalculate(nameOfCell).ToList();
     }
 
@@ -501,11 +551,12 @@ public class Spreadsheet
 
         if (!this.nonEmptyCells.ContainsKey(nameOfCell))
         {
-            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, text));
+            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, text, text));
         }
         else
         {
             this.nonEmptyCells[nameOfCell].SetContent(text);
+            this.nonEmptyCells[nameOfCell].SetValue(text);
         }
 
         return this.GetCellsToRecalculate(nameOfCell).ToList();
@@ -543,7 +594,10 @@ public class Spreadsheet
         if (!this.nonEmptyCells.ContainsKey(nameOfCell))
         {
             CheckForCircularException(nameOfCell, formula, string.Empty);
-            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, formula));
+
+            object formulaValue = formula.Evaluate((var) => (double)this.GetCellValue(var));
+
+            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, formula, formulaValue));
         }
         else
         {
@@ -555,7 +609,10 @@ public class Spreadsheet
 
             CheckForCircularException(nameOfCell, formula, ogContents);
 
+            object formulaValue = formula.Evaluate((var) => (double)this.GetCellValue(var));
+
             this.nonEmptyCells[nameOfCell].SetContent(formula);
+            this.nonEmptyCells[nameOfCell].SetValue(formulaValue);
         }
 
         return this.GetCellsToRecalculate(nameOfCell).ToList();
@@ -746,16 +803,19 @@ internal class Cell
 {
     private string name;
     private object content;
+    private object value;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Cell"/> class.
     /// </summary>
     /// <param name="name"> The name of the cell.</param>
     /// <param name="content">The content in the cell which can be a double, string, or formula.</param>
-    public Cell(string name, object content)
+    /// <param name="value">The actual value in the cell which can either be a double a string or a FormulaError.</param>
+    public Cell(string name, object content, object value)
     {
         this.name = name;
         this.content = content;
+        this.value = value;
     }
 
     /// <summary>
@@ -774,6 +834,24 @@ internal class Cell
     public void SetContent(object givenContent)
     {
         this.content = givenContent;
+    }
+
+    /// <summary>
+    /// Method to set the value of a cell.
+    /// </summary>
+    /// <param name="value">The value which the cell will be set to.</param>
+    public void SetValue(object value)
+    {
+        this.value = value;
+    }
+
+    /// <summary>
+    /// Method to get the value of the cell (not the contents).
+    /// </summary>
+    /// <returns> The value of this cell.</returns>
+    public object GetValue()
+    {
+        return this.value;
     }
 }
 
