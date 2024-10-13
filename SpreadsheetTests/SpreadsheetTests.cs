@@ -8,6 +8,7 @@ using System;
 using CS3500.Spreadsheet;
 using CS3500.Formula;
 using System.Diagnostics;
+using System.Text;
 
 /// <summary>
 /// Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
@@ -59,7 +60,7 @@ public class SpreadsheetTests
     public void SpreadsheetGetNamesOfAllNonEmptyCells_OneNonEmpty_ReturnsOneName()
     {
         Spreadsheet sheet = new Spreadsheet();
-        sheet.SetCellContents("x2", 2.0);
+        sheet.SetContentsOfCell("x2", "2.0");
         HashSet<string> actualNames = sheet.GetNamesOfAllNonemptyCells().ToHashSet();
         HashSet<string> expectedNames = new HashSet<string>();
         expectedNames.Add("X2");
@@ -87,11 +88,11 @@ public class SpreadsheetTests
     public void SpreadsheetGetNamesOfAllNonEmptyCells_MultipleNonEmpty_ReturnsMultipleName()
     {
         Spreadsheet sheet = new Spreadsheet();
-        sheet.SetCellContents("x2", 2.0);
-        sheet.SetCellContents("b2", new Formula("2+2"));
-        sheet.SetCellContents("a2", 5.0);
-        sheet.SetCellContents("s2", "aq2");
-        sheet.SetCellContents("f2", 9.0);
+        sheet.SetContentsOfCell("x2", "2.0");
+        sheet.SetContentsOfCell("b2", "=2+2");
+        sheet.SetContentsOfCell("a2", "5.0");
+        sheet.SetContentsOfCell("s2", "aq2");
+        sheet.SetContentsOfCell("f2", "9.0");
         HashSet<string> actualNames = sheet.GetNamesOfAllNonemptyCells().ToHashSet();
         HashSet<string> expectedNames = new HashSet<string>();
         expectedNames.Add("X2");
@@ -110,12 +111,12 @@ public class SpreadsheetTests
     public void SpreadsheetGetNamesOfAllNonEmptyCells_MultipleAddedThenOneRemovedViaSettingToEmpty_ReturnsMultipleName()
     {
         Spreadsheet sheet = new Spreadsheet();
-        sheet.SetCellContents("x2", 2.0);
-        sheet.SetCellContents("b2", new Formula("2+2"));
-        sheet.SetCellContents("a2", 5.0);
-        sheet.SetCellContents("s2", "aq2");
-        sheet.SetCellContents("f2", 9.0);
-        sheet.SetCellContents("f2", string.Empty);
+        sheet.SetContentsOfCell("x2", "2.0");
+        sheet.SetContentsOfCell("b2", "=2+2");
+        sheet.SetContentsOfCell("a2", "5.0");
+        sheet.SetContentsOfCell("s2", "aq2");
+        sheet.SetContentsOfCell("f2", "9.0");
+        sheet.SetContentsOfCell("f2", string.Empty);
         HashSet<string> actualNames = sheet.GetNamesOfAllNonemptyCells().ToHashSet();
         HashSet<string> expectedNames = new HashSet<string>();
         expectedNames.Add("X2");
@@ -133,8 +134,8 @@ public class SpreadsheetTests
     public void SpreadsheetGetNamesOfAllNonEmptyCells_OneAddedThenOneRemovedViaSettingToEmpty_ReturnsZeroName()
     {
         Spreadsheet sheet = new Spreadsheet();
-        sheet.SetCellContents("f2", new Formula("x5+7"));
-        sheet.SetCellContents("f2", string.Empty);
+        sheet.SetContentsOfCell("f2", "=x5+7");
+        sheet.SetContentsOfCell("f2", string.Empty);
         HashSet<string> actualNames = sheet.GetNamesOfAllNonemptyCells().ToHashSet();
         HashSet<string> expectedNames = new HashSet<string>();
         Assert.IsTrue(actualNames.SetEquals(expectedNames));
@@ -149,14 +150,14 @@ public class SpreadsheetTests
     public void SpreadsheetGetNamesOfAllNonEmptyCells_MultipleAddedThenMultipleRemovedViaSettingToEmpty_ReturnsMultipleName()
     {
         Spreadsheet sheet = new Spreadsheet();
-        sheet.SetCellContents("x2", 2.0);
-        sheet.SetCellContents("b2", new Formula("2+2"));
-        sheet.SetCellContents("a2", 5.0);
-        sheet.SetCellContents("s2", "aq2");
-        sheet.SetCellContents("f2", 9.0);
-        sheet.SetCellContents("f2", string.Empty);
-        sheet.SetCellContents("b2", string.Empty);
-        sheet.SetCellContents("a2", string.Empty);
+        sheet.SetContentsOfCell("x2", "2.0");
+        sheet.SetContentsOfCell("b2", "=2+2");
+        sheet.SetContentsOfCell("a2", "5.0");
+        sheet.SetContentsOfCell("s2", "aq2");
+        sheet.SetContentsOfCell("f2", "9.0");
+        sheet.SetContentsOfCell("f2", string.Empty);
+        sheet.SetContentsOfCell("b2", string.Empty);
+        sheet.SetContentsOfCell("a2", string.Empty);
         HashSet<string> actualNames = sheet.GetNamesOfAllNonemptyCells().ToHashSet();
         HashSet<string> expectedNames = new HashSet<string>();
         expectedNames.Add("X2");
@@ -173,7 +174,7 @@ public class SpreadsheetTests
     public void SpreadsheetGetCellContents_CellWithText_ReturnsString()
     {
         Spreadsheet sheet = new Spreadsheet();
-        sheet.SetCellContents("x2", "Hello");
+        sheet.SetContentsOfCell("x2", "Hello");
         string actualCellContents = (string)sheet.GetCellContents("x2");
         string expectedCellContents = "Hello";
         Assert.AreEqual(expectedCellContents, actualCellContents);
@@ -197,7 +198,7 @@ public class SpreadsheetTests
     public void SpreadsheetGetCellContents_CellWithDouble_ReturnsDouble()
     {
         Spreadsheet sheet = new Spreadsheet();
-        sheet.SetCellContents("x2", 5.0);
+        sheet.SetContentsOfCell("x2", "5.0");
         double actualCellContents = (double)sheet.GetCellContents("x2");
         double expectedCellContents = 5.0;
         Assert.AreEqual(expectedCellContents, actualCellContents);
@@ -210,7 +211,7 @@ public class SpreadsheetTests
     public void SpreadsheetGetCellContents_CellWithFormula_ReturnsFormula()
     {
         Spreadsheet sheet = new Spreadsheet();
-        sheet.SetCellContents("x2", new Formula("2+23"));
+        sheet.SetContentsOfCell("x2", "=2+23");
         Formula actualCellContents = (Formula)sheet.GetCellContents("x2");
         Formula expectedCellContents = new Formula("2+23");
         Assert.AreEqual(expectedCellContents, actualCellContents);
@@ -224,7 +225,7 @@ public class SpreadsheetTests
     public void SpreadsheetGetCellContents_InvalidName_ThrowsException()
     {
         Spreadsheet sheet = new Spreadsheet();
-        sheet.SetCellContents("x2", new Formula("2+23"));
+        sheet.SetContentsOfCell("x2", "=2+23");
         object actualCellContents = sheet.GetCellContents("2321fewf32");
     }
 
@@ -235,56 +236,56 @@ public class SpreadsheetTests
     public void SpreadsheetGetCellContents_ValidNameThatIsEmpty_ReturnsEmptyString()
     {
         Spreadsheet sheet = new Spreadsheet();
-        sheet.SetCellContents("ff4", "22123");
-        sheet.SetCellContents("zf4", 0.2);
-        sheet.SetCellContents("rf4", "223");
+        sheet.SetContentsOfCell("ff4", "22123");
+        sheet.SetContentsOfCell("zf4", "0.2");
+        sheet.SetContentsOfCell("rf4", "223");
 
         string actualCellContents = (string)sheet.GetCellContents("x2");
         string expectedCellContents = string.Empty;
         Assert.AreEqual(expectedCellContents, actualCellContents);
     }
 
-    // --------------- SetCellContents double tests -------------------
+    // --------------- SetContentsOfCell double tests -------------------
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for doubles returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for doubles returns the proper
     /// list of cells affected.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsDouble_AffectsNothing_ReturnsListOfOneElement()
+    public void SpreadSheetSetContentsOfCellDouble_AffectsNothing_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", 2.2);
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "2.2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for doubles returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for doubles returns the proper
     /// list of cells affected. Even when a cell has been replaced with other contents.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsDouble_OverwritingCell_ReturnsListOfOneElement()
+    public void SpreadSheetSetContentsOfCellDouble_OverwritingCell_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("x2", 2.2);
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", 5.0);
+        spreadsheet.SetContentsOfCell("x2", "2.2");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "5.0");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
     /// <summary>
-    /// Test that ensures that when adding to a sheet the SetCellContents method for doubles returns the proper
+    /// Test that ensures that when adding to a sheet the SetContentsOfCell method for doubles returns the proper
     /// list of cells affected only directly.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsDouble_AffectsOneThingDirectly_ReturnsListOfTwoElement()
+    public void SpreadSheetSetContentsOfCellDouble_AffectsOneThingDirectly_ReturnsListOfTwoElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", 2.2);
+        spreadsheet.SetContentsOfCell("a2", "=x2 +1");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "2.2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("A2");
@@ -292,16 +293,16 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for doubles returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for doubles returns the proper
     /// list of cells affected both indirectly and directly.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsDouble_AffectsThingsDirectlyAndIndirectly_ReturnsListOfElements()
+    public void SpreadSheetSetContentsOfCellDouble_AffectsThingsDirectlyAndIndirectly_ReturnsListOfElements()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
-        spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", 2.2);
+        spreadsheet.SetContentsOfCell("a2", "=x2 + 1");
+        spreadsheet.SetContentsOfCell("b2", "=a2 + 5");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "2.2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("A2");
@@ -310,16 +311,16 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for doubles returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for doubles returns the proper
     /// list of cells affected both indirectly and directly.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsDouble_AffectsThingsDirectlyOrderDoesNotMatter_ReturnsListOfElements()
+    public void SpreadSheetSetContentsOfCellDouble_AffectsThingsDirectlyOrderDoesNotMatter_ReturnsListOfElements()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
-        spreadsheet.SetCellContents("b2", new Formula("x2 + 5"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", 2.2);
+        spreadsheet.SetContentsOfCell("a2", "=x2 + 1");
+        spreadsheet.SetContentsOfCell("b2", "=x2 + 5");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "2.2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("B2");
@@ -328,48 +329,48 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to a sheet the SetCellContents method for doubles is able to
+    /// Test that ensures that when adding to a sheet the SetContentsOfCell method for doubles is able to
     /// throw the correct InvalidNameException when the name is not a variable.
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(InvalidNameException))]
-    public void SpreadSheetSetCellContentsDouble_InvalidName_ThrowsException()
+    public void SpreadSheetSetContentsOfCellDouble_InvalidName_ThrowsException()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("2fdasd", 2.2);
+        spreadsheet.SetContentsOfCell("a2", "=x2 +1");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("2fdasd", "2.2");
     }
 
-    // --------------- SetCellContents string tests -------------------
+    // --------------- SetContentsOfCell string tests -------------------
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for strings returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for strings returns the proper
     /// list of cells affected.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsString_AffectsNothing_ReturnsListOfOneElement()
+    public void SpreadSheetSetContentsOfCellString_AffectsNothing_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", "Hi");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "Hi");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for strings returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for strings returns the proper
     /// list of cells affected. Even after a cell has been overwritten with nothing therefore drastically affecting
     /// the whole spreadsheet.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsString_OverwriteWithNothing_ReturnsListOfOneElement()
+    public void SpreadSheetSetContentsOfCellString_OverwriteWithNothing_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("X2", new Formula("b3 + g6"));
-        spreadsheet.SetCellContents("b3", new Formula("c5 + 2"));
-        spreadsheet.SetCellContents("g6", new Formula("c8 + bp0"));
-        spreadsheet.SetCellContents("v4", new Formula("x2 + 3"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", string.Empty);
+        spreadsheet.SetContentsOfCell("X2", "=b3 + g6");
+        spreadsheet.SetContentsOfCell("b3", "=c5 + 2");
+        spreadsheet.SetContentsOfCell("g6", "=c8 + bp0");
+        spreadsheet.SetContentsOfCell("v4", "=x2 + 3");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", string.Empty);
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("V4");
@@ -377,30 +378,30 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for strings returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for strings returns the proper
     /// list of cells affected. Even when a cell's contents have been replaced.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsString_OverwritingCell_ReturnsListOfOneElement()
+    public void SpreadSheetSetContentsOfCellString_OverwritingCell_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("x2", "Goober");
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", "Hi");
+        spreadsheet.SetContentsOfCell("x2", "Goober");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "Hi");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
     /// <summary>
-    /// Test that ensures that when adding to a sheet the SetCellContents method for strings returns the proper
+    /// Test that ensures that when adding to a sheet the SetContentsOfCell method for strings returns the proper
     /// list of cells affected only directly.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsString_AffectsOneThingDirectly_ReturnsListOfTwoElement()
+    public void SpreadSheetSetContentsOfCellString_AffectsOneThingDirectly_ReturnsListOfTwoElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", "Lol");
+        spreadsheet.SetContentsOfCell("a2", "=x2 +1");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "Lol");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("A2");
@@ -408,16 +409,16 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for strings returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for strings returns the proper
     /// list of cells affected both indirectly and directly.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsString_AffectsThingsDirectlyAndIndirectly_ReturnsListOfElements()
+    public void SpreadSheetSetContentsOfCellString_AffectsThingsDirectlyAndIndirectly_ReturnsListOfElements()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
-        spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", "Hello");
+        spreadsheet.SetContentsOfCell("a2", "=x2 + 1");
+        spreadsheet.SetContentsOfCell("b2", "=a2 + 5");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "Hello");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("A2");
@@ -426,16 +427,16 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for strings returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for strings returns the proper
     /// list of cells affected both indirectly and directly.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsString_AffectsThingsDirectlyOrderDoesNotMatter_ReturnsListOfElements()
+    public void SpreadSheetSetContentsOfCellString_AffectsThingsDirectlyOrderDoesNotMatter_ReturnsListOfElements()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
-        spreadsheet.SetCellContents("b2", new Formula("x2 + 5"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", "Totally Tubular");
+        spreadsheet.SetContentsOfCell("a2", "=x2 + 1");
+        spreadsheet.SetContentsOfCell("b2", "=x2 + 5");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "Totally Tubular");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("B2");
@@ -445,45 +446,45 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to a sheet the SetCellContents method for strings is able to
+    /// Test that ensures that when adding to a sheet the SetContentsOfCell method for strings is able to
     /// throw the correct InvalidNameException when the name is not a variable.
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(InvalidNameException))]
-    public void SpreadSheetSetCellContentsString_InvalidName_ThrowsException()
+    public void SpreadSheetSetContentsOfCellString_InvalidName_ThrowsException()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("2fdasd", "Bro, this is invalid Hawk");
+        spreadsheet.SetContentsOfCell("a2", "=x2 +1");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("2fdasd", "Bro, this is invalid Hawk");
     }
 
-    // --------------- SetCellContents Formula tests -------------------
+    // --------------- SetContentsOfCell Formula tests -------------------
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
     /// list of cells affected.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_AffectsNothing_ReturnsListOfOneElement()
+    public void SpreadSheetSetContentsOfCellFormula_AffectsNothing_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=2+2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
     /// list of cells affected. When something has changed which results to indirect having to change to.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_ChangingReturnsProperListNestedStuff_ReturnsListOfOneElement()
+    public void SpreadSheetSetContentsOfCellFormula_ChangingReturnsProperListNestedStuff_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("b2", new Formula("x2+3"));
-        spreadsheet.SetCellContents("a3", new Formula("b2+x2"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        spreadsheet.SetContentsOfCell("b2", "=x2+3");
+        spreadsheet.SetContentsOfCell("a3", "=b2+x2");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=2+2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("B2");
@@ -492,77 +493,77 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
-    /// list of cells affected. Even when a cell has been replaced with SetCellContents.
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
+    /// list of cells affected. Even when a cell has been replaced with SetContentsOfCell.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_OverwritingCell_ReturnsListOfOneElement()
+    public void SpreadSheetSetContentsOfCellFormula_OverwritingCell_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("X2", new Formula("2004"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        spreadsheet.SetContentsOfCell("X2", "=2004");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=2+2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas and overwriting a valid cell with a
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas and overwriting a valid cell with a
     /// cell that causes a Circular exception leads to Circular Exception.
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(CircularException))]
-    public void SpreadSheetSetCellContentsFormula_OverwritingCellWithVariablesThatDoCircular_ThrowsException()
+    public void SpreadSheetSetContentsOfCellFormula_OverwritingCellWithVariablesThatDoCircular_ThrowsException()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("X2", new Formula("2004"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("X2+2"));
+        spreadsheet.SetContentsOfCell("X2", "=2004");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=X2+2");
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
-    /// list of cells affected. Even when a cell has been replaced with SetCellContents.
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
+    /// list of cells affected. Even when a cell has been replaced with SetContentsOfCell.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_OverwritingCellWithValidVariables_ReturnsListOfOneElement()
+    public void SpreadSheetSetContentsOfCellFormula_OverwritingCellWithValidVariables_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("X2", new Formula("2004"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("y2+z2"));
+        spreadsheet.SetContentsOfCell("X2", "=2004");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=y2+z2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
-    /// list of cells affected. Even when a cell has been replaced with SetCellContents.
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
+    /// list of cells affected. Even when a cell has been replaced with SetContentsOfCell.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_OverwritingCellWithValidVariablesWithDifferentVariables_ReturnsListOfOneElement()
+    public void SpreadSheetSetContentsOfCellFormula_OverwritingCellWithValidVariablesWithDifferentVariables_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("X2", new Formula("b3 + g6"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("y2+z2"));
+        spreadsheet.SetContentsOfCell("X2", "=b3 + g6");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=y2+z2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
-    /// list of cells affected. Even when a cell has been replaced with SetCellContents in a very meaningful way which
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
+    /// list of cells affected. Even when a cell has been replaced with SetContentsOfCell in a very meaningful way which
     /// affects cells directly and indirectly.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_ExtremelyMeaningfulCascadingOverwritingOfCell_ReturnsListOfOneElement()
+    public void SpreadSheetSetContentsOfCellFormula_ExtremelyMeaningfulCascadingOverwritingOfCell_ReturnsListOfOneElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("X2", new Formula("b3 + g6"));
-        spreadsheet.SetCellContents("b3", new Formula("c5 + 2"));
-        spreadsheet.SetCellContents("g6", new Formula("c8 + bp0"));
-        spreadsheet.SetCellContents("v4", new Formula("x2 + 3"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+z2"));
+        spreadsheet.SetContentsOfCell("X2", "=b3 + g6");
+        spreadsheet.SetContentsOfCell("b3", "=c5 + 2");
+        spreadsheet.SetContentsOfCell("g6", "=c8 + bp0");
+        spreadsheet.SetContentsOfCell("v4", "=x2 + 3");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=2+z2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("V4");
@@ -570,15 +571,15 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to a sheet the SetCellContents method for formulas returns the proper
+    /// Test that ensures that when adding to a sheet the SetContentsOfCell method for formulas returns the proper
     /// list of cells affected only directly.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_AffectsOneThingDirectly_ReturnsListOfTwoElement()
+    public void SpreadSheetSetContentsOfCellFormula_AffectsOneThingDirectly_ReturnsListOfTwoElement()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        spreadsheet.SetContentsOfCell("a2", "=x2 +1");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=2+2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("A2");
@@ -586,16 +587,16 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
     /// list of cells affected both indirectly and directly.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_AffectsThingsDirectlyAndIndirectly_ReturnsListOfElements()
+    public void SpreadSheetSetContentsOfCellFormula_AffectsThingsDirectlyAndIndirectly_ReturnsListOfElements()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
-        spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        spreadsheet.SetContentsOfCell("a2", "=x2 + 1");
+        spreadsheet.SetContentsOfCell("b2", "=a2 + 5");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=2+2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("A2");
@@ -604,16 +605,16 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
     /// list of cells affected both indirectly and directly.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_AffectsThingsDirectlyOrderDoesNotMatter_ReturnsListOfElements()
+    public void SpreadSheetSetContentsOfCellFormula_AffectsThingsDirectlyOrderDoesNotMatter_ReturnsListOfElements()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
-        spreadsheet.SetCellContents("b2", new Formula("x2 + 5"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        spreadsheet.SetContentsOfCell("a2", "=x2 + 1");
+        spreadsheet.SetContentsOfCell("b2", "=x2 + 5");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=2+2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("B2");
@@ -622,96 +623,96 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
     /// list of cells affected both indirectly and directly.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_AddingOfDirectCircularExpressionDoesNotChangeSpreadsheet_ReturnsListOfElements()
+    public void SpreadSheetSetContentsOfCellFormula_AddingOfDirectCircularExpressionDoesNotChangeSpreadsheet_ReturnsListOfElements()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
-        spreadsheet.SetCellContents("b2", new Formula("x2 + 5"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        spreadsheet.SetContentsOfCell("a2", "=x2 + 1");
+        spreadsheet.SetContentsOfCell("b2", "=x2 + 5");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=2+2");
         try
         {
-            spreadsheet.SetCellContents("a2", new Formula("a2+2"));
+            spreadsheet.SetContentsOfCell("a2", "=a2+2");
         }
         catch (CircularException)
         {
         }
 
-        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), "=x2 + 1");
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
     /// list of cells affected both indirectly and directly. And does not change.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_AddingOfIndirectCircularExpression_DoesNotChangeSpreadsheet()
+    public void SpreadSheetSetContentsOfCellFormula_AddingOfIndirectCircularExpression_DoesNotChangeSpreadsheet()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
-        spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        spreadsheet.SetContentsOfCell("a2", "=x2 + 1");
+        spreadsheet.SetContentsOfCell("b2", "=a2 + 5");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=2+2");
         try
         {
-            spreadsheet.SetCellContents("a2", new Formula("b2+2"));
+            spreadsheet.SetContentsOfCell("a2", "=b2+2");
         }
         catch (CircularException)
         {
         }
 
-        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), "=x2 + 1");
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
     /// list of cells affected both indirectly and directly.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_AddingOfIndirectCircularExpressionInNewCell_DoesNotChangeSpreadsheet()
+    public void SpreadSheetSetContentsOfCellFormula_AddingOfIndirectCircularExpressionInNewCell_DoesNotChangeSpreadsheet()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
-        spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
+        spreadsheet.SetContentsOfCell("a2", "=x2 + 1");
+        spreadsheet.SetContentsOfCell("b2", "=a2 + 5");
         try
         {
-            spreadsheet.SetCellContents("x2", new Formula("b2+a2"));
+            spreadsheet.SetContentsOfCell("x2", "=b2+a2");
         }
         catch (CircularException)
         {
         }
 
-        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
-        Assert.AreEqual(spreadsheet.GetCellContents("b2"), new Formula("a2 + 5"));
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), "=x2 + 1");
+        Assert.AreEqual(spreadsheet.GetCellContents("b2"), "=a2 + 5");
         Assert.AreEqual(spreadsheet.GetCellContents("x2"), string.Empty);
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
     /// list of cells affected both indirectly and directly specifically when a CircularExceptionOccurred and we are overwriting
-    /// via our SetCellContents.
+    /// via our SetContentsOfCell.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_AddingOverWriteAfterCircularExceptionWorks_DoesNotThrowException()
+    public void SpreadSheetSetContentsOfCellFormula_AddingOverWriteAfterCircularExceptionWorks_DoesNotThrowException()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
-        spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
+        spreadsheet.SetContentsOfCell("a2", "=x2 + 1");
+        spreadsheet.SetContentsOfCell("b2", "=a2 + 5");
         try
         {
-            spreadsheet.SetCellContents("x2", new Formula("b2+a2"));
+            spreadsheet.SetContentsOfCell("x2", "=b2+a2");
         }
         catch (CircularException)
         {
         }
 
-        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
-        Assert.AreEqual(spreadsheet.GetCellContents("b2"), new Formula("a2 + 5"));
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), "=x2 + 1");
+        Assert.AreEqual(spreadsheet.GetCellContents("b2"), "=a2 + 5");
         Assert.AreEqual(spreadsheet.GetCellContents("x2"), string.Empty);
 
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("2+2"));
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=2+2");
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         expectedList.Add("A2");
@@ -720,94 +721,591 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    /// Test that ensures that when adding to an empty sheet the SetCellContents method for formulas returns the proper
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
     /// list of cells affected both indirectly and directly specifically when a CircularExceptionOccurred the add does not
     /// overwrite.
     /// </summary>
     [TestMethod]
-    public void SpreadSheetSetCellContentsFormula_AddingAfterCircularExceptionWorks_DoesNotThrowException()
+    public void SpreadSheetSetContentsOfCellFormula_AddingAfterCircularExceptionWorks_DoesNotThrowException()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 + 1"));
-        spreadsheet.SetCellContents("b2", new Formula("a2 + 5"));
+        spreadsheet.SetContentsOfCell("a2", "=x2 + 1");
+        spreadsheet.SetContentsOfCell("b2", "=a2 + 5");
         try
         {
-            spreadsheet.SetCellContents("x2", new Formula("b2+a2"));
+            spreadsheet.SetContentsOfCell("x2", "=b2+a2");
         }
         catch (CircularException)
         {
         }
 
-        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
-        Assert.AreEqual(spreadsheet.GetCellContents("b2"), new Formula("a2 + 5"));
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), "=x2 + 1");
+        Assert.AreEqual(spreadsheet.GetCellContents("b2"), "=a2 + 5");
         Assert.AreEqual(spreadsheet.GetCellContents("x2"), string.Empty);
 
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("f2", new Formula("2+2"));
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("f2", "=2+2");
         List<string> expectedList = new List<string>();
         expectedList.Add("F2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
     }
 
     /// <summary>
-    /// Test that ensures that when adding to a sheet the SetCellContents method for formulas is able to
+    /// Test that ensures that when adding to a sheet the SetContentsOfCell method for formulas is able to
     /// throw the correct InvalidNameException when the name is not a variable.
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(InvalidNameException))]
-    public void SpreadSheetSetCellContentsFormula_InvalidName_ThrowsException()
+    public void SpreadSheetSetContentsOfCellFormula_InvalidName_ThrowsException()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("2fdasd", new Formula("2+2"));
+        spreadsheet.SetContentsOfCell("a2", "=x2 +1");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("2fdasd", "=2+2");
     }
 
     /// <summary>
-    /// Test that ensures that when adding to a sheet the SetCellContents method for formulas is able to
+    /// Test that ensures that when adding to a sheet the SetContentsOfCell method for formulas is able to
     /// throw the correct CircularException when the setting of cell contents results in a cycle between itself and itself.
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(CircularException))]
-    public void SpreadSheetSetCellContentsFormula_CircularRightAway_ThrowsException()
+    public void SpreadSheetSetContentsOfCellFormula_CircularRightAway_ThrowsException()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("x2+2"));
+        spreadsheet.SetContentsOfCell("a2", "=x2 +1");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=x2+2");
     }
 
     /// <summary>
-    /// Test that ensures that when adding to a sheet the SetCellContents method for formulas is able to
+    /// Test that ensures that when adding to a sheet the SetContentsOfCell method for formulas is able to
     /// throw the correct CircularException when the setting of cell contents results in a cycle between itself
     /// and a direct cell.
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(CircularException))]
-    public void SpreadSheetSetCellContentsFormula_CircularDirect_ThrowsException()
+    public void SpreadSheetSetContentsOfCellFormula_CircularDirect_ThrowsException()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("a2+2"));
+        spreadsheet.SetContentsOfCell("a2", "=x2 +1");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=a2+2");
     }
 
     /// <summary>
-    /// Test that ensures that when adding to a sheet the SetCellContents method for formulas is able to
+    /// Test that ensures that when adding to a sheet the SetContentsOfCell method for formulas is able to
     /// throw the correct CircularException when the setting of cell contents results in a cycle between itself
     /// and an indirect cell.
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(CircularException))]
-    public void SpreadSheetSetCellContentsFormula_CircularIndirect_ThrowsException()
+    public void SpreadSheetSetContentsOfCellFormula_CircularIndirect_ThrowsException()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetCellContents("b2", new Formula("a2 +1"));
-        spreadsheet.SetCellContents("a2", new Formula("x2 +1"));
-        List<string> actualList = (List<string>)spreadsheet.SetCellContents("x2", new Formula("b2+2"));
+        spreadsheet.SetContentsOfCell("b2", "=a2 +1");
+        spreadsheet.SetContentsOfCell("a2", "=x2 +1");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=b2+2");
+    }
+
+    // TESTS FOR SAVING (save function) -----------------------------
+
+    /// <summary>
+    /// Test to ensure that the save method is able to save a spreadsheet with only one cell filled out.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetSave_BasicOneObjectJSON_CreatesExpectedObject()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "3.0");
+
+        File.WriteAllText("values.txt", string.Empty);
+
+        s.Save("values.txt");
+
+        Spreadsheet sheetFromSaved = new Spreadsheet();
+
+        sheetFromSaved.Load("values.txt");
+
+        string expectedContents = "3.0";
+
+        string? actualContents = sheetFromSaved.GetCellContents("A1").ToString();
+
+        Assert.AreEqual(expectedContents, actualContents);
+
+        Assert.IsTrue(sheetFromSaved.GetNamesOfAllNonemptyCells().Count == 1);
+    }
+
+    /// <summary>
+    /// Test to ensure that the save method is able to save a spreadsheet with only two cells filled out.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetSave_BasicTwoObjectJSON_CreatesExpectedObject()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "5");
+        s.SetContentsOfCell("B1", "=4+2");
+
+        File.WriteAllText("values.txt", string.Empty);
+
+        s.Save("values.txt");
+
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("values.txt");
+
+        string expectedContents = "5";
+
+        string? actualContents = ss.GetCellContents("A1").ToString();
+
+        string expectedContents2 = "=4+2";
+
+        string? actualContents2 = ss.GetCellContents("B1").ToString();
+
+        Assert.AreEqual(expectedContents, actualContents);
+        Assert.AreEqual(expectedContents2, actualContents2);
+
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 2);
+    }
+
+    /// <summary>
+    /// Test to ensure that the save method is able to save a spreadsheet with multiple cells filled out.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetSave_MultiObjectJSON_CreatesExpectedObject()
+    {
+        Spreadsheet s = new Spreadsheet();
+        Random r = new Random();
+        for (int i = 100; i < 100; i++)
+        {
+            switch (r.Next(3))
+            {
+                case 0:
+                    s.SetContentsOfCell($"A{i}", $"{i}");
+                    break;
+                case 1:
+                    s.SetContentsOfCell($"B{i}", $"=4+{i}");
+                    break;
+                case 2:
+                    s.SetContentsOfCell($"C{i}", $"Hello{i}");
+                    break;
+            }
+        }
+
+        File.WriteAllText("values.txt", string.Empty);
+        s.Save("values.txt");
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("values.txt");
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 100);
+    }
+
+    /// <summary>
+    /// Test to ensure that the save method is able to throw the proper exception when the file we are attempting to save to
+    /// does not exist.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(SpreadsheetReadWriteException))]
+    public void SpreadsheetSave_SavingToFileThatDoesNotExist_ThrowsReadWriteException()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "5");
+        s.SetContentsOfCell("B1", "=4+2");
+
+        s.Save(".");
+    }
+
+    /// <summary>
+    /// Test to ensure that if an Invalid Formula is present in the spreadsheet cells that the spreadsheet will throw a read write
+    /// exception.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(SpreadsheetReadWriteException))]
+    public void SpreadsheetSave_SavingFileThatContainsAnInvalidFormula_ThrowsReadWriteException()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "5");
+        s.SetContentsOfCell("B1", "= $ridai39&&& + 721$$$&");
+
+        File.WriteAllText("values.txt", string.Empty);
+
+        s.Save("values.txt");
+    }
+
+    /// <summary>
+    /// Test to ensure that the save method is able to save a spreadsheet that has no filled out cells.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetSave_SavingEmptySpreadsheet_CreatesExpectedObject()
+    {
+        Spreadsheet s = new Spreadsheet();
+
+        File.WriteAllText("values.txt", string.Empty);
+
+        s.Save("values.txt");
+
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("values.txt");
+
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 0);
+    }
+
+    /// <summary>
+    /// Test to ensure that a spreadsheet created with the second constructor (with a given name) can still be properly saved
+    /// through the save method.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetSave_SavingSpreadsheetWithName_CreatesExpectedObject()
+    {
+        Spreadsheet s = new Spreadsheet("Hey there");
+
+        File.WriteAllText("values.txt", string.Empty);
+
+        s.Save("values.txt");
+
+        Spreadsheet ss = new Spreadsheet("Hi!");
+        ss.Load("values.txt");
+
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 0);
+    }
+
+    // TESTS FOR LOADING (load function) -----------------------------
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to load a spreadsheet with only one cell filled out.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetLoad_BasicOneObjectJSON_CreatesExpectedObject()
+    {
+        string expectedOutput = @"{""Cells"": { ""A1"": { ""StringForm"": ""5""}}}";
+
+        File.WriteAllText("known_values.txt", expectedOutput);
+
+        // Now Read that file
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+
+        string expectedContents = "5";
+
+        string? actualContents = ss.GetCellContents("A1").ToString();
+
+        Assert.AreEqual(expectedContents, actualContents);
+
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 1);
+    }
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to load a spreadsheet with only two cells filled out.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetLoad_BasicTwoObjectJSON_CreatesExpectedObject()
+    {
+        string expectedOutput = @"{""Cells"": { ""A1"": { ""StringForm"": ""5""},""B1"":{""StringForm"": ""=4+2""}}}";
+
+        File.WriteAllText("known_values.txt", expectedOutput);
+
+        // Now Read that file
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+
+        string expectedContents = "5";
+
+        string? actualContents = ss.GetCellContents("A1").ToString();
+
+        string expectedContents2 = "=4+2";
+
+        string? actualContents2 = ss.GetCellContents("B1").ToString();
+
+        Assert.AreEqual(expectedContents, actualContents);
+        Assert.AreEqual(expectedContents2, actualContents2);
+
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 2);
+    }
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to load a spreadsheet with multiple cells filled out.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetLoad_MultiObjectJSON_CreatesExpectedObject()
+    {
+        StringBuilder jsonStringBuilder = new StringBuilder();
+        jsonStringBuilder.Append(@"{""Cells"": {");
+        Random r = new Random();
+        for(int i = 100; i < 100; i++)
+        {
+            switch (r.Next(3))
+            {
+                case 0:
+                    jsonStringBuilder.Append($@" ""A{i}"":" + @"{ ""StringForm"": ""5""},");
+                    break;
+                case 1:
+                    jsonStringBuilder.Append($@" ""B{i}"":" + @"{ ""StringForm"": ""=3+11""},");
+                    break;
+                case 2:
+                    jsonStringBuilder.Append($@" ""C{i}"":" + @"{ ""StringForm"": ""Hello""},");
+                    break;
+            }
+        }
+
+        File.WriteAllText("known_values.txt", jsonStringBuilder.ToString());
+
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 100);
+    }
+
+    /// <summary>
+    /// Test to ensure that the load method is able to correctly throw a SpreadsheetReadWriteException when the file
+    /// we are loading from does not exist.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(SpreadsheetReadWriteException))]
+    public void SpreadsheetLoad_LoadingFromAFileThatDoesNotExist_ThrowsReadWriteException()
+    {
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load(".");
+    }
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to correctly throw a SpreadsheetReadWriteException when a cell in the
+    ///  file contains a formula with invalid syntax.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(SpreadsheetReadWriteException))]
+    public void SpreadsheetLoading_LoadingAFileThatContainsAnInvalidFormula_ThrowsReadWriteException()
+    {
+        string expectedOutput = @"{""Cells"": { ""A1"": { ""StringForm"": ""5""},""B1"":{""StringForm"": ""=$$rt&hd + 67&&d*/da""}}}";
+
+        File.WriteAllText("known_values.txt", expectedOutput);
+
+        // Now Read that file
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+    }
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to correctly throw a SpreadsheetReadWriteException when the file is not a
+    ///  JSON readable file. For example just a string of random letters.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(SpreadsheetReadWriteException))]
+    public void SpreadsheetLoading_LoadingAFileThatIsNotInOurExpectedFormat_ThrowsReadWriteException()
+    {
+        string expectedOutput = "Hello";
+
+        File.WriteAllText("known_values.txt", expectedOutput);
+
+        // Now Read that file
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+    }
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to correctly throw a SpreadsheetReadWriteException when the file given has
+    ///  cells that when loaded would create circular dependencies.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(SpreadsheetReadWriteException))]
+    public void SpreadsheetLoading_LoadingAFileWithCircularExceptions_ThrowsReadWriteException()
+    {
+        string expectedOutput = @"{""Cells"": { ""A1"": { ""StringForm"": ""5""},""B1"":{""StringForm"": ""=B1+2""}}}";
+
+        File.WriteAllText("known_values.txt", expectedOutput);
+
+        // Now Read that file
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+    }
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to correctly throw a SpreadsheetReadWriteException when the cells are not named
+    ///  properly.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(SpreadsheetReadWriteException))]
+    public void SpreadsheetLoading_LoadingAFileWithInvalidNamingPrinciples_ThrowsReadWriteException()
+    {
+        string expectedOutput = @"{""Cells"": { ""1A"": { ""StringForm"": ""5""},""B"":{""StringForm"": ""=43/0""}}}";
+
+        File.WriteAllText("known_values.txt", expectedOutput);
+
+        // Now Read that file
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+    }
+
+    /// <summary>
+    /// Test to ensure that the load method can properly load a spreadsheet with no cells filled out.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetLoad_SavingEmptySpreadsheet_CreatesExpectedObject()
+    {
+        string expectedOutput = @"{""Cells"": {}}";
+
+        File.WriteAllText("known_values.txt", expectedOutput);
+
+        // Now Read that file
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the load method is able to load a spreadsheet which was created using the second constructor (a
+    /// spreadsheet with a name).
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetLoad_LoadingSpreadsheetWithName_CreatesExpectedObject()
+    {
+        string expectedOutput = @"{""Cells"": {}}";
+
+        File.WriteAllText("known_values.txt", expectedOutput);
+
+        // Now Read that file
+        Spreadsheet ss = new Spreadsheet("Money");
+        ss.Load("known_values.txt");
+
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 0);
+    }
+
+    // TESTS FOR NEW CONSTRUCTOR WITH SPREADSHEET NAME ---------------
+
+    /// <summary>
+    /// Test to ensure a spreadsheet can be created when it is created with the second constructor (it is given a name).
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetNameConstructor_GiveName_CreatesValidObject()
+    {
+        Spreadsheet s = new Spreadsheet("Money");
+
+        s.SetContentsOfCell("A1", "=3+4");
+
+        Assert.IsTrue(s.GetNamesOfAllNonemptyCells().Count == 1);
+    }
+
+    // TESTS FOR GetCellValue ----------------------------------------
+
+    /// <summary>
+    /// Test to ensure that the GetCellValue method returns a string of text when the value in the cell is just a string.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetGetCellValue_StringOfTextInCell_ReturnsString()
+    {
+        Spreadsheet s = new Spreadsheet();
+
+        s.SetContentsOfCell("A1", "Hello Joe");
+
+        string expectedValue = "Hello Joe";
+        if(s.GetCellValue("A1") is string actualValue)
+        {
+            Assert.AreEqual(expectedValue, actualValue);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+
+    /// <summary>
+    ///  Test to ensure that the GetCellValue method returns a double when the value in that cell is just a double.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetGetCellValue_DoubleInCell_ReturnsDouble()
+    {
+        Spreadsheet s = new Spreadsheet();
+
+        s.SetContentsOfCell("A1", "3.0");
+
+        double expectedValue = 3.0;
+        if (s.GetCellValue("A1") is double actualValue)
+        {
+            Assert.AreEqual(expectedValue, actualValue);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+
+    /// <summary>
+    ///  Test to ensure that the GetCellValue method returns a formula evaluated value when the value in a cell is a formula
+    ///  that is formatted correctly.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetGetCellValue_GoodFormula_ReturnsDouble()
+    {
+        Spreadsheet s = new Spreadsheet();
+
+        s.SetContentsOfCell("A1", "=3+7");
+
+        double expectedValue = 10.0;
+        if (s.GetCellValue("A1") is double actualValue)
+        {
+            Assert.AreEqual(expectedValue, actualValue);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+
+    /// <summary>
+    /// Test to ensure that the GetCellValue method returns a FormulaError object if the cell contains a formula which when
+    /// evaluated would return a FormulaError.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetGetCellValue_FormulaWhichReturnsFormulaError_ReturnsFormulaError()
+    {
+        Spreadsheet s = new Spreadsheet();
+
+        s.SetContentsOfCell("A1", "=2/0");
+
+        FormulaError expectedValue = new FormulaError("Divide by 0 is NOT allowed!");
+        if (s.GetCellValue("A1") is FormulaError actualValue)
+        {
+            Assert.AreEqual(expectedValue, actualValue);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+
+    /// <summary>
+    ///  Test to ensure that the GetCellValue method returns an empty string when the cells value is nothing and is an empty cell.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetGetCellValue_Empty_ReturnsEmptyString()
+    {
+        Spreadsheet s = new Spreadsheet();
+
+        s.SetContentsOfCell("A1", "Hello Joe");
+
+        string expectedValue = string.Empty;
+        if (s.GetCellValue("B1") is string actualValue)
+        {
+            Assert.AreEqual(expectedValue, actualValue);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+
+    /// <summary>
+    ///  Test to ensure that the GetCellValue method throws an InvalidNameException when the cell that was passed as a parameter
+    ///  is not a valid cell.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(InvalidNameException))]
+    public void SpreadSheetGetCellValue_InvalidName_ThrowsInvalidNameException()
+    {
+        Spreadsheet s = new Spreadsheet();
+
+        s.SetContentsOfCell("A1", "Hello Joe");
+
+        s.GetCellValue("Hi");
     }
 
     /// <summary>
     /// Tests that the cell naming convention is honored.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("2")]
     [ExpectedException(typeof(InvalidNameException))]
     public void GetCellContents_InvalidCellName_Throws()
@@ -820,7 +1318,6 @@ public class SpreadsheetTests
     ///   Test that an unassigned cell has the default value of an empty string.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("3")]
     public void GetCellContents_DefaultCellValue_Empty()
     {
@@ -832,25 +1329,23 @@ public class SpreadsheetTests
     ///   Try setting an invalid cell to a double.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("5")]
     [ExpectedException(typeof(InvalidNameException))]
-    public void SetCellContents_InvalidCellName_Throws()
+    public void SetContentsOfCell_InvalidCellName_Throws()
     {
         Spreadsheet s = new();
-        s.SetCellContents("1A1A", 1.5);
+        s.SetContentsOfCell("1A1A", "1.5");
     }
 
     /// <summary>
     ///   Set a cell to a number and get the number back out.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("6")]
     public void SetGetCellContents_SetTheNumber_RetrieveTheNumber()
     {
         Spreadsheet s = new();
-        s.SetCellContents("Z7", 1.5);
+        s.SetContentsOfCell("Z7", "1.5");
         Assert.AreEqual(1.5, (double)s.GetCellContents("Z7"), 1e-9);
     }
 
@@ -860,13 +1355,12 @@ public class SpreadsheetTests
     ///   Try to assign a string to an invalid cell.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("9")]
     [ExpectedException(typeof(InvalidNameException))]
-    public void SetCellContentsString_InvalidCellName_Throw()
+    public void SetContentsOfCellString_InvalidCellName_Throw()
     {
         Spreadsheet s = new();
-        s.SetCellContents("1AZ", "hello");
+        s.SetContentsOfCell("1AZ", "hello");
     }
 
     /// <summary>
@@ -874,12 +1368,11 @@ public class SpreadsheetTests
     ///   it back out.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("10")]
     public void SetAndGetCellContents_SetTheString_RetrieveTheString()
     {
         Spreadsheet s = new();
-        s.SetCellContents("Z7", "hello");
+        s.SetContentsOfCell("Z7", "hello");
         Assert.AreEqual("hello", s.GetCellContents("Z7"));
     }
 
@@ -890,25 +1383,23 @@ public class SpreadsheetTests
     ///   throws an exception.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("13")]
     [ExpectedException(typeof(InvalidNameException))]
-    public void SetCellContents_InvalidCellNameForFormula_Throws()
+    public void SetContentsOfCell_InvalidCellNameForFormula_Throws()
     {
         Spreadsheet s = new();
-        s.SetCellContents("1AZ", new Formula("2"));
+        s.SetContentsOfCell("1AZ", "=2");
     }
 
     /// <summary>
     ///   Set a formula, retrieve the formula.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("14")]
     public void SetGetCellContents_SetAFormula_RetrieveTheFormula()
     {
         Spreadsheet s = new();
-        s.SetCellContents("Z7", new Formula("3"));
+        s.SetContentsOfCell("Z7", "=3");
         Formula f = (Formula)s.GetCellContents("Z7");
         Assert.AreEqual(new Formula("3"), f);
         Assert.AreNotEqual(new Formula("2"), f);
@@ -920,31 +1411,29 @@ public class SpreadsheetTests
     ///   Two cell circular dependency check.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("15")]
     [ExpectedException(typeof(CircularException))]
-    public void SetCellContents_CircularDependency_Throws()
+    public void SetContentsOfCell_CircularDependency_Throws()
     {
         Spreadsheet s = new();
 
-        s.SetCellContents("A1", new Formula("A2"));
-        s.SetCellContents("A2", new Formula("A1"));
+        s.SetContentsOfCell("A1", "=A2");
+        s.SetContentsOfCell("A2", "=A1");
     }
 
     /// <summary>
     ///    A four cell circular dependency test.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("16")]
     [ExpectedException(typeof(CircularException))]
-    public void SetCellContents_CircularDependencyMultipleCells_Throws()
+    public void SetContentsOfCell_CircularDependencyMultipleCells_Throws()
     {
         Spreadsheet s = new();
-        s.SetCellContents("A1", new Formula("A2+A3"));
-        s.SetCellContents("A3", new Formula("A4+A5"));
-        s.SetCellContents("A5", new Formula("A6+A7"));
-        s.SetCellContents("A7", new Formula("A1+A1"));
+        s.SetContentsOfCell("A1", "=A2+A3");
+        s.SetContentsOfCell("A3", "=A4+A5");
+        s.SetContentsOfCell("A5", "=A6+A7");
+        s.SetContentsOfCell("A7", "=A1+A1");
     }
 
     /// <summary>
@@ -952,18 +1441,17 @@ public class SpreadsheetTests
     ///  spreadsheet unmodified.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("17")]
     [ExpectedException(typeof(CircularException))]
-    public void SetCellContents_TestUndoCircular_OriginalSheetRemains()
+    public void SetContentsOfCell_TestUndoCircular_OriginalSheetRemains()
     {
         Spreadsheet s = new();
         try
         {
-            s.SetCellContents("A1", new Formula("A2+A3"));
-            s.SetCellContents("A2", 15);
-            s.SetCellContents("A3", 30);
-            s.SetCellContents("A2", new Formula("A3*A1"));
+            s.SetContentsOfCell("A1", "=A2+A3");
+            s.SetContentsOfCell("A2", "15");
+            s.SetContentsOfCell("A3", "30");
+            s.SetContentsOfCell("A2", "=A3*A1");
         }
         catch (CircularException)
         {
@@ -977,16 +1465,15 @@ public class SpreadsheetTests
     ///   should still contain the original value, but the second one removed.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("17b")]
     [ExpectedException(typeof(CircularException))]
-    public void SetCellContents_SimpleCircularUndo_OriginalSheetRemains()
+    public void SetContentsOfCell_SimpleCircularUndo_OriginalSheetRemains()
     {
         Spreadsheet s = new();
         try
         {
-            s.SetCellContents("A1", new Formula("A2"));
-            s.SetCellContents("A2", new Formula("A1"));
+            s.SetContentsOfCell("A1", "=A2");
+            s.SetContentsOfCell("A2", "=A1");
         }
         catch (CircularException)
         {
@@ -1002,7 +1489,6 @@ public class SpreadsheetTests
     ///   An empty spreadsheet should have no non-empty cells.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("18")]
     public void GetNamesOfAllNonEmptyCells_EmptySpreadsheet_EmptyEnumerator()
     {
@@ -1014,12 +1500,11 @@ public class SpreadsheetTests
     ///   Assigning an empty string into a cell should not create a non-empty cell.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("19")]
-    public void SetCellContents_SetEmptyCell_CellIsEmpty()
+    public void SetContentsOfCell_SetEmptyCell_CellIsEmpty()
     {
         Spreadsheet s = new();
-        s.SetCellContents("B1", string.Empty);
+        s.SetContentsOfCell("B1", string.Empty);
         Assert.IsFalse(s.GetNamesOfAllNonemptyCells().GetEnumerator().MoveNext());
     }
 
@@ -1027,12 +1512,11 @@ public class SpreadsheetTests
     ///   Assigning a string into a cell produces a spreadsheet with one non-empty cell.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("20")]
     public void GetNamesOfAllNonEmptyCells_AddStringToCell_ThatCellIsNotEmpty()
     {
         Spreadsheet s = new();
-        s.SetCellContents("B1", "hello");
+        s.SetContentsOfCell("B1", "hello");
         Assert.IsTrue(new HashSet<string>(s.GetNamesOfAllNonemptyCells()).SetEquals(["B1"]));
     }
 
@@ -1040,12 +1524,11 @@ public class SpreadsheetTests
     ///   Assigning a double into a cell produces a spreadsheet with one non-empty cell.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("21")]
     public void GetNamesOfAllNonEmptyCells_AddDoubleToCell_ThatCellIsNotEmpty()
     {
         Spreadsheet s = new();
-        s.SetCellContents("B1", 52.25);
+        s.SetContentsOfCell("B1", "52.25");
         Assert.IsTrue(s.GetNamesOfAllNonemptyCells().Matches(["B1"]));
         Assert.IsTrue(new HashSet<string>(s.GetNamesOfAllNonemptyCells()).SetEquals(["B1"]));
     }
@@ -1054,12 +1537,11 @@ public class SpreadsheetTests
     ///   Assigning a Formula into a cell produces a spreadsheet with one non-empty cell.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("22")]
     public void GetNamesOfAllNonEmptyCells_AddFormulaToCell_ThatCellIsNotEmpty()
     {
         Spreadsheet s = new();
-        s.SetCellContents("B1", new Formula("3.5"));
+        s.SetContentsOfCell("B1", "=3.5");
         Assert.IsTrue(new HashSet<string>(s.GetNamesOfAllNonemptyCells()).SetEquals(["B1"]));
     }
 
@@ -1068,15 +1550,14 @@ public class SpreadsheetTests
     ///   they each have their own cell.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("23")]
-    public void SetCellContents_AssignDoubleStringAndFormula_ThreeCellsExist()
+    public void SetContentsOfCell_AssignDoubleStringAndFormula_ThreeCellsExist()
     {
         Spreadsheet s = new();
 
-        s.SetCellContents("A1", 17.2);
-        s.SetCellContents("C1", "hello");
-        s.SetCellContents("B1", new Formula("3.5"));
+        s.SetContentsOfCell("A1", "17.2");
+        s.SetContentsOfCell("C1", "hello");
+        s.SetContentsOfCell("B1", "=3.5");
 
         Assert.IsTrue(s.GetNamesOfAllNonemptyCells().Matches(["A1", "B1", "C1"]));
         Assert.IsTrue(new HashSet<string>(s.GetNamesOfAllNonemptyCells()).SetEquals(["A1", "B1", "C1"]));
@@ -1089,15 +1570,14 @@ public class SpreadsheetTests
     ///   that cell needs to be reevaluated. (Testing for Double content cells.)
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("24")]
-    public void SetCellContents_SettingIndependentCellToDouble_ReturnsOnlyThatCell()
+    public void SetContentsOfCell_SettingIndependentCellToDouble_ReturnsOnlyThatCell()
     {
         Spreadsheet s = new();
 
-        s.SetCellContents("B1", "hello");
-        s.SetCellContents("C1", new Formula("5"));
-        var toReevaluate = s.SetCellContents("A1", 17.2);
+        s.SetContentsOfCell("B1", "hello");
+        s.SetContentsOfCell("C1", "=5");
+        var toReevaluate = s.SetContentsOfCell("A1", "17.2");
         Assert.IsTrue(toReevaluate.Matches(["A1"])); // Note: Matches is not order dependent
     }
 
@@ -1106,16 +1586,15 @@ public class SpreadsheetTests
     ///   that cell needs to be reevaluated. (Testing for Formula content cells.)
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("25")]
-    public void SetCellContents_SettingIndependentCellToString_ReturnsOnlyThatCell()
+    public void SetContentsOfCell_SettingIndependentCellToString_ReturnsOnlyThatCell()
     {
         Spreadsheet s = new();
 
-        s.SetCellContents("A1", 17.2);
-        s.SetCellContents("C1", new Formula("5"));
+        s.SetContentsOfCell("A1", "17.2");
+        s.SetContentsOfCell("C1", "=5");
 
-        var toReevaluated = s.SetCellContents("B1", "hello");
+        var toReevaluated = s.SetContentsOfCell("B1", "hello");
         Assert.IsTrue(toReevaluated.Matches(["B1"]));
     }
 
@@ -1124,14 +1603,13 @@ public class SpreadsheetTests
     ///   that cell needs to be reevaluated. (Testing for Formula content cells.)
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("26")]
-    public void SetCellContents_SettingIndependentCellToFormula_ReturnsOnlyThatCell()
+    public void SetContentsOfCell_SettingIndependentCellToFormula_ReturnsOnlyThatCell()
     {
         Spreadsheet s = new();
-        s.SetCellContents("A1", 17.2);
-        s.SetCellContents("B1", "hello");
-        var changed = s.SetCellContents("C1", new Formula("5"));
+        s.SetContentsOfCell("A1", "17.2");
+        s.SetContentsOfCell("B1", "hello");
+        var changed = s.SetContentsOfCell("C1", "=5");
         Assert.IsTrue(changed.Matches(["C1"]));
     }
 
@@ -1140,17 +1618,16 @@ public class SpreadsheetTests
     ///   is modified, then all the cells have to be recomputed.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("27")]
-    public void SetCellContents_CreateChainModifyFirst_AllAreInNeedOfUpdate()
+    public void SetContentsOfCell_CreateChainModifyFirst_AllAreInNeedOfUpdate()
     {
         Spreadsheet s = new();
-        s.SetCellContents("A1", new Formula("A2+A3"));
-        s.SetCellContents("A2", 6);
-        s.SetCellContents("A3", new Formula("A2+A4"));
-        s.SetCellContents("A4", new Formula("A2+A5"));
+        s.SetContentsOfCell("A1", "=A2+A3");
+        s.SetContentsOfCell("A2", "6");
+        s.SetContentsOfCell("A3", "=A2+A4");
+        s.SetContentsOfCell("A4", "=A2+A5");
 
-        var changed = s.SetCellContents("A5", 82.5);
+        var changed = s.SetContentsOfCell("A5", "82.5");
 
         Assert.IsTrue(changed.SequenceEqual(["A5", "A4", "A3", "A1"]));
     }
@@ -1161,13 +1638,12 @@ public class SpreadsheetTests
     ///   Test that replacing the contents of a cell (Formula --> double) works.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("28")]
-    public void SetCellContents_ReplaceFormulaWithDouble_CellValueCorrect()
+    public void SetContentsOfCell_ReplaceFormulaWithDouble_CellValueCorrect()
     {
         Spreadsheet s = new();
-        s.SetCellContents("A1", new Formula("A2+A3"));
-        s.SetCellContents("A1", 2.5);
+        s.SetContentsOfCell("A1", "=A2+A3");
+        s.SetContentsOfCell("A1", "2.5");
         Assert.AreEqual(2.5, (double)s.GetCellContents("A1"), 1e-9);
     }
 
@@ -1175,13 +1651,12 @@ public class SpreadsheetTests
     ///   Test that replacing a formula in a cell with a string works.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("29")]
-    public void SetCellContents_ReplaceFormulaWithString_CellValueCorrect()
+    public void SetContentsOfCell_ReplaceFormulaWithString_CellValueCorrect()
     {
         Spreadsheet s = new();
-        s.SetCellContents("A1", new Formula("A2+A3"));
-        s.SetCellContents("A1", "Hello");
+        s.SetContentsOfCell("A1", "=A2+A3");
+        s.SetContentsOfCell("A1", "Hello");
         Assert.AreEqual("Hello", (string)s.GetCellContents("A1"));
     }
 
@@ -1189,13 +1664,12 @@ public class SpreadsheetTests
     ///   Test that replacing a cell containing a string with a new formula works.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("30")]
-    public void SetCellContents_ReplaceStringWithFormula_CellValueCorrect()
+    public void SetContentsOfCell_ReplaceStringWithFormula_CellValueCorrect()
     {
         Spreadsheet s = new();
-        s.SetCellContents("A1", "Hello");
-        s.SetCellContents("A1", new Formula("23"));
+        s.SetContentsOfCell("A1", "Hello");
+        s.SetContentsOfCell("A1", "=23");
         Assert.AreEqual(new Formula("23"), (Formula)s.GetCellContents("A1"));
         Assert.AreNotEqual(new Formula("24"), (Formula)s.GetCellContents("A1"));
     }
@@ -1207,29 +1681,28 @@ public class SpreadsheetTests
     ///   the end of the chain results in all the cells having to be recomputed.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("31")]
-    public void SetCellContents_LongChainModifyEnd_AllCellsNeedToBeReEvaluated()
+    public void SetContentsOfCell_LongChainModifyEnd_AllCellsNeedToBeReEvaluated()
     {
         Spreadsheet s = new();
 
-        s.SetCellContents("A1", new Formula("B1+B2"));
-        s.SetCellContents("B1", new Formula("C1-C2"));
-        s.SetCellContents("B2", new Formula("C3*C4"));
-        s.SetCellContents("C1", new Formula("D1*D2"));
-        s.SetCellContents("C2", new Formula("D3*D4"));
-        s.SetCellContents("C3", new Formula("D5*D6"));
-        s.SetCellContents("C4", new Formula("D7*D8"));
-        s.SetCellContents("D1", new Formula("E1"));
-        s.SetCellContents("D2", new Formula("E1"));
-        s.SetCellContents("D3", new Formula("E1"));
-        s.SetCellContents("D4", new Formula("E1"));
-        s.SetCellContents("D5", new Formula("E1"));
-        s.SetCellContents("D6", new Formula("E1"));
-        s.SetCellContents("D7", new Formula("E1"));
-        s.SetCellContents("D8", new Formula("E1"));
+        s.SetContentsOfCell("A1", "=B1+B2");
+        s.SetContentsOfCell("B1", "=C1-C2");
+        s.SetContentsOfCell("B2", "=C3*C4");
+        s.SetContentsOfCell("C1", "=D1*D2");
+        s.SetContentsOfCell("C2", "=D3*D4");
+        s.SetContentsOfCell("C3", "=D5*D6");
+        s.SetContentsOfCell("C4", "=D7*D8");
+        s.SetContentsOfCell("D1", "=E1");
+        s.SetContentsOfCell("D2", "=E1");
+        s.SetContentsOfCell("D3", "=E1");
+        s.SetContentsOfCell("D4", "=E1");
+        s.SetContentsOfCell("D5", "=E1");
+        s.SetContentsOfCell("D6", "=E1");
+        s.SetContentsOfCell("D7", "=E1");
+        s.SetContentsOfCell("D8", "=E1");
 
-        var cells = s.SetCellContents("E1", 0);
+        var cells = s.SetContentsOfCell("E1", "0");
         Assert.IsTrue(cells.Matches(["A1", "B1", "B2", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "E1"]));
     }
 
@@ -1237,33 +1710,30 @@ public class SpreadsheetTests
     ///    Repeat the stress test for more weight in grading process.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("32")]
     public void IncreaseGradingWeight1()
     {
-        SetCellContents_LongChainModifyEnd_AllCellsNeedToBeReEvaluated();
+        SetContentsOfCell_LongChainModifyEnd_AllCellsNeedToBeReEvaluated();
     }
 
     /// <summary>
     ///    Repeat the stress test for more weight in grading process.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("33")]
     public void IncreaseGradingWeight2()
     {
-        SetCellContents_LongChainModifyEnd_AllCellsNeedToBeReEvaluated();
+        SetContentsOfCell_LongChainModifyEnd_AllCellsNeedToBeReEvaluated();
     }
 
     /// <summary>
     ///    Repeat the stress test for more weight in grading process.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("34")]
     public void IncreaseGradingWeight3()
     {
-        SetCellContents_LongChainModifyEnd_AllCellsNeedToBeReEvaluated();
+        SetContentsOfCell_LongChainModifyEnd_AllCellsNeedToBeReEvaluated();
     }
 
     /// <summary>
@@ -1272,9 +1742,8 @@ public class SpreadsheetTests
     ///   needs to be reevaluated.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("35")]
-    public void SetCellContents_TwoHundredLongChain_EachTimeReturnsRestOfChain()
+    public void SetContentsOfCell_TwoHundredLongChain_EachTimeReturnsRestOfChain()
     {
         Spreadsheet s = new();
         ISet<string> expectedAnswers = new HashSet<string>();
@@ -1283,7 +1752,7 @@ public class SpreadsheetTests
             string currentCell = "A" + i;
             expectedAnswers.Add(currentCell);
 
-            var changed = s.SetCellContents(currentCell, new Formula("A" + (i + 1)));
+            var changed = s.SetContentsOfCell(currentCell, "=A" + (i + 1));
 
             Assert.IsTrue(changed.Matches([.. expectedAnswers]));
         }
@@ -1293,33 +1762,30 @@ public class SpreadsheetTests
     ///   Add weight to the grading by repeating the above test.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("36")]
     public void IncreaseGradingWeight4()
     {
-        SetCellContents_TwoHundredLongChain_EachTimeReturnsRestOfChain();
+        SetContentsOfCell_TwoHundredLongChain_EachTimeReturnsRestOfChain();
     }
 
     /// <summary>
     ///   Add weight to the grading by repeating the above test.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("37")]
     public void IncreaseGradingWeight5()
     {
-        SetCellContents_TwoHundredLongChain_EachTimeReturnsRestOfChain();
+        SetContentsOfCell_TwoHundredLongChain_EachTimeReturnsRestOfChain();
     }
 
     /// <summary>
     ///   Add weight to the grading by repeating the above test.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("38")]
     public void IncreaseGradingWeight6()
     {
-        SetCellContents_TwoHundredLongChain_EachTimeReturnsRestOfChain();
+        SetContentsOfCell_TwoHundredLongChain_EachTimeReturnsRestOfChain();
     }
 
     /// <summary>
@@ -1327,10 +1793,9 @@ public class SpreadsheetTests
     ///   of the chain to a circular dependency.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("39")]
     [ExpectedException(typeof(CircularException))]
-    public void SetCellContents_LongChainAddCircularInMiddle_Throws()
+    public void SetContentsOfCell_LongChainAddCircularInMiddle_Throws()
     {
         Spreadsheet s = new();
 
@@ -1338,47 +1803,44 @@ public class SpreadsheetTests
         {
             string currentCell = "A" + i;
             string nextCell = "A" + (i + 1);
-            s.SetCellContents(nextCell, 0);
-            s.SetCellContents(currentCell, new Formula(nextCell));
+            s.SetContentsOfCell(nextCell, "0");
+            s.SetContentsOfCell(currentCell, "="+nextCell);
         }
 
-        s.SetCellContents("A150", new Formula("A50"));
+        s.SetContentsOfCell("A150", "=A50");
     }
 
     /// <summary>
     ///   Add weight to the grading by repeating the above test.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("40")]
     [ExpectedException(typeof(CircularException))]
     public void IncreaseGradingWeight7()
     {
-        SetCellContents_LongChainAddCircularInMiddle_Throws();
+        SetContentsOfCell_LongChainAddCircularInMiddle_Throws();
     }
 
     /// <summary>
     ///   Add weight to the grading by repeating the above test.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("41")]
     [ExpectedException(typeof(CircularException))]
     public void IncreaseGradingWeight8()
     {
-        SetCellContents_LongChainAddCircularInMiddle_Throws();
+        SetContentsOfCell_LongChainAddCircularInMiddle_Throws();
     }
 
     /// <summary>
     ///   Add weight to the grading by repeating the above test.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("42")]
     [ExpectedException(typeof(CircularException))]
     public void IncreaseGradingWeight9()
     {
-        SetCellContents_LongChainAddCircularInMiddle_Throws();
+        SetContentsOfCell_LongChainAddCircularInMiddle_Throws();
     }
 
     /// <summary>
@@ -1395,9 +1857,8 @@ public class SpreadsheetTests
     ///   </para>
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("43")]
-    public void SetCellContents_BreakALongChain_TwoIndependentChains()
+    public void SetContentsOfCell_BreakALongChain_TwoIndependentChains()
     {
         Spreadsheet s = new();
 
@@ -1405,8 +1866,8 @@ public class SpreadsheetTests
         {
             string currentCell = "A1" + i;
             string nextCell = "A1" + (i + 1);
-            s.SetCellContents(nextCell, 0);
-            s.SetCellContents(currentCell, new Formula(nextCell));
+            s.SetContentsOfCell(nextCell, "0");
+            s.SetContentsOfCell(currentCell, "=" + nextCell);
         }
 
         List<string> firstCells = [];
@@ -1423,8 +1884,8 @@ public class SpreadsheetTests
         firstCells.Reverse();
         lastCells.Reverse();
 
-        var firstHalfNeedReevaluate = s.SetCellContents("A1249", 25.0);
-        var secondHalfNeedReevaluate = s.SetCellContents("A1499", 0);
+        var firstHalfNeedReevaluate = s.SetContentsOfCell("A1249", "25.0");
+        var secondHalfNeedReevaluate = s.SetContentsOfCell("A1499", "0");
 
         Assert.IsTrue(firstHalfNeedReevaluate.SequenceEqual(firstCells));
         Assert.IsTrue(secondHalfNeedReevaluate.SequenceEqual(lastCells));
@@ -1434,33 +1895,30 @@ public class SpreadsheetTests
     ///   Add weight to the grading by repeating the above test.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("44")]
     public void IncreaseGradingWeight10()
     {
-        SetCellContents_BreakALongChain_TwoIndependentChains();
+        SetContentsOfCell_BreakALongChain_TwoIndependentChains();
     }
 
     /// <summary>
     ///   Add weight to the grading by repeating the above test.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("45")]
     public void IncreaseGradingWeight11()
     {
-        SetCellContents_BreakALongChain_TwoIndependentChains();
+        SetContentsOfCell_BreakALongChain_TwoIndependentChains();
     }
 
     /// <summary>
     ///   Add weight to the grading by repeating the above test.
     /// </summary>
     [TestMethod]
-    [Timeout(2000)]
     [TestCategory("46")]
     public void IncreaseGradingWeight12()
     {
-        SetCellContents_BreakALongChain_TwoIndependentChains();
+        SetContentsOfCell_BreakALongChain_TwoIndependentChains();
     }
 
     /// <summary>
@@ -1471,7 +1929,7 @@ public class SpreadsheetTests
     [TestCategory("47")]
     public void IncreaseGradingWeight13()
     {
-        SetCellContents_1000RandomCells_MatchesPrecomputedSizeValue(47, 2514);
+        SetContentsOfCell_1000RandomCells_MatchesPrecomputedSizeValue(47, 2514);
     }
 
     /// <summary>
@@ -1482,7 +1940,7 @@ public class SpreadsheetTests
     [TestCategory("48")]
     public void IncreaseGradingWeight14()
     {
-        SetCellContents_1000RandomCells_MatchesPrecomputedSizeValue(48, 2519);
+        SetContentsOfCell_1000RandomCells_MatchesPrecomputedSizeValue(48, 2519);
     }
 
     /// <summary>
@@ -1493,7 +1951,7 @@ public class SpreadsheetTests
     [TestCategory("49")]
     public void IncreaseGradingWeight15()
     {
-        SetCellContents_1000RandomCells_MatchesPrecomputedSizeValue(49, 2502);
+        SetContentsOfCell_1000RandomCells_MatchesPrecomputedSizeValue(49, 2502);
     }
 
     /// <summary>
@@ -1504,7 +1962,7 @@ public class SpreadsheetTests
     [TestCategory("50")]
     public void IncreaseGradingWeight16()
     {
-        SetCellContents_1000RandomCells_MatchesPrecomputedSizeValue(50, 2515);
+        SetContentsOfCell_1000RandomCells_MatchesPrecomputedSizeValue(50, 2515);
     }
 
     /// <summary>
@@ -1528,7 +1986,7 @@ public class SpreadsheetTests
     ///   The precomputed/known size of the resulting spreadsheet.
     ///   This size was determined by pre-running the test with the given seed.
     /// </param>
-    private static void SetCellContents_1000RandomCells_MatchesPrecomputedSizeValue(int seed, int size)
+    private static void SetContentsOfCell_1000RandomCells_MatchesPrecomputedSizeValue(int seed, int size)
     {
         int circularExceptions = 0;
         int overWritten = 0;
@@ -1548,7 +2006,7 @@ public class SpreadsheetTests
                             overWritten++;
                         }
 
-                        s.SetCellContents(cellName, 3.14);
+                        s.SetContentsOfCell(cellName, "3.14");
                         break;
                     case 1:
                         if (s.GetNamesOfAllNonemptyCells().Contains(cellName))
@@ -1556,7 +2014,7 @@ public class SpreadsheetTests
                             overWritten++;
                         }
 
-                        s.SetCellContents(cellName, "hello");
+                        s.SetContentsOfCell(cellName, "hello");
                         break;
                     case 2:
                         if (s.GetNamesOfAllNonemptyCells().Contains(cellName))
@@ -1564,7 +2022,7 @@ public class SpreadsheetTests
                             overWritten++;
                         }
 
-                        s.SetCellContents(cellName, new Formula(GenerateRandomFormula(rand)));
+                        s.SetContentsOfCell(cellName, "=" + GenerateRandomFormula(rand));
                         break;
                 }
             }
