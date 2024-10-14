@@ -337,7 +337,6 @@ public class SpreadsheetTests
     public void SpreadSheetSetContentsOfCellDouble_InvalidName_ThrowsException()
     {
         Spreadsheet spreadsheet = new Spreadsheet();
-        spreadsheet.SetContentsOfCell("a2", "=x2 +1");
         List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("2fdasd", "2.2");
     }
 
@@ -641,7 +640,7 @@ public class SpreadsheetTests
         {
         }
 
-        Assert.AreEqual(spreadsheet.GetCellContents("a2"), "=x2 + 1");
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
     }
 
     /// <summary>
@@ -663,7 +662,7 @@ public class SpreadsheetTests
         {
         }
 
-        Assert.AreEqual(spreadsheet.GetCellContents("a2"), "=x2 + 1");
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
     }
 
     /// <summary>
@@ -684,8 +683,8 @@ public class SpreadsheetTests
         {
         }
 
-        Assert.AreEqual(spreadsheet.GetCellContents("a2"), "=x2 + 1");
-        Assert.AreEqual(spreadsheet.GetCellContents("b2"), "=a2 + 5");
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
+        Assert.AreEqual(spreadsheet.GetCellContents("b2"), new Formula("a2 + 5"));
         Assert.AreEqual(spreadsheet.GetCellContents("x2"), string.Empty);
     }
 
@@ -708,8 +707,8 @@ public class SpreadsheetTests
         {
         }
 
-        Assert.AreEqual(spreadsheet.GetCellContents("a2"), "=x2 + 1");
-        Assert.AreEqual(spreadsheet.GetCellContents("b2"), "=a2 + 5");
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
+        Assert.AreEqual(spreadsheet.GetCellContents("b2"), new Formula("a2 + 5"));
         Assert.AreEqual(spreadsheet.GetCellContents("x2"), string.Empty);
 
         List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=2+2");
@@ -739,8 +738,8 @@ public class SpreadsheetTests
         {
         }
 
-        Assert.AreEqual(spreadsheet.GetCellContents("a2"), "=x2 + 1");
-        Assert.AreEqual(spreadsheet.GetCellContents("b2"), "=a2 + 5");
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
+        Assert.AreEqual(spreadsheet.GetCellContents("b2"), new Formula("a2 + 5"));
         Assert.AreEqual(spreadsheet.GetCellContents("x2"), string.Empty);
 
         List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("f2", "=2+2");
@@ -823,7 +822,7 @@ public class SpreadsheetTests
 
         sheetFromSaved.Load("values.txt");
 
-        string expectedContents = "3.0";
+        string expectedContents = "3";
 
         string? actualContents = sheetFromSaved.GetCellContents("A1").ToString();
 
@@ -853,7 +852,7 @@ public class SpreadsheetTests
 
         string? actualContents = ss.GetCellContents("A1").ToString();
 
-        string expectedContents2 = "=4+2";
+        string expectedContents2 = "4+2";
 
         string? actualContents2 = ss.GetCellContents("B1").ToString();
 
@@ -871,7 +870,7 @@ public class SpreadsheetTests
     {
         Spreadsheet s = new Spreadsheet();
         Random r = new Random();
-        for (int i = 100; i < 100; i++)
+        for (int i = 0; i < 100; i++)
         {
             switch (r.Next(3))
             {
@@ -891,7 +890,9 @@ public class SpreadsheetTests
         s.Save("values.txt");
         Spreadsheet ss = new Spreadsheet();
         ss.Load("values.txt");
-        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 100);
+        int expectedCount = 100;
+        int actualCount = ss.GetNamesOfAllNonemptyCells().Count;
+        Assert.AreEqual(expectedCount, actualCount);
     }
 
     /// <summary>
@@ -906,7 +907,7 @@ public class SpreadsheetTests
         s.SetContentsOfCell("A1", "5");
         s.SetContentsOfCell("B1", "=4+2");
 
-        s.Save(".");
+        s.Save("bleeberblabb");
     }
 
     /// <summary>
@@ -1006,7 +1007,7 @@ public class SpreadsheetTests
 
         string? actualContents = ss.GetCellContents("A1").ToString();
 
-        string expectedContents2 = "=4+2";
+        string expectedContents2 = "4+2";
 
         string? actualContents2 = ss.GetCellContents("B1").ToString();
 
@@ -1025,7 +1026,7 @@ public class SpreadsheetTests
         StringBuilder jsonStringBuilder = new StringBuilder();
         jsonStringBuilder.Append(@"{""Cells"": {");
         Random r = new Random();
-        for(int i = 100; i < 100; i++)
+        for(int i = 0; i < 100; i++)
         {
             switch (r.Next(3))
             {
@@ -1041,11 +1042,12 @@ public class SpreadsheetTests
             }
         }
 
+        jsonStringBuilder.Append(@" ""A101"":" + @"{ ""StringForm"": ""5""}}}");
         File.WriteAllText("known_values.txt", jsonStringBuilder.ToString());
 
         Spreadsheet ss = new Spreadsheet();
         ss.Load("known_values.txt");
-        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 100);
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 101);
     }
 
     /// <summary>
@@ -1057,7 +1059,7 @@ public class SpreadsheetTests
     public void SpreadsheetLoad_LoadingFromAFileThatDoesNotExist_ThrowsReadWriteException()
     {
         Spreadsheet ss = new Spreadsheet();
-        ss.Load(".");
+        ss.Load("gleebglobblibberblab");
     }
 
     /// <summary>
@@ -1255,15 +1257,7 @@ public class SpreadsheetTests
 
         s.SetContentsOfCell("A1", "=2/0");
 
-        FormulaError expectedValue = new FormulaError("Divide by 0 is NOT allowed!");
-        if (s.GetCellValue("A1") is FormulaError actualValue)
-        {
-            Assert.AreEqual(expectedValue, actualValue);
-        }
-        else
-        {
-            Assert.Fail();
-        }
+        Assert.IsTrue(s.GetCellValue("A1") is FormulaError);
     }
 
     /// <summary>

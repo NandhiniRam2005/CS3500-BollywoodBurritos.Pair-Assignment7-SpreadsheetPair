@@ -9,6 +9,9 @@ using CS3500.DependencyGraph;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Net.Mime.MediaTypeNames;
+using System.Text.Json.Serialization;
+using System.Runtime.CompilerServices;
+using System.Collections;
 
 /// <summary>
 /// Author:    Joel Rodriguez,  Profs Joe, Professor Kopta, and Professor Jim.
@@ -119,6 +122,8 @@ public class Spreadsheet
     ///  A representation of all the non empty cells in this spreadsheet it is a hash map where the key is the name of the cell
     /// and the value is a cell object that stores its contents.
     /// </summary>
+    [JsonInclude]
+    [JsonPropertyName("Cells")]
     private Dictionary<string, Cell> nonEmptyCells;
 
     /// <summary>
@@ -139,6 +144,7 @@ public class Spreadsheet
         this.name = "default";
         this.dependencyGraph = new DependencyGraph();
         this.nonEmptyCells = new Dictionary<string, Cell>();
+        this._changed = false;
     }
 
     /// <summary>
@@ -150,11 +156,13 @@ public class Spreadsheet
         this.name = name;
         this.dependencyGraph = new DependencyGraph();
         this.nonEmptyCells = new Dictionary<string, Cell>();
+        this._changed = false;
     }
 
     /// <summary>
     /// Gets or sets a value indicating whether the field _changed is get or set.
     /// </summary>
+    [JsonIgnore]
     public bool Changed
     {
         get { return _changed; }
@@ -193,7 +201,7 @@ public class Spreadsheet
         get
         {
             string nameOfCell = NormalizeToken(cellName);
-            if (!IsValidName(name))
+            if (!IsValidName(nameOfCell))
             {
                 throw new InvalidNameException();
             }
@@ -268,7 +276,18 @@ public class Spreadsheet
     /// </exception>
     public void Save(string filename)
     {
-        throw new NotImplementedException();
+       string jsonString = string.Empty;
+       try
+       {
+           jsonString = System.Text.Json.JsonSerializer.Serialize<Spreadsheet>(this);
+       }
+       catch (Exception e)
+       {
+           throw new SpreadsheetReadWriteException("Error: " + e);
+       }
+
+       File.WriteAllText(filename, jsonString);
+       Changed = false;
     }
 
     /// <summary>
@@ -288,7 +307,38 @@ public class Spreadsheet
     /// <exception cref="SpreadsheetReadWriteException"> When the file cannot be opened or the json is bad.</exception>
     public void Load(string filename)
     {
-        throw new NotImplementedException();
+        Spreadsheet ogSpreadsheet = this;
+        this.nonEmptyCells.Clear();
+        this.dependencyGraph = new DependencyGraph();
+
+        string jsonText = string.Empty;
+        try
+        {
+            jsonText = File.ReadAllText(filename);
+            Spreadsheet? tempSpreadsheeet = System.Text.Json.JsonSerializer.Deserialize<Spreadsheet>(jsonText);
+
+            List<string> loadedKeys = new List<string>();
+
+            // needed to get rid of nullable warning.
+            if (tempSpreadsheeet != null)
+            {
+                loadedKeys = tempSpreadsheeet.nonEmptyCells.Keys.ToList();
+                int i = 0;
+                foreach (Cell cell in tempSpreadsheeet.nonEmptyCells.Values)
+                {
+                    this.SetContentsOfCell(loadedKeys[i], cell.StringForm);
+                    i++;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            this.nonEmptyCells = ogSpreadsheet.nonEmptyCells;
+            this.dependencyGraph = ogSpreadsheet.dependencyGraph;
+            throw new SpreadsheetReadWriteException("Error:" + e);
+        }
+
+        Changed = false;
     }
 
     /// <summary>
@@ -309,7 +359,17 @@ public class Spreadsheet
     public object GetCellValue(string cellName)
     {
         string normalizedCellName = NormalizeToken(cellName);
-        return this.nonEmptyCells[normalizedCellName].GetValue();
+        if (!IsValidName(normalizedCellName))
+        {
+            throw new InvalidNameException();
+        }
+
+        if (this.nonEmptyCells.ContainsKey(normalizedCellName))
+        {
+            return this.nonEmptyCells[normalizedCellName].GetValue();
+        }
+
+        return string.Empty;
     }
 
     /// <summary>
@@ -504,22 +564,18 @@ public class Spreadsheet
     /// </returns>
     private IList<string> SetCellContents(string name, double number)
     {
-        string nameOfCell = NormalizeToken(name);
-        if (!IsValidName(nameOfCell))
+        if (!this.nonEmptyCells.ContainsKey(name))
         {
-            throw new InvalidNameException();
+            this.nonEmptyCells.Add(name, new Cell(number.ToString()));
         }
 
-        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
-        {
-            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, number, number));
-        }
+        this.dependencyGraph.ReplaceDependees(name, new HashSet<string>());
+        this.nonEmptyCells[name].SetContent(number);
+        this.nonEmptyCells[name].SetValue(number);
+        this.nonEmptyCells[name].StringForm = number.ToString();
 
-        this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
-        this.nonEmptyCells[nameOfCell].SetContent(number);
-        this.nonEmptyCells[nameOfCell].SetValue(number);
-
-        return this.GetCellsToRecalculate(nameOfCell).ToList();
+        Changed = true;
+        return this.GetCellsToRecalculate(name).ToList();
     }
 
     /// <summary>
@@ -536,30 +592,26 @@ public class Spreadsheet
     /// </returns>
     private IList<string> SetCellContents(string name, string text)
     {
-        string nameOfCell = NormalizeToken(name);
-        if (!IsValidName(nameOfCell))
-        {
-            throw new InvalidNameException();
-        }
-
-        this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
+        this.dependencyGraph.ReplaceDependees(name, new HashSet<string>());
         if (text.Equals(string.Empty))
         {
-            this.nonEmptyCells.Remove(nameOfCell);
-            return this.GetCellsToRecalculate(nameOfCell).ToList();
+            this.nonEmptyCells.Remove(name);
+            return this.GetCellsToRecalculate(name).ToList();
         }
 
-        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
+        if (!this.nonEmptyCells.ContainsKey(name))
         {
-            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, text, text));
+            this.nonEmptyCells.Add(name, new Cell(text));
         }
         else
         {
-            this.nonEmptyCells[nameOfCell].SetContent(text);
-            this.nonEmptyCells[nameOfCell].SetValue(text);
+            this.nonEmptyCells[name].SetContent(text);
+            this.nonEmptyCells[name].SetValue(text);
+            this.nonEmptyCells[name].StringForm = text;
         }
 
-        return this.GetCellsToRecalculate(nameOfCell).ToList();
+        Changed = true;
+        return this.GetCellsToRecalculate(name).ToList();
     }
 
     /// <summary>
@@ -584,38 +636,31 @@ public class Spreadsheet
     /// </returns>
     private IList<string> SetCellContents(string name, Formula formula)
     {
-        if (!IsValidName(name))
+        if (!this.nonEmptyCells.ContainsKey(name))
         {
-            throw new InvalidNameException();
-        }
+            CheckForCircularException(name, formula, string.Empty);
 
-        string nameOfCell = NormalizeToken(name);
+            this.nonEmptyCells.Add(name, new Cell("=" + formula.ToString()));
 
-        if (!this.nonEmptyCells.ContainsKey(nameOfCell))
-        {
-            CheckForCircularException(nameOfCell, formula, string.Empty);
-
-            object formulaValue = formula.Evaluate((var) => (double)this.GetCellValue(var));
-
-            this.nonEmptyCells.Add(nameOfCell, new Cell(nameOfCell, formula, formulaValue));
+            this.nonEmptyCells[name].ComputeValue(this);
         }
         else
         {
-            object ogContents = this.nonEmptyCells[nameOfCell].GetContent();
+            object ogContents = this.nonEmptyCells[name].GetContent();
             if (ogContents is Formula)
             {
-                this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
+                this.dependencyGraph.ReplaceDependees(name, new HashSet<string>());
             }
 
-            CheckForCircularException(nameOfCell, formula, ogContents);
+            CheckForCircularException(name, formula, ogContents);
 
-            object formulaValue = formula.Evaluate((var) => (double)this.GetCellValue(var));
-
-            this.nonEmptyCells[nameOfCell].SetContent(formula);
-            this.nonEmptyCells[nameOfCell].SetValue(formulaValue);
+            this.nonEmptyCells[name].SetContent(formula);
+            this.nonEmptyCells[name].StringForm = "=" + formula.ToString();
+            this.nonEmptyCells[name].ComputeValue(this);
+            Changed = true;
         }
 
-        return this.GetCellsToRecalculate(nameOfCell).ToList();
+        return this.GetCellsToRecalculate(name).ToList();
     }
 
     /// <summary>
@@ -801,21 +846,88 @@ public class Spreadsheet
 /// </summary>
 internal class Cell
 {
-    private string name;
+    /// <summary>
+    /// The string value of the cell object for example the formula (2+2) should have a string value of "=2+2".
+    /// </summary>
+    private string _stringForm;
+
+    /// <summary>
+    /// The contents of the string which are either a formula object, a double, or a string.
+    /// </summary>
     private object content;
+
+    /// <summary>
+    /// The actual value of the cell for example a formula of "2+6" would have a value of 8.
+    /// </summary>
     private object value;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Cell"/> class.
     /// </summary>
-    /// <param name="name"> The name of the cell.</param>
-    /// <param name="content">The content in the cell which can be a double, string, or formula.</param>
-    /// <param name="value">The actual value in the cell which can either be a double a string or a FormulaError.</param>
-    public Cell(string name, object content, object value)
+    /// <param name="stringForm"> The string value of the cell.</param>
+    public Cell(string stringForm)
     {
-        this.name = name;
-        this.content = content;
-        this.value = value;
+        this._stringForm = stringForm;
+
+        // The following line is temporary and will always be fixed later on.
+        this.value = 0;
+        bool successfullyParsed = double.TryParse(stringForm, out double doubleContent);
+        if (stringForm.StartsWith("="))
+        {
+            string formulaContent = stringForm.Substring(1);
+
+            Formula formula = new Formula(formulaContent);
+
+            this.content = formula;
+        }
+        else if (successfullyParsed)
+        {
+            this.value = doubleContent;
+            this.content = doubleContent;
+        }
+        else
+        {
+            this.content = stringForm;
+            this.value = stringForm;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the StringForm property.
+    /// </summary>
+    public string StringForm
+    {
+        get { return this._stringForm; }
+        set { this._stringForm = value; }
+    }
+
+    /// <summary>
+    /// Computes the value of the cell and stores that inside this cell object.
+    /// </summary>
+    /// <param name="spreadsheet">The instance of the spreadsheet in which this cell lives in.</param>
+    public void ComputeValue(Spreadsheet spreadsheet)
+    {
+        double MyVariables(string var)
+        {
+            if (spreadsheet[var] is double value)
+            {
+                return value;
+            }
+
+            if (spreadsheet[var].Equals(string.Empty))
+            {
+                return 0;
+            }
+
+            return 0;
+            //throw new FormulaFormatException("Attempting to add two things that are not numbers!");
+        }
+
+        string formulaContent = this.StringForm.Substring(1);
+
+        Formula formula = new Formula(formulaContent);
+
+        this.value = formula.Evaluate(MyVariables);
     }
 
     /// <summary>
