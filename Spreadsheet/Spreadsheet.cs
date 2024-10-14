@@ -160,7 +160,8 @@ public class Spreadsheet
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the field _changed is get or set.
+    /// Gets or sets a value indicating whether gets or sets _changed.
+    /// Gets the value of the field _changed or changes it (set it).
     /// </summary>
     [JsonIgnore]
     public bool Changed
@@ -307,7 +308,9 @@ public class Spreadsheet
     /// <exception cref="SpreadsheetReadWriteException"> When the file cannot be opened or the json is bad.</exception>
     public void Load(string filename)
     {
-        Spreadsheet ogSpreadsheet = this;
+        Spreadsheet ogSpreadsheet = new Spreadsheet();
+        ogSpreadsheet.nonEmptyCells = new Dictionary<string, Cell>(this.nonEmptyCells);
+
         this.nonEmptyCells.Clear();
         this.dependencyGraph = new DependencyGraph();
 
@@ -333,8 +336,11 @@ public class Spreadsheet
         }
         catch (Exception e)
         {
-            this.nonEmptyCells = ogSpreadsheet.nonEmptyCells;
-            this.dependencyGraph = ogSpreadsheet.dependencyGraph;
+            foreach (KeyValuePair<string, Cell> pair in ogSpreadsheet.nonEmptyCells)
+            {
+                this.SetContentsOfCell(pair.Key, pair.Value.StringForm);
+            }
+
             throw new SpreadsheetReadWriteException("Error:" + e);
         }
 
@@ -919,8 +925,7 @@ internal class Cell
                 return 0;
             }
 
-            return 0;
-            //throw new FormulaFormatException("Attempting to add two things that are not numbers!");
+            throw new ArgumentException("Attempting to add two things that are not numbers!");
         }
 
         string formulaContent = this.StringForm.Substring(1);

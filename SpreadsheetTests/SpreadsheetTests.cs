@@ -667,6 +667,29 @@ public class SpreadsheetTests
 
     /// <summary>
     /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
+    /// list of cells affected both indirectly and directly. And does not change.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetContentsOfCellFormula_AddingOfIndirectCircularExpression_DoesNotChangeSpreadsheetOrChanged()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetContentsOfCell("a2", "=x2 + 1");
+        spreadsheet.SetContentsOfCell("b2", "=a2 + 5");
+        List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=2+2");
+        try
+        {
+            spreadsheet.SetContentsOfCell("a2", "=b2+2");
+        }
+        catch (CircularException)
+        {
+        }
+
+        Assert.AreEqual(spreadsheet.GetCellContents("a2"), new Formula("x2 + 1"));
+        Assert.AreEqual(spreadsheet.Changed, true);
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas returns the proper
     /// list of cells affected both indirectly and directly.
     /// </summary>
     [TestMethod]
@@ -1063,6 +1086,28 @@ public class SpreadsheetTests
     }
 
     /// <summary>
+    /// Test to ensure that the load method is able to correctly throw a SpreadsheetReadWriteException when the file
+    /// we are loading from does not exist.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetLoad_LoadingError_DoesNotChangeSpreadsheet()
+    {
+        Spreadsheet ss = new Spreadsheet();
+        ss.SetContentsOfCell("A1", "=2+2");
+        try
+        {
+            ss.Load("gleebglobblibberblab");
+        }
+        catch (SpreadsheetReadWriteException)
+        {
+        }
+
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 1);
+        Assert.IsTrue(ss.GetCellContents("A1") is Formula);
+        Assert.AreEqual(4.0, ss.GetCellValue("A1"));
+    }
+
+    /// <summary>
     ///  Test to ensure that the load method is able to correctly throw a SpreadsheetReadWriteException when a cell in the
     ///  file contains a formula with invalid syntax.
     /// </summary>
@@ -1121,13 +1166,39 @@ public class SpreadsheetTests
     [ExpectedException(typeof(SpreadsheetReadWriteException))]
     public void SpreadsheetLoading_LoadingAFileWithInvalidNamingPrinciples_ThrowsReadWriteException()
     {
-        string expectedOutput = @"{""Cells"": { ""1A"": { ""StringForm"": ""5""},""B"":{""StringForm"": ""=43/0""}}}";
+        string expectedOutput = @"{""Cells"": { ""1A"": { ""StringForm"": ""5""},""B"":{""StringForm"": ""=43/2""}}}";
 
         File.WriteAllText("known_values.txt", expectedOutput);
 
         // Now Read that file
         Spreadsheet ss = new Spreadsheet();
         ss.Load("known_values.txt");
+    }
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to correctly throw a SpreadsheetReadWriteException when the cells are not named
+    ///  properly and the state of changed is not changed.
+    /// </summary>
+    [TestMethod]
+
+    public void SpreadsheetLoading_LoadingAFileWithInvalidNamingPrinciplesDoesNotChangeStateOfChanged_ThrowsReadWriteException()
+    {
+        string expectedOutput = @"{""Cells"": { ""1A"": { ""StringForm"": ""5""},""B"":{""StringForm"": ""=43/0""}}}";
+
+        File.WriteAllText("known_values.txt", expectedOutput);
+
+        // Now Read that file
+        Spreadsheet ss = new Spreadsheet();
+        ss.SetContentsOfCell("A1", "hi");
+        try
+        {
+            ss.Load("known_values.txt");
+        }
+        catch (Exception)
+        {
+        }
+
+        Assert.IsTrue(ss.Changed);
     }
 
     /// <summary>
@@ -1163,6 +1234,43 @@ public class SpreadsheetTests
         ss.Load("known_values.txt");
 
         Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 0);
+    }
+
+    // TESTS FOR INDEXER OF SPREADSHEET -----------------------------
+
+    /// <summary>
+    /// Ensure the indexer for the spreadsheet can return the proper value in a normal case.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetIndexer_RegularIndexerCase_GetValidValue()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "33");
+
+        Assert.AreEqual(s["A1"], 33.0);
+    }
+
+    /// <summary>
+    /// Ensure the indexer for the spreadsheet can return the proper value in a normal case where we grab the value of an empty cell.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetIndexer_GetEmptyCell_GetValidValue()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "33");
+
+        Assert.AreEqual(s["B1"], string.Empty);
+    }
+
+    /// <summary>
+    /// Ensure the indexer for the spreadsheet can throw the proper InvalidNameException when an invalid name is given to the indexer.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(InvalidNameException))]
+    public void SpreadsheetIndexer_InvalidVariableName_ThrowsException()
+    {
+        Spreadsheet s = new Spreadsheet();
+        object badName = s["afdas"];
     }
 
     // TESTS FOR NEW CONSTRUCTOR WITH SPREADSHEET NAME ---------------
