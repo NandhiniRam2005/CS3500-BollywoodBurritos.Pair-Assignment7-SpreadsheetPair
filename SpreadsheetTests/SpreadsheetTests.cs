@@ -2139,10 +2139,10 @@ public class SpreadsheetTests
         }
 
         ISet<string> set = new HashSet<string>(s.GetNamesOfAllNonemptyCells());
-        int shouldBeTenK = overWritten + circularExceptions + set.Count;
-        Assert.AreEqual(10000, shouldBeTenK);
+        //int shouldBeTenK = overWritten + circularExceptions + set.Count;
+        //Assert.AreEqual(10000, shouldBeTenK);
 
-        // Assert.AreEqual(size, set.Count);
+        Assert.AreEqual(size, set.Count);
     }
 
     /// <summary>

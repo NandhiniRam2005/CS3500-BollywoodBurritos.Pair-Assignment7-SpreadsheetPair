@@ -574,11 +574,13 @@ public class Spreadsheet
         {
             this.nonEmptyCells.Add(name, new Cell(number.ToString()));
         }
-
-        this.dependencyGraph.ReplaceDependees(name, new HashSet<string>());
-        this.nonEmptyCells[name].SetContent(number);
-        this.nonEmptyCells[name].SetValue(number);
-        this.nonEmptyCells[name].StringForm = number.ToString();
+        else
+        {
+            this.dependencyGraph.ReplaceDependees(name, new HashSet<string>());
+            this.nonEmptyCells[name].SetContent(number);
+            this.nonEmptyCells[name].SetValue(number);
+            this.nonEmptyCells[name].StringForm = number.ToString();
+        }
 
         Changed = true;
         return this.GetCellsToRecalculate(name).ToList();
@@ -602,6 +604,7 @@ public class Spreadsheet
         if (text.Equals(string.Empty))
         {
             this.nonEmptyCells.Remove(name);
+            Changed = true;
             return this.GetCellsToRecalculate(name).ToList();
         }
 
@@ -653,19 +656,21 @@ public class Spreadsheet
         else
         {
             object ogContents = this.nonEmptyCells[name].GetContent();
+
             if (ogContents is Formula)
             {
                 this.dependencyGraph.ReplaceDependees(name, new HashSet<string>());
             }
+
 
             CheckForCircularException(name, formula, ogContents);
 
             this.nonEmptyCells[name].SetContent(formula);
             this.nonEmptyCells[name].StringForm = "=" + formula.ToString();
             this.nonEmptyCells[name].ComputeValue(this);
-            Changed = true;
         }
 
+        Changed = true;
         return this.GetCellsToRecalculate(name).ToList();
     }
 
@@ -692,6 +697,19 @@ public class Spreadsheet
         HashSet<string> formulaVariables = formula.GetVariables().ToHashSet();
         if (formulaVariables.Contains(nameOfCell))
         {
+            if (ogContents is Formula ogFormula)
+            {
+                this.SetCellContents(nameOfCell, ogFormula);
+            }
+            else if (ogContents is string ogString)
+            {
+                this.SetCellContents(nameOfCell, ogString);
+            }
+            else if (ogContents is double ogDouble)
+            {
+                this.SetCellContents(nameOfCell, ogDouble);
+            }
+
             throw new CircularException();
         }
 
