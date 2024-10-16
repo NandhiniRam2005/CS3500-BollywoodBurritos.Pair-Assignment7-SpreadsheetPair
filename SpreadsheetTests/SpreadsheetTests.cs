@@ -930,7 +930,24 @@ public class SpreadsheetTests
         s.SetContentsOfCell("A1", "5");
         s.SetContentsOfCell("B1", "=4+2");
 
-        s.Save("bleeberblabb");
+        s.Save(@"bleeber//b\labb");
+    }
+
+    /// <summary>
+    /// Test to ensure that the save method is able to throw the proper exception when the file we are attempting to save to
+    /// does not exist.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(SpreadsheetReadWriteException))]
+    public void RandomTest_ThrowsReadWriteException()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "5");
+        s.SetContentsOfCell("B1", "=A1+3");
+        s.SetContentsOfCell("A1", "hello");
+        object hello =  s.GetCellValue("B1");
+        int j = 6;
+
     }
 
     /// <summary>

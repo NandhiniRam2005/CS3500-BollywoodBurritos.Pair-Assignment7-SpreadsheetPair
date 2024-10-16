@@ -281,13 +281,13 @@ public class Spreadsheet
        try
        {
            jsonString = System.Text.Json.JsonSerializer.Serialize<Spreadsheet>(this);
-       }
+           File.WriteAllText(filename, jsonString);
+        }
        catch (Exception e)
        {
            throw new SpreadsheetReadWriteException("Error: " + e);
        }
 
-       File.WriteAllText(filename, jsonString);
        Changed = false;
     }
 
@@ -582,6 +582,11 @@ public class Spreadsheet
             this.nonEmptyCells[name].StringForm = number.ToString();
         }
 
+        foreach (string depenedent in this.dependencyGraph.GetDependents(name))
+        {
+            this.nonEmptyCells[depenedent].ComputeValue(this);
+        }
+
         Changed = true;
         return this.GetCellsToRecalculate(name).ToList();
     }
@@ -605,6 +610,11 @@ public class Spreadsheet
         {
             this.nonEmptyCells.Remove(name);
             Changed = true;
+            foreach (string depenedent in this.dependencyGraph.GetDependents(name))
+            {
+                this.nonEmptyCells[depenedent].ComputeValue(this);
+            }
+
             return this.GetCellsToRecalculate(name).ToList();
         }
 
@@ -617,6 +627,11 @@ public class Spreadsheet
             this.nonEmptyCells[name].SetContent(text);
             this.nonEmptyCells[name].SetValue(text);
             this.nonEmptyCells[name].StringForm = text;
+        }
+
+        foreach (string depenedent in this.dependencyGraph.GetDependents(name))
+        {
+            this.nonEmptyCells[depenedent].ComputeValue(this);
         }
 
         Changed = true;
@@ -652,6 +667,11 @@ public class Spreadsheet
             this.nonEmptyCells.Add(name, new Cell("=" + formula.ToString()));
 
             this.nonEmptyCells[name].ComputeValue(this);
+
+            foreach (string depenedent in this.dependencyGraph.GetDependents(name))
+            {
+                this.nonEmptyCells[depenedent].ComputeValue(this);
+            }
         }
         else
         {
@@ -668,6 +688,11 @@ public class Spreadsheet
             this.nonEmptyCells[name].SetContent(formula);
             this.nonEmptyCells[name].StringForm = "=" + formula.ToString();
             this.nonEmptyCells[name].ComputeValue(this);
+
+            foreach (string depenedent in this.dependencyGraph.GetDependents(name))
+            {
+                this.nonEmptyCells[depenedent].ComputeValue(this);
+            }
         }
 
         Changed = true;
