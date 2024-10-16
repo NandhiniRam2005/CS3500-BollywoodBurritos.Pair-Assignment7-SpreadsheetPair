@@ -49,10 +49,16 @@ value of the cell).
    I add anything in my code to ensure I have not harmed my solution. I also practice TDD which helps me get the solution right the first time.
 3. Self Documenting Code - My code uses good variable names and easy to read syntax. For example I vouch for using for each statements with good variable names 
    to ensure my code is easy to read even without comments.
-In additon to these GSP's I also have
-4. DRY
-5. Style
-6. XML Documentation
+4. DRY - I am aware that this is somewhat like code reuse but it also encompasses not repeating data. In my solution I ensure to not repeat data or code! For example in 
+   my spreadsheet class I do not repeat the data of the name of a cell inside the cell class and only store it in the Dictionary.
+5. Style - I ensure to follow the style guidelines that were given to us in class and in documents shared on canvas. I do not have unindented code or code that is hard 
+   to read in my solution.
+6. XML Documentation - In addition to having self documenting code I made sure to write good XML comments for all my member variables, methods, and tests. This ensures
+   that in addition to my code being easy to read there are also concise XML comments that are easy to read both on-line and in an IDE using intellisense. 
+Others I have acheived are:
+1. Well named, commented, short methods that do a specific job and return a specific result.
+2. Abstraction
+3. Regression Testing (I did have old tests)
 
 # Time Management Skills
 Throughout this project I have learned many things about time management skills and estimation skills. One of the main things I have learned is 
@@ -89,9 +95,10 @@ continue to get better as the semester continues.
                                                                                    Effectively:     3
                                                                                    Debugging:       5.8
                                                                                    Learning Tools:  0.2
-    6. Assignment 6: A Full Spreadsheet Model        Predicted Hours:  15       Actual Hours:   3
+
+    6. Assignment 6: A Full Spreadsheet Model        Predicted Hours:  15       Actual Hours:   10.5
                                                                                 Hours Spent - 
-                                                                                   Effectively:     2.5
-                                                                                   Debugging:       0
+                                                                                   Effectively:     4
+                                                                                   Debugging:       6
                                                                                    Learning Tools:  0.5
 

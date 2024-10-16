@@ -826,6 +826,225 @@ public class SpreadsheetTests
         List<string> actualList = (List<string>)spreadsheet.SetContentsOfCell("x2", "=b2+2");
     }
 
+    // SET CONTENTS OF CELL GENERAL TESTS ----------------------------
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// a double turning into a string.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromDoubleToString_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "5");
+        s.SetContentsOfCell("B1", "=A1+3");
+        Assert.AreEqual(s.GetCellValue("B1"), 8.0);
+        s.SetContentsOfCell("A1", "newValue");
+        object newValue = s.GetCellValue("B1");
+        Assert.IsTrue(newValue is FormulaError);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// a double turning into a formula.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromDoubleToFormula_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "5");
+        s.SetContentsOfCell("B1", "=A1+3");
+        Assert.AreEqual(s.GetCellValue("B1"), 8.0);
+        s.SetContentsOfCell("A1", "=2+4");
+        object newValue = s.GetCellValue("B1");
+        Assert.AreEqual(newValue, 9.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// a double turning into an empty string.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromDoubleToEmptyString_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "5");
+        s.SetContentsOfCell("B1", "=A1+3");
+        Assert.AreEqual(s.GetCellValue("B1"), 8.0);
+        s.SetContentsOfCell("A1", string.Empty);
+        object newValue = s.GetCellValue("B1");
+        Assert.AreEqual(newValue, 3.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// a double turning into a different double.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromDoubleToDifferentDouble_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "5");
+        s.SetContentsOfCell("B1", "=A1+3");
+        Assert.AreEqual(s.GetCellValue("B1"), 8.0);
+        s.SetContentsOfCell("A1", "10.0");
+        object newValue = s.GetCellValue("B1");
+        Assert.AreEqual(newValue, 13.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// a string turning into a double.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromStringToDouble_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "newValue");
+        s.SetContentsOfCell("B1", "=A1+3");
+        object newValue = s.GetCellValue("B1");
+        Assert.IsTrue(newValue is FormulaError);
+        s.SetContentsOfCell("A1", "5");
+        Assert.AreEqual(s.GetCellValue("B1"), 8.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// a string turning into a formula.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromStringToFormula_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "newValue");
+        s.SetContentsOfCell("B1", "=A1+3");
+        object newValue = s.GetCellValue("B1");
+        Assert.IsTrue(newValue is FormulaError);
+        s.SetContentsOfCell("A1", "=2+3");
+        Assert.AreEqual(s.GetCellValue("B1"), 8.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// a string turning into an empty cell.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromStringToAnEmptyString_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "newValue");
+        s.SetContentsOfCell("B1", "=A1+3");
+        object newValue = s.GetCellValue("B1");
+        Assert.IsTrue(newValue is FormulaError);
+        s.SetContentsOfCell("A1", string.Empty);
+        Assert.AreEqual(s.GetCellValue("B1"), 3.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// a formula turning into a double.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromFormulaToADouble_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "=2+5");
+        s.SetContentsOfCell("B1", "=A1+3");
+        Assert.AreEqual(s.GetCellValue("B1"), 10.0);
+        s.SetContentsOfCell("A1", "12");
+        object newValue = s.GetCellValue("B1");
+        Assert.AreEqual(newValue, 15.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// a formula turning into another formula.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromFormulaToAnotherFormula_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "=2+5");
+        s.SetContentsOfCell("B1", "=A1+3");
+        Assert.AreEqual(s.GetCellValue("B1"), 10.0);
+        s.SetContentsOfCell("A1", "=12-10");
+        object newValue = s.GetCellValue("B1");
+        Assert.AreEqual(newValue, 5.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// a formula turning into a string.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromFormulaToAString_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "=2+2");
+        s.SetContentsOfCell("B1", "=A1+3");
+        Assert.AreEqual(s.GetCellValue("B1"), 7.0);
+        s.SetContentsOfCell("A1", "newValue");
+        object newValue = s.GetCellValue("B1");
+        Assert.IsTrue(newValue is FormulaError);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// a formula turning into another formula.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromFormulaToAnEmptyString_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "=2+5");
+        s.SetContentsOfCell("B1", "=A1+3");
+        Assert.AreEqual(s.GetCellValue("B1"), 10.0);
+        s.SetContentsOfCell("A1", string.Empty);
+        Assert.AreEqual(s.GetCellValue("B1"), 3.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// an EmptyString into a double.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromAnEmptyStringToADouble_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("B1", "=A1+3");
+        Assert.AreEqual(s.GetCellValue("B1"), 3.0);
+        s.SetContentsOfCell("A1", "2");
+        Assert.AreEqual(s.GetCellValue("B1"), 5.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// an EmptyString into a formula.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromAnEmptyStringToFormula_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("B1", "=A1+3");
+        Assert.AreEqual(s.GetCellValue("B1"), 3.0);
+        s.SetContentsOfCell("A1", "=2+8");
+        Assert.AreEqual(s.GetCellValue("B1"), 13.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents when it has been updated. Specifically for the case of
+    /// an EmptyString into a string.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_ChangingFromAnEmptyStringToAString_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("B1", "=A1+3");
+        Assert.AreEqual(s.GetCellValue("B1"), 3.0);
+        s.SetContentsOfCell("A1", "Hello");
+        Assert.IsTrue(s.GetCellValue("B1") is FormulaError);
+    }
+
     // TESTS FOR SAVING (save function) -----------------------------
 
     /// <summary>
@@ -931,40 +1150,6 @@ public class SpreadsheetTests
         s.SetContentsOfCell("B1", "=4+2");
 
         s.Save(@"bleeber//b\labb");
-    }
-
-    /// <summary>
-    /// Test to ensure that the save method is able to throw the proper exception when the file we are attempting to save to
-    /// does not exist.
-    /// </summary>
-    [TestMethod]
-    [ExpectedException(typeof(SpreadsheetReadWriteException))]
-    public void RandomTest_ThrowsReadWriteException()
-    {
-        Spreadsheet s = new Spreadsheet();
-        s.SetContentsOfCell("A1", "5");
-        s.SetContentsOfCell("B1", "=A1+3");
-        s.SetContentsOfCell("A1", "hello");
-        object hello =  s.GetCellValue("B1");
-        int j = 6;
-
-    }
-
-    /// <summary>
-    /// Test to ensure that if an Invalid Formula is present in the spreadsheet cells that the spreadsheet will throw a read write
-    /// exception.
-    /// </summary>
-    [TestMethod]
-    [ExpectedException(typeof(SpreadsheetReadWriteException))]
-    public void SpreadsheetSave_SavingFileThatContainsAnInvalidFormula_ThrowsReadWriteException()
-    {
-        Spreadsheet s = new Spreadsheet();
-        s.SetContentsOfCell("A1", "5");
-        s.SetContentsOfCell("B1", "= $ridai39&&& + 721$$$&");
-
-        File.WriteAllText("values.txt", string.Empty);
-
-        s.Save("values.txt");
     }
 
     /// <summary>
@@ -1479,7 +1664,7 @@ public class SpreadsheetTests
     public void SetContentsOfCellString_InvalidCellName_Throw()
     {
         Spreadsheet s = new();
-        s.SetContentsOfCell("1AZ", "hello");
+        s.SetContentsOfCell("1AZ", "newValue");
     }
 
     /// <summary>
@@ -1491,8 +1676,8 @@ public class SpreadsheetTests
     public void SetAndGetCellContents_SetTheString_RetrieveTheString()
     {
         Spreadsheet s = new();
-        s.SetContentsOfCell("Z7", "hello");
-        Assert.AreEqual("hello", s.GetCellContents("Z7"));
+        s.SetContentsOfCell("Z7", "newValue");
+        Assert.AreEqual("newValue", s.GetCellContents("Z7"));
     }
 
     // SETTING CELL TO A FORMULA
@@ -1635,7 +1820,7 @@ public class SpreadsheetTests
     public void GetNamesOfAllNonEmptyCells_AddStringToCell_ThatCellIsNotEmpty()
     {
         Spreadsheet s = new();
-        s.SetContentsOfCell("B1", "hello");
+        s.SetContentsOfCell("B1", "newValue");
         Assert.IsTrue(new HashSet<string>(s.GetNamesOfAllNonemptyCells()).SetEquals(["B1"]));
     }
 
@@ -1675,7 +1860,7 @@ public class SpreadsheetTests
         Spreadsheet s = new();
 
         s.SetContentsOfCell("A1", "17.2");
-        s.SetContentsOfCell("C1", "hello");
+        s.SetContentsOfCell("C1", "newValue");
         s.SetContentsOfCell("B1", "=3.5");
 
         Assert.IsTrue(s.GetNamesOfAllNonemptyCells().Matches(["A1", "B1", "C1"]));
@@ -1694,7 +1879,7 @@ public class SpreadsheetTests
     {
         Spreadsheet s = new();
 
-        s.SetContentsOfCell("B1", "hello");
+        s.SetContentsOfCell("B1", "newValue");
         s.SetContentsOfCell("C1", "=5");
         var toReevaluate = s.SetContentsOfCell("A1", "17.2");
         Assert.IsTrue(toReevaluate.Matches(["A1"])); // Note: Matches is not order dependent
@@ -1713,7 +1898,7 @@ public class SpreadsheetTests
         s.SetContentsOfCell("A1", "17.2");
         s.SetContentsOfCell("C1", "=5");
 
-        var toReevaluated = s.SetContentsOfCell("B1", "hello");
+        var toReevaluated = s.SetContentsOfCell("B1", "newValue");
         Assert.IsTrue(toReevaluated.Matches(["B1"]));
     }
 
@@ -1727,7 +1912,7 @@ public class SpreadsheetTests
     {
         Spreadsheet s = new();
         s.SetContentsOfCell("A1", "17.2");
-        s.SetContentsOfCell("B1", "hello");
+        s.SetContentsOfCell("B1", "newValue");
         var changed = s.SetContentsOfCell("C1", "=5");
         Assert.IsTrue(changed.Matches(["C1"]));
     }
@@ -2133,7 +2318,7 @@ public class SpreadsheetTests
                             overWritten++;
                         }
 
-                        s.SetContentsOfCell(cellName, "hello");
+                        s.SetContentsOfCell(cellName, "newValue");
                         break;
                     case 2:
                         if (s.GetNamesOfAllNonemptyCells().Contains(cellName))
