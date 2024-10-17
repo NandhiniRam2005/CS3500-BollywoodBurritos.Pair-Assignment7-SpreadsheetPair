@@ -873,7 +873,7 @@ public class SpreadsheetTests
         Assert.AreEqual(s.GetCellValue("B1"), 8.0);
         s.SetContentsOfCell("A1", string.Empty);
         object newValue = s.GetCellValue("B1");
-        Assert.AreEqual(newValue, 3.0);
+        Assert.IsTrue(s.GetCellValue("B1") is FormulaError);
     }
 
     /// <summary>
@@ -937,7 +937,7 @@ public class SpreadsheetTests
         object newValue = s.GetCellValue("B1");
         Assert.IsTrue(newValue is FormulaError);
         s.SetContentsOfCell("A1", string.Empty);
-        Assert.AreEqual(s.GetCellValue("B1"), 3.0);
+        Assert.IsTrue(s.GetCellValue("B1") is FormulaError);
     }
 
     /// <summary>
@@ -1000,7 +1000,7 @@ public class SpreadsheetTests
         s.SetContentsOfCell("B1", "=A1+3");
         Assert.AreEqual(s.GetCellValue("B1"), 10.0);
         s.SetContentsOfCell("A1", string.Empty);
-        Assert.AreEqual(s.GetCellValue("B1"), 3.0);
+        Assert.IsTrue(s.GetCellValue("B1") is FormulaError);
     }
 
     /// <summary>
@@ -1012,7 +1012,7 @@ public class SpreadsheetTests
     {
         Spreadsheet s = new Spreadsheet();
         s.SetContentsOfCell("B1", "=A1+3");
-        Assert.AreEqual(s.GetCellValue("B1"), 3.0);
+        Assert.IsTrue(s.GetCellValue("B1") is FormulaError);
         s.SetContentsOfCell("A1", "2");
         Assert.AreEqual(s.GetCellValue("B1"), 5.0);
     }
@@ -1026,7 +1026,7 @@ public class SpreadsheetTests
     {
         Spreadsheet s = new Spreadsheet();
         s.SetContentsOfCell("B1", "=A1+3");
-        Assert.AreEqual(s.GetCellValue("B1"), 3.0);
+        Assert.IsTrue(s.GetCellValue("B1") is FormulaError);
         s.SetContentsOfCell("A1", "=2+8");
         Assert.AreEqual(s.GetCellValue("B1"), 13.0);
     }
@@ -1040,7 +1040,7 @@ public class SpreadsheetTests
     {
         Spreadsheet s = new Spreadsheet();
         s.SetContentsOfCell("B1", "=A1+3");
-        Assert.AreEqual(s.GetCellValue("B1"), 3.0);
+        Assert.IsTrue(s.GetCellValue("B1") is FormulaError);
         s.SetContentsOfCell("A1", "Hello");
         Assert.IsTrue(s.GetCellValue("B1") is FormulaError);
     }
@@ -1248,6 +1248,7 @@ public class SpreadsheetTests
     [TestMethod]
     public void SpreadsheetLoad_MultiObjectJSON_CreatesExpectedObject()
     {
+        Spreadsheet expectedSpreadsheet = new Spreadsheet();
         StringBuilder jsonStringBuilder = new StringBuilder();
         jsonStringBuilder.Append(@"{""Cells"": {");
         Random r = new Random();
@@ -1257,21 +1258,26 @@ public class SpreadsheetTests
             {
                 case 0:
                     jsonStringBuilder.Append($@" ""A{i}"":" + @"{ ""StringForm"": ""5""},");
+                    expectedSpreadsheet.SetContentsOfCell($"A{i}", "5");
                     break;
                 case 1:
                     jsonStringBuilder.Append($@" ""B{i}"":" + @"{ ""StringForm"": ""=3+11""},");
+                    expectedSpreadsheet.SetContentsOfCell($"B{i}", "=3+11");
                     break;
                 case 2:
                     jsonStringBuilder.Append($@" ""C{i}"":" + @"{ ""StringForm"": ""Hello""},");
+                    expectedSpreadsheet.SetContentsOfCell($"C{i}", "Hello");
                     break;
             }
         }
 
         jsonStringBuilder.Append(@" ""A101"":" + @"{ ""StringForm"": ""5""}}}");
+        expectedSpreadsheet.SetContentsOfCell("A101", "5");
         File.WriteAllText("known_values.txt", jsonStringBuilder.ToString());
 
         Spreadsheet ss = new Spreadsheet();
         ss.Load("known_values.txt");
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SetEquals(expectedSpreadsheet.GetNamesOfAllNonemptyCells()));
         Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 101);
     }
 
@@ -1315,7 +1321,7 @@ public class SpreadsheetTests
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(SpreadsheetReadWriteException))]
-    public void SpreadsheetLoading_LoadingAFileThatContainsAnInvalidFormula_ThrowsReadWriteException()
+    public void SpreadsheetLoad_LoadingAFileThatContainsAnInvalidFormula_ThrowsReadWriteException()
     {
         string expectedOutput = @"{""Cells"": { ""A1"": { ""StringForm"": ""5""},""B1"":{""StringForm"": ""=$$rt&hd + 67&&d*/da""}}}";
 
@@ -1332,7 +1338,7 @@ public class SpreadsheetTests
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(SpreadsheetReadWriteException))]
-    public void SpreadsheetLoading_LoadingAFileThatIsNotInOurExpectedFormat_ThrowsReadWriteException()
+    public void SpreadsheetLoad_LoadingAFileThatIsNotInOurExpectedFormat_ThrowsReadWriteException()
     {
         string expectedOutput = "Hello";
 
@@ -1349,7 +1355,7 @@ public class SpreadsheetTests
     /// </summary>
     [TestMethod]
     [ExpectedException(typeof(SpreadsheetReadWriteException))]
-    public void SpreadsheetLoading_LoadingAFileWithCircularExceptions_ThrowsReadWriteException()
+    public void SpreadsheetLoad_LoadingAFileWithCircularExceptions_ThrowsReadWriteException()
     {
         string expectedOutput = @"{""Cells"": { ""A1"": { ""StringForm"": ""5""},""B1"":{""StringForm"": ""=B1+2""}}}";
 
@@ -1383,7 +1389,7 @@ public class SpreadsheetTests
     /// </summary>
     [TestMethod]
 
-    public void SpreadsheetLoading_LoadingAFileWithInvalidNamingPrinciplesDoesNotChangeStateOfChanged_ThrowsReadWriteException()
+    public void SpreadsheetLoad_LoadingAFileWithInvalidNamingPrinciplesDoesNotChangeStateOfChanged_ThrowsReadWriteException()
     {
         string expectedOutput = @"{""Cells"": { ""1A"": { ""StringForm"": ""5""},""B"":{""StringForm"": ""=43/0""}}}";
 
@@ -2341,8 +2347,6 @@ public class SpreadsheetTests
         }
 
         ISet<string> set = new HashSet<string>(s.GetNamesOfAllNonemptyCells());
-        //int shouldBeTenK = overWritten + circularExceptions + set.Count;
-        //Assert.AreEqual(10000, shouldBeTenK);
 
         Assert.AreEqual(size, set.Count);
     }

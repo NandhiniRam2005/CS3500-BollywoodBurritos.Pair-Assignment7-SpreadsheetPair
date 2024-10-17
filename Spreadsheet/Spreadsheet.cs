@@ -285,6 +285,7 @@ public class Spreadsheet
         }
        catch (Exception e)
        {
+            // We do not need to revert the spreadsheet because the spreadsheet is never changed when saving.
            throw new SpreadsheetReadWriteException("Error: " + e);
        }
 
@@ -311,6 +312,7 @@ public class Spreadsheet
         Spreadsheet ogSpreadsheet = new Spreadsheet();
         ogSpreadsheet.nonEmptyCells = new Dictionary<string, Cell>(this.nonEmptyCells);
 
+        // Clears our current spreadsheet to prepare it for loading of a new spreadsheet.
         this.nonEmptyCells.Clear();
         this.dependencyGraph = new DependencyGraph();
 
@@ -322,9 +324,10 @@ public class Spreadsheet
 
             List<string> loadedKeys = new List<string>();
 
-            // needed to get rid of nullable warning.
+            // Needed to get rid of nullable warning.
             if (tempSpreadsheeet != null)
             {
+                // What we are doing here is remaking our spreadsheet from the deserialized spreadsheet.
                 loadedKeys = tempSpreadsheeet.nonEmptyCells.Keys.ToList();
                 int i = 0;
                 foreach (Cell cell in tempSpreadsheeet.nonEmptyCells.Values)
@@ -336,6 +339,7 @@ public class Spreadsheet
         }
         catch (Exception e)
         {
+            // If an error occurs during the creation of the loaded spreadsheet (Such as a circular exception etc...) We rebuild our old spreadsheet.
             foreach (KeyValuePair<string, Cell> pair in ogSpreadsheet.nonEmptyCells)
             {
                 this.SetContentsOfCell(pair.Key, pair.Value.StringForm);
@@ -344,6 +348,7 @@ public class Spreadsheet
             throw new SpreadsheetReadWriteException("Error:" + e);
         }
 
+        // Should changed only be true after a successful load?
         Changed = false;
     }
 
@@ -582,10 +587,7 @@ public class Spreadsheet
             this.nonEmptyCells[name].StringForm = number.ToString();
         }
 
-        foreach (string depenedent in this.dependencyGraph.GetDependents(name))
-        {
-            this.nonEmptyCells[depenedent].ComputeValue(this);
-        }
+        RecomputeDependentsValues(name);
 
         Changed = true;
         return this.GetCellsToRecalculate(name).ToList();
@@ -610,10 +612,8 @@ public class Spreadsheet
         {
             this.nonEmptyCells.Remove(name);
             Changed = true;
-            foreach (string depenedent in this.dependencyGraph.GetDependents(name))
-            {
-                this.nonEmptyCells[depenedent].ComputeValue(this);
-            }
+
+            RecomputeDependentsValues(name);
 
             return this.GetCellsToRecalculate(name).ToList();
         }
@@ -629,10 +629,7 @@ public class Spreadsheet
             this.nonEmptyCells[name].StringForm = text;
         }
 
-        foreach (string depenedent in this.dependencyGraph.GetDependents(name))
-        {
-            this.nonEmptyCells[depenedent].ComputeValue(this);
-        }
+        RecomputeDependentsValues(name);
 
         Changed = true;
         return this.GetCellsToRecalculate(name).ToList();
@@ -668,10 +665,7 @@ public class Spreadsheet
 
             this.nonEmptyCells[name].ComputeValue(this);
 
-            foreach (string depenedent in this.dependencyGraph.GetDependents(name))
-            {
-                this.nonEmptyCells[depenedent].ComputeValue(this);
-            }
+            RecomputeDependentsValues(name);
         }
         else
         {
@@ -682,17 +676,14 @@ public class Spreadsheet
                 this.dependencyGraph.ReplaceDependees(name, new HashSet<string>());
             }
 
-
             CheckForCircularException(name, formula, ogContents);
 
             this.nonEmptyCells[name].SetContent(formula);
             this.nonEmptyCells[name].StringForm = "=" + formula.ToString();
+
             this.nonEmptyCells[name].ComputeValue(this);
 
-            foreach (string depenedent in this.dependencyGraph.GetDependents(name))
-            {
-                this.nonEmptyCells[depenedent].ComputeValue(this);
-            }
+            RecomputeDependentsValues(name);
         }
 
         Changed = true;
@@ -767,7 +758,19 @@ public class Spreadsheet
 
             throw new CircularException();
         }
-}
+    }
+
+    /// <summary>
+    /// Recomputes all the values of a cells dependents after it has been reassigned.
+    /// </summary>
+    /// <param name="name">The name of the original cell which has been reassigned.</param>
+    private void RecomputeDependentsValues(string name)
+    {
+        foreach (string depenedent in this.dependencyGraph.GetDependents(name))
+        {
+            this.nonEmptyCells[depenedent].ComputeValue(this);
+        }
+    }
 
     /// <summary>
     ///   Returns an enumeration, without duplicates, of the names of all cells whose
@@ -961,11 +964,6 @@ internal class Cell
             if (spreadsheet[var] is double value)
             {
                 return value;
-            }
-
-            if (spreadsheet[var].Equals(string.Empty))
-            {
-                return 0;
             }
 
             throw new ArgumentException("Attempting to add two things that are not numbers!");
