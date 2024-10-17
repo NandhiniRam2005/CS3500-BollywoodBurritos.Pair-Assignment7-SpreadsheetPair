@@ -12,6 +12,7 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Text.Json.Serialization;
 using System.Runtime.CompilerServices;
 using System.Collections;
+using System.Transactions;
 
 /// <summary>
 /// Author:    Joel Rodriguez,  Profs Joe, Professor Kopta, and Professor Jim.
@@ -716,15 +717,16 @@ public class Spreadsheet
             if (ogContents is Formula ogFormula)
             {
                 this.SetCellContents(nameOfCell, ogFormula);
+                throw new CircularException();
             }
             else if (ogContents is string ogString)
             {
                 this.SetCellContents(nameOfCell, ogString);
+                throw new CircularException();
             }
-            else if (ogContents is double ogDouble)
-            {
-                this.SetCellContents(nameOfCell, ogDouble);
-            }
+
+            double ogDouble = (double)ogContents;
+            this.SetCellContents(nameOfCell, ogDouble);
 
             throw new CircularException();
         }
@@ -746,15 +748,16 @@ public class Spreadsheet
             if (ogContents is Formula ogFormula)
             {
                 this.SetCellContents(nameOfCell, ogFormula);
+                throw new CircularException();
             }
             else if (ogContents is string ogString)
             {
                 this.SetCellContents(nameOfCell, ogString);
+                throw new CircularException();
             }
-            else if (ogContents is double ogDouble)
-            {
-                this.SetCellContents(nameOfCell, ogDouble);
-            }
+
+            double ogDouble = (double)ogContents;
+            this.SetCellContents(nameOfCell, ogDouble);
 
             throw new CircularException();
         }
@@ -766,9 +769,10 @@ public class Spreadsheet
     /// <param name="name">The name of the original cell which has been reassigned.</param>
     private void RecomputeDependentsValues(string name)
     {
-        foreach (string depenedent in this.dependencyGraph.GetDependents(name))
+        foreach (string dependent in this.dependencyGraph.GetDependents(name))
         {
-            this.nonEmptyCells[depenedent].ComputeValue(this);
+            this.nonEmptyCells[dependent].ComputeValue(this);
+            RecomputeDependentsValues(dependent);
         }
     }
 
