@@ -8,11 +8,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{591FB2B1-F089-4D7A-9C48-2AD42ED0D13F}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\Downloads\.editorconfig = ..\..\..\Downloads\.editorconfig
-		Whiteboard\architecture_whiteboard.PNG = Whiteboard\architecture_whiteboard.PNG
-		Whiteboard\dependencygraph_whiteboard.PNG = Whiteboard\dependencygraph_whiteboard.PNG
-		Whiteboard\formula_whiteboard.PNG = Whiteboard\formula_whiteboard.PNG
+		Spreadsheet\Whiteboard\architecture_whiteboard.PNG = Spreadsheet\Whiteboard\architecture_whiteboard.PNG
+		Spreadsheet\Whiteboard\dependencygraph_whiteboard.PNG = Spreadsheet\Whiteboard\dependencygraph_whiteboard.PNG
+		Spreadsheet\Whiteboard\formula_whiteboard.PNG = Spreadsheet\Whiteboard\formula_whiteboard.PNG
 		README.md = README.md
-		Whiteboard\spreadsheet_whiteboard.PNG = Whiteboard\spreadsheet_whiteboard.PNG
+		Spreadsheet\Whiteboard\spreadsheet_whiteboard.PNG = Spreadsheet\Whiteboard\spreadsheet_whiteboard.PNG
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormulaTests", "FormulaTests\FormulaTests.csproj", "{897B3E7B-A5BA-4FCB-BE1B-87E07C54EC92}"
