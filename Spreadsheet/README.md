@@ -15,9 +15,11 @@ I added a constructor to the spreadsheet and a cell class. I did this because in
 was advised to be created in piazza question @402. I created a helper method for all three SetCellContents that way it is easier to understand what is 
 happening at each stage. I moved the header comment to the correct location (under the namespace and using) so please look there for my header comment.
 I have also not created an extension class for my spreadsheet class as it was not specifically mentioned in the assignment.
-I was told by a TA that I had the freedom to decide how my evaluate method handles strings (Treat them as 0's or throw an exception). I choose to do it the same
-way Google sheets does it which is treat empty strings (empty cells) as having a value of 0 and non empty cells with strings in them as an error.
+I was told by a TA that I had the freedom to decide how my evaluate method handles strings (Treat them as 0's or throw an exception). I choose to throw a formula .
 Given that changed is a public property it would be included in the JSon serialization so I added a JsonIgnore tag I added a JSON include tag for the dictionary.
+I also deserialize and serialize a spreadsheet object instead of a dictionary object. Computing it this way leads to less logic and easier to read code.
+I also chose to add  a lot to my white board because I argued that a lot of the things were necessary and made sense to include in my white board. Most of the methods 
+are built off of each other. And every method depends on other methods which makes them important.
 
 # Assignment Specific Topics
 Assignment 5: Learn to utilize/combine the appropriate existing functionality to generate a more powerful combination.
@@ -37,3 +39,4 @@ List any peers (or other people) in the class (or outside for that matter) that 
 # References:
 
     1. IList Interface - https://learn.microsoft.com/en-us/dotnet/api/system.collections.ilist?view=net-8.0
+    2. Json in C# - https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to

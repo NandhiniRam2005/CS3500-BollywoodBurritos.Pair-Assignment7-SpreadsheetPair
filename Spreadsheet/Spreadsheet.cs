@@ -346,7 +346,7 @@ public class Spreadsheet
                 this.SetContentsOfCell(pair.Key, pair.Value.StringForm);
             }
 
-            throw new SpreadsheetReadWriteException("Error:" + e);
+            throw new SpreadsheetReadWriteException("Error:" + e.Message);
         }
 
         // Should changed only be true after a successful load?
@@ -463,6 +463,7 @@ public class Spreadsheet
             return this.SetCellContents(nameOfCell, formulaToBeAdded);
         }
 
+        // This was done to easily create a double if successfull
         bool successfullyParsed = double.TryParse(content, out double doubleToBeAdded);
         if(successfullyParsed)
         {
@@ -769,6 +770,7 @@ public class Spreadsheet
     /// <param name="name">The name of the original cell which has been reassigned.</param>
     private void RecomputeDependentsValues(string name)
     {
+        // What I do here is find everything that is dependent on the value that has been changed and then change its value as we should.
         foreach (string dependent in this.dependencyGraph.GetDependents(name))
         {
             this.nonEmptyCells[dependent].ComputeValue(this);

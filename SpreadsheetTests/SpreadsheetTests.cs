@@ -9,6 +9,7 @@ using CS3500.Spreadsheet;
 using CS3500.Formula;
 using System.Diagnostics;
 using System.Text;
+using System.ComponentModel;
 
 /// <summary>
 /// Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
@@ -1050,7 +1051,7 @@ public class SpreadsheetTests
     /// the updating of a cell.
     /// </summary>
     [TestMethod]
-    public void SetContentsOfCell_UpdatingAChainAffectsValues_UpdatesDependents()
+    public void SetContentsOfCell_UpdatingAChainAffectsValuesFormulaToFormula_UpdatesDependents()
     {
         Spreadsheet s = new Spreadsheet();
         s.SetContentsOfCell("A1", "=2+3");
@@ -1059,6 +1060,60 @@ public class SpreadsheetTests
         Assert.AreEqual(s.GetCellValue("B1"), 8.0);
         Assert.AreEqual(s.GetCellValue("C1"), 10.0);
         s.SetContentsOfCell("A1", "=2+1");
+        Assert.AreEqual(s.GetCellValue("B1"), 6.0);
+        Assert.AreEqual(s.GetCellValue("C1"), 8.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents and its dependents upon
+    /// the updating of a cell.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_UpdatingAChainAffectsValuesFormulaToDouble_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "=2+3");
+        s.SetContentsOfCell("B1", "=A1+3");
+        s.SetContentsOfCell("C1", "=B1+2");
+        Assert.AreEqual(s.GetCellValue("B1"), 8.0);
+        Assert.AreEqual(s.GetCellValue("C1"), 10.0);
+        s.SetContentsOfCell("A1", "3.0");
+        Assert.AreEqual(s.GetCellValue("B1"), 6.0);
+        Assert.AreEqual(s.GetCellValue("C1"), 8.0);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents and its dependents upon
+    /// the updating of a cell.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_UpdatingAChainAffectsValuesFormulaToString_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "=2+3");
+        s.SetContentsOfCell("B1", "=A1+3");
+        s.SetContentsOfCell("C1", "=B1+2");
+        Assert.AreEqual(s.GetCellValue("B1"), 8.0);
+        Assert.AreEqual(s.GetCellValue("C1"), 10.0);
+        s.SetContentsOfCell("A1", "hello");
+        Assert.IsTrue(s.GetCellValue("B1") is FormulaError);
+        Assert.IsTrue(s.GetCellValue("C1") is FormulaError);
+    }
+
+    /// <summary>
+    /// Test to ensure that the SetContentsOfCell is able to successfully update all of its dependents and its dependents upon
+    /// the updating of a cell.
+    /// </summary>
+    [TestMethod]
+    public void SetContentsOfCell_UpdatingAChainAffectsValuesDoubleToDifferentDouble_UpdatesDependents()
+    {
+        Spreadsheet s = new Spreadsheet();
+        s.SetContentsOfCell("A1", "5.0");
+        s.SetContentsOfCell("B1", "=A1+3");
+        s.SetContentsOfCell("C1", "=B1+2");
+        Assert.AreEqual(s.GetCellValue("B1"), 8.0);
+        Assert.AreEqual(s.GetCellValue("C1"), 10.0);
+        s.SetContentsOfCell("A1", "3.0");
         Assert.AreEqual(s.GetCellValue("B1"), 6.0);
         Assert.AreEqual(s.GetCellValue("C1"), 8.0);
     }
@@ -1192,6 +1247,8 @@ public class SpreadsheetTests
         ss.Load("values.txt");
         int expectedCount = 100;
         int actualCount = ss.GetNamesOfAllNonemptyCells().Count;
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SetEquals(s.GetNamesOfAllNonemptyCells()));
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SequenceEqual(s.GetNamesOfAllNonemptyCells()));
         Assert.AreEqual(expectedCount, actualCount);
     }
 
@@ -1336,6 +1393,7 @@ public class SpreadsheetTests
         Spreadsheet ss = new Spreadsheet();
         ss.Load("known_values.txt");
         Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SetEquals(expectedSpreadsheet.GetNamesOfAllNonemptyCells()));
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SequenceEqual(expectedSpreadsheet.GetNamesOfAllNonemptyCells()));
         Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 101);
     }
 
@@ -1446,7 +1504,6 @@ public class SpreadsheetTests
     ///  properly and the state of changed is not changed.
     /// </summary>
     [TestMethod]
-
     public void SpreadsheetLoad_LoadingAFileWithInvalidNamingPrinciplesDoesNotChangeStateOfChanged_ThrowsReadWriteException()
     {
         string expectedOutput = @"{""Cells"": { ""1A"": { ""StringForm"": ""5""},""B"":{""StringForm"": ""=43/0""}}}";
@@ -1471,7 +1528,7 @@ public class SpreadsheetTests
     /// Test to ensure that the load method can properly load a spreadsheet with no cells filled out.
     /// </summary>
     [TestMethod]
-    public void SpreadsheetLoad_SavingEmptySpreadsheet_CreatesExpectedObject()
+    public void SpreadsheetLoad_LoadingEmptySpreadsheet_CreatesExpectedObject()
     {
         string expectedOutput = @"{""Cells"": {}}";
 
@@ -1668,5 +1725,49 @@ public class SpreadsheetTests
         s.SetContentsOfCell("A1", "Hello Joe");
 
         s.GetCellValue("Hi");
+    }
+
+    // STRESS TESTS ---------------------------------
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to load a spreadsheet with multiple cells filled out and chains the chain is 1000 and we then
+    ///  change the one that leads to the most changes. Since both visit and my recompute cell values are recursive I cannot.
+    /// </summary>
+    [TestMethod]
+    [Timeout(30000)]
+    public void SpreadsheetLoad_MultiObjectJSONWithChains_CreatesExpectedObject()
+    {
+        Spreadsheet expectedSpreadsheet = new Spreadsheet();
+        StringBuilder jsonStringBuilder = new StringBuilder();
+        jsonStringBuilder.Append(@"{""Cells"":{ ""A1"": {""StringForm"": ""5"" },");
+        expectedSpreadsheet.SetContentsOfCell("A1", "5");
+        Random r = new Random();
+        char prevLetter = 'A';
+        int prevI = 1;
+        for (int i = 2; i < 1000; i++)
+        {
+            int letterInt = Math.Clamp(i, 65, 90);
+            char letter = (char)letterInt;
+            jsonStringBuilder.Append($@"""{letter}{i}"":" + @"{ ""StringForm"":" + $@" ""={prevLetter}{prevI}""" + "},");
+            expectedSpreadsheet.SetContentsOfCell($"{letter}{i}", $"={prevLetter}{prevI}");
+            prevLetter = letter;
+            prevI = i;
+        }
+
+        jsonStringBuilder.Append(@" ""A101"":" + @"{ ""StringForm"": ""3.0""}}}");
+        string jsonString = jsonStringBuilder.ToString();
+        expectedSpreadsheet.SetContentsOfCell("A101", "3.0");
+        File.WriteAllText("known_values.txt", jsonString);
+
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SetEquals(expectedSpreadsheet.GetNamesOfAllNonemptyCells()));
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SequenceEqual(expectedSpreadsheet.GetNamesOfAllNonemptyCells()));
+
+        ss.SetContentsOfCell("A1", "3.0");
+        foreach (string cellName in ss.GetNamesOfAllNonemptyCells())
+        {
+            Assert.AreEqual(ss.GetCellValue(cellName), 3.0);
+        }
     }
 }

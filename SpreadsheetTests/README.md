@@ -15,7 +15,8 @@ I learned about the sequence equals from stack overflow. I learned that, that ca
 not use ChatGPT even though the assignment instructions said that was an option. I chose not to use ChatGPT because I have heard that ChatGPT is an op
 and not good for asking for code. I moved the header comment to the correct location (under the namespace and using) so please look there for my header comment.
 I also only have one basic test for the constructor that is because all the other tests double as tests for the constructor.
-In accordance with what was said in class we are allowed to keep auto grader tests which I did. 
+In accordance with what was said in class we are allowed to keep auto grader tests which I did in some of my commits.
+I was told by a TA that timeouts weren't that important for stress tests so I did not add them.
 
 # Assignment Specific Topics
 Assignment 5: In the spreadsheet tests class I will learn more about Test Driven development. Learn to utilize/combine the appropriate 
