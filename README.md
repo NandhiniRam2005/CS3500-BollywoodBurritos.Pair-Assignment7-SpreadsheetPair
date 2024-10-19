@@ -96,9 +96,9 @@ continue to get better as the semester continues.
                                                                                    Debugging:       5.8
                                                                                    Learning Tools:  0.2
 
-    6. Assignment 6: A Full Spreadsheet Model        Predicted Hours:  15       Actual Hours:   10.5
+    6. Assignment 6: A Full Spreadsheet Model        Predicted Hours:  15       Actual Hours:   18
                                                                                 Hours Spent - 
                                                                                    Effectively:     4
-                                                                                   Debugging:       6
+                                                                                   Debugging:       13.5
                                                                                    Learning Tools:  0.5
 

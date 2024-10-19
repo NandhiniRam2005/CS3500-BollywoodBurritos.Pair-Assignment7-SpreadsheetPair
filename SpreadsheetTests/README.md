@@ -35,3 +35,4 @@ architectures. We will also continue to practice test driven development.
 # References:
 
     1. Check if two lists are equal - https://stackoverflow.com/questions/22173762/check-if-two-lists-are-equal
+    2. Math.Clamp - https://learn.microsoft.com/en-us/dotnet/api/system.math.clamp?view=net-8.0
