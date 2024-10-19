@@ -20,7 +20,6 @@ Given that changed is a public property it would be included in the JSon seriali
 I also deserialize and serialize a spreadsheet object instead of a dictionary object. Computing it this way leads to less logic and easier to read code.
 I also chose to add  a lot to my white board because I argued that a lot of the things were necessary and made sense to include in my white board. Most of the methods 
 are built off of each other. And every method depends on other methods which makes them important.
-I also understand that recalculating could cause a stackoverflow if we have a chain of 10,000 dependents but this is the way.
 Under piazza post @617 a TA stated that we are allowed to have unicode in our saved files to represent certain charcters as long as our code still works. That is what 
 is happening in our save method. UnsafeReleaxedJSon is unsafe which is why I didnt use it.
 # Assignment Specific Topics
