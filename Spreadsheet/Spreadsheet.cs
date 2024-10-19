@@ -771,10 +771,10 @@ public class Spreadsheet
     private void RecomputeDependentsValues(string name)
     {
         // What I do here is find everything that is dependent on the value that has been changed and then change its value as we should.
-        foreach (string dependent in this.dependencyGraph.GetDependents(name))
+        List<string> cellsToRecalculate = this.GetCellsToRecalculate(name).ToList();
+        for(int i = 1; i < cellsToRecalculate.Count; i++)
         {
-            this.nonEmptyCells[dependent].ComputeValue(this);
-            RecomputeDependentsValues(dependent);
+            this.nonEmptyCells[cellsToRecalculate[i]].ComputeValue(this);
         }
     }
 

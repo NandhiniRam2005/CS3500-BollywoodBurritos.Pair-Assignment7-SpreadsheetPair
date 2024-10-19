@@ -1770,4 +1770,54 @@ public class SpreadsheetTests
             Assert.AreEqual(ss.GetCellValue(cellName), 3.0);
         }
     }
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to load a spreadsheet with multiple cells filled out and chains the chain is 1000 and we then
+    ///  change the one that leads to the most changes. Since both visit and my recompute cell values are recursive I cannot. This test specifically makes
+    ///  sure that I do not change spreadsheet.
+    /// </summary>
+    [TestMethod]
+    [Timeout(30000)]
+    public void SpreadsheetLoad_MultiObjectJSONWithChainsChangesBadObject_CreatesExpectedObject()
+    {
+        Spreadsheet expectedSpreadsheet = new Spreadsheet();
+        StringBuilder jsonStringBuilder = new StringBuilder();
+        jsonStringBuilder.Append(@"{""Cells"":{ ""A1"": {""StringForm"": ""5"" },");
+        expectedSpreadsheet.SetContentsOfCell("A1", "5");
+        Random r = new Random();
+        char prevLetter = 'A';
+        int prevI = 1;
+        for (int i = 2; i < 1000; i++)
+        {
+            int letterInt = Math.Clamp(i, 65, 90);
+            char letter = (char)letterInt;
+            jsonStringBuilder.Append($@"""{letter}{i}"":" + @"{ ""StringForm"":" + $@" ""={prevLetter}{prevI}""" + "},");
+            expectedSpreadsheet.SetContentsOfCell($"{letter}{i}", $"={prevLetter}{prevI}");
+            prevLetter = letter;
+            prevI = i;
+        }
+
+        jsonStringBuilder.Append(@" ""A101"":" + @"{ ""StringForm"": ""5.0""}}}");
+        string jsonString = jsonStringBuilder.ToString();
+        expectedSpreadsheet.SetContentsOfCell("A101", "5.0");
+        File.WriteAllText("known_values.txt", jsonString);
+
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SetEquals(expectedSpreadsheet.GetNamesOfAllNonemptyCells()));
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SequenceEqual(expectedSpreadsheet.GetNamesOfAllNonemptyCells()));
+
+        try
+        {
+            ss.SetContentsOfCell("A1", "=A1");
+        }
+        catch (Exception)
+        {
+        }
+
+        foreach (string cellName in ss.GetNamesOfAllNonemptyCells())
+        {
+            Assert.AreEqual(ss.GetCellValue(cellName), 5.0);
+        }
+    }
 }
