@@ -4,15 +4,10 @@
 
 namespace CS3500.Spreadsheet;
 
-using CS3500.Formula;
-using CS3500.DependencyGraph;
-using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Net.Mime.MediaTypeNames;
 using System.Text.Json.Serialization;
-using System.Runtime.CompilerServices;
-using System.Collections;
-using System.Transactions;
+using System.Text.RegularExpressions;
+using CS3500.DependencyGraph;
+using CS3500.Formula;
 
 /// <summary>
 /// Author:    Joel Rodriguez,  Profs Joe, Professor Kopta, and Professor Jim.
