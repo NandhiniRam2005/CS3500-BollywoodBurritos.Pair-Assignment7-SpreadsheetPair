@@ -17,6 +17,7 @@ and not good for asking for code. I moved the header comment to the correct loca
 I also only have one basic test for the constructor that is because all the other tests double as tests for the constructor.
 In accordance with what was said in class we are allowed to keep auto grader tests which I did in some of my commits.
 I was told by a TA that timeouts weren't that important for stress tests so I did not add them.
+There is a warning CS0168 on my end that has been removed but still comes up please ignore that warning.
 
 # Assignment Specific Topics
 Assignment 5: In the spreadsheet tests class I will learn more about Test Driven development. Learn to utilize/combine the appropriate 

@@ -22,6 +22,7 @@ I also chose to add  a lot to my white board because I argued that a lot of the 
 are built off of each other. And every method depends on other methods which makes them important.
 Under piazza post @617 a TA stated that we are allowed to have unicode in our saved files to represent certain charcters as long as our code still works. That is what 
 is happening in our save method. UnsafeReleaxedJSon is unsafe which is why I didnt use it.
+Also I push to my branch after having merged to my main (to test submitting) to satisfy assign requirements.
 # Assignment Specific Topics
 Assignment 5: Learn to utilize/combine the appropriate existing functionality to generate a more powerful combination.
 Continue practicing comprehensive and deep reading of complex requirements and specifications. Continue to utilize fundamental 
