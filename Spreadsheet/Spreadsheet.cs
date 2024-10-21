@@ -4,6 +4,7 @@
 
 namespace CS3500.Spreadsheet;
 
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using CS3500.DependencyGraph;
@@ -12,7 +13,7 @@ using CS3500.Formula;
 /// <summary>
 /// Author:    Joel Rodriguez,  Profs Joe, Professor Kopta, and Professor Jim.
 /// Partner:   None
-/// Date:      October 18, 2024
+/// Date:      October 19, 2024
 /// Course:    CS 3500, University of Utah, School of Computing
 /// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
 ///            be copied for use in Academic Coursework.
@@ -119,6 +120,7 @@ public class Spreadsheet
     /// and the value is a cell object that stores its contents.
     /// </summary>
     [JsonInclude]
+    [JsonRequired]
     [JsonPropertyName("Cells")]
     private Dictionary<string, Cell> nonEmptyCells;
 
@@ -273,19 +275,22 @@ public class Spreadsheet
     /// </exception>
     public void Save(string filename)
     {
-       string jsonString = string.Empty;
-       try
-       {
-           jsonString = System.Text.Json.JsonSerializer.Serialize<Spreadsheet>(this);
-           File.WriteAllText(filename, jsonString);
-        }
-       catch (Exception e)
-       {
-            // We do not need to revert the spreadsheet because the spreadsheet is never changed when saving.
-           throw new SpreadsheetReadWriteException("Error: " + e);
-       }
+        var options = new JsonSerializerOptions();
+        options.WriteIndented = true;
 
-       Changed = false;
+        string jsonString = string.Empty;
+        try
+        {
+            jsonString = System.Text.Json.JsonSerializer.Serialize<Spreadsheet>(this, options);
+            File.WriteAllText(filename, jsonString);
+        }
+        catch (Exception e)
+        {
+            // We do not need to revert the spreadsheet because the spreadsheet is never changed when saving.
+            throw new SpreadsheetReadWriteException("Error: " + e);
+        }
+
+        Changed = false;
     }
 
     /// <summary>
@@ -460,7 +465,7 @@ public class Spreadsheet
 
         // This was done to easily create a double if successfull
         bool successfullyParsed = double.TryParse(content, out double doubleToBeAdded);
-        if(successfullyParsed)
+        if (successfullyParsed)
         {
             return this.SetCellContents(nameOfCell, doubleToBeAdded);
         }
@@ -668,11 +673,6 @@ public class Spreadsheet
         {
             object ogContents = this.nonEmptyCells[name].GetContent();
 
-            if (ogContents is Formula)
-            {
-                this.dependencyGraph.ReplaceDependees(name, new HashSet<string>());
-            }
-
             CheckForCircularException(name, formula, ogContents);
 
             this.nonEmptyCells[name].SetContent(formula);
@@ -710,23 +710,10 @@ public class Spreadsheet
         HashSet<string> formulaVariables = formula.GetVariables().ToHashSet();
         if (formulaVariables.Contains(nameOfCell))
         {
-            if (ogContents is Formula ogFormula)
-            {
-                this.SetCellContents(nameOfCell, ogFormula);
-                throw new CircularException();
-            }
-            else if (ogContents is string ogString)
-            {
-                this.SetCellContents(nameOfCell, ogString);
-                throw new CircularException();
-            }
-
-            double ogDouble = (double)ogContents;
-            this.SetCellContents(nameOfCell, ogDouble);
-
             throw new CircularException();
         }
 
+        List<string> oldDependees = new List<string>(this.dependencyGraph.GetDependees(nameOfCell).ToList());
         this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
 
         foreach (string dependee in formulaVariables)
@@ -741,21 +728,54 @@ public class Spreadsheet
         }
         catch (CircularException)
         {
+            // This step is necessary if we were to simply call SetContentsOfCell and revert back to the ogContents then changed would be incorrectly changed to true.
             if (ogContents is Formula ogFormula)
             {
-                this.SetCellContents(nameOfCell, ogFormula);
+                this.nonEmptyCells[nameOfCell].SetContent(ogFormula);
+                this.nonEmptyCells[nameOfCell].StringForm = "=" + ogFormula.ToString();
+                this.nonEmptyCells[nameOfCell].ComputeValue(this);
+
+                RevertDependencyGraph(nameOfCell, oldDependees);
+
                 throw new CircularException();
             }
             else if (ogContents is string ogString)
             {
-                this.SetCellContents(nameOfCell, ogString);
+                if (!ogString.Equals(string.Empty))
+                {
+                    this.nonEmptyCells[nameOfCell].SetContent(ogString);
+                    this.nonEmptyCells[nameOfCell].StringForm = ogString;
+                    this.nonEmptyCells[nameOfCell].SetValue(ogString);
+                }
+
+                RevertDependencyGraph(nameOfCell, oldDependees);
+
                 throw new CircularException();
             }
 
             double ogDouble = (double)ogContents;
-            this.SetCellContents(nameOfCell, ogDouble);
+            this.nonEmptyCells[nameOfCell].SetContent(ogDouble);
+            this.nonEmptyCells[nameOfCell].StringForm = ogDouble.ToString();
+            this.nonEmptyCells[nameOfCell].SetValue(ogDouble);
+
+            RevertDependencyGraph(nameOfCell, oldDependees);
 
             throw new CircularException();
+        }
+    }
+
+    /// <summary>
+    /// Reverts the dependency graph to what it was before encountering a circular exception.
+    /// </summary>
+    /// <param name="nameOfCell">The name of the cell which we will be adding as dependent to our dependency graph.</param>
+    /// <param name="oldDependees">The list of old dependees for our cell (name of cell).</param>
+    private void RevertDependencyGraph(string nameOfCell, List<string> oldDependees)
+    {
+        this.dependencyGraph.ReplaceDependees(nameOfCell, new HashSet<string>());
+
+        foreach (string dependee in oldDependees)
+        {
+            this.dependencyGraph.AddDependency(dependee, nameOfCell);
         }
     }
 
@@ -767,7 +787,7 @@ public class Spreadsheet
     {
         // What I do here is find everything that is dependent on the value that has been changed and then change its value as we should.
         List<string> cellsToRecalculate = this.GetCellsToRecalculate(name).ToList();
-        for(int i = 1; i < cellsToRecalculate.Count; i++)
+        for (int i = 1; i < cellsToRecalculate.Count; i++)
         {
             this.nonEmptyCells[cellsToRecalculate[i]].ComputeValue(this);
         }

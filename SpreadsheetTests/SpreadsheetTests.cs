@@ -5,16 +5,14 @@
 namespace CS3500.SpreadsheetTests;
 
 using System;
-using CS3500.Spreadsheet;
-using CS3500.Formula;
-using System.Diagnostics;
 using System.Text;
-using System.ComponentModel;
+using CS3500.Formula;
+using CS3500.Spreadsheet;
 
 /// <summary>
 /// Author:    Joel Rodriguez,  Profs Joe, Danny, and Jim.
 /// Partner:   None
-/// Date:      September 20, 2024
+/// Date:      October 19, 2024
 /// Course:    CS 3500, University of Utah, School of Computing
 /// Copyright: CS 3500 and [Joel Rodriguez] - This work may not
 ///            be copied for use in Academic Coursework.
@@ -472,6 +470,178 @@ public class SpreadsheetTests
         List<string> expectedList = new List<string>();
         expectedList.Add("X2");
         Assert.IsTrue(actualList.SequenceEqual(expectedList));
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas that if a circular exception is encountered we revert
+    /// back to proper contents and changed does not change.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetContentsOfCellFormula_EmptyStringAfterACircularException_ChangedShouldNotChange()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetContentsOfCell("A1", "=B1+1");
+        spreadsheet.SetContentsOfCell("C1", "=A1 +1");
+        spreadsheet.Save("values.txt");
+        try
+        {
+            spreadsheet.SetContentsOfCell("B1", "=C1+2");
+        }
+        catch (Exception)
+        {
+        }
+
+        Assert.AreEqual(spreadsheet.GetCellContents("B1"), string.Empty);
+        Assert.IsFalse(spreadsheet.Changed);
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas that if a circular exception is encountered we revert
+    /// back to proper contents and changed does not change.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetContentsOfCellFormula_DoubleAfterACircularException_ChangedShouldNotChange()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetContentsOfCell("A1", "=B1+1");
+        spreadsheet.SetContentsOfCell("C1", "=A1 +1");
+        spreadsheet.SetContentsOfCell("B1", "2.0");
+        spreadsheet.Save("values.txt");
+        try
+        {
+            spreadsheet.SetContentsOfCell("B1", "=C1+2");
+        }
+        catch (Exception)
+        {
+        }
+
+        Assert.AreEqual(spreadsheet.GetCellContents("B1"), 2.0);
+        Assert.IsFalse(spreadsheet.Changed);
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas that if a circular exception is encountered we revert
+    /// back to proper contents and changed does not change.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetContentsOfCellFormula_FormulaAfterACircularException_ChangedShouldNotChange()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetContentsOfCell("A1", "=B1+1");
+        spreadsheet.SetContentsOfCell("C1", "=A1 +1");
+        spreadsheet.SetContentsOfCell("B1", "=B2+2");
+        spreadsheet.Save("values.txt");
+        try
+        {
+            spreadsheet.SetContentsOfCell("B1", "=C1+2");
+        }
+        catch (Exception)
+        {
+        }
+
+        Assert.AreEqual(spreadsheet.GetCellContents("B1"), new Formula("B2+2"));
+        Assert.IsFalse(spreadsheet.Changed);
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas that if a circular exception is encountered we revert
+    /// back to proper contents and changed does not change and that nothing else changes. We test this by making sure chains are still in tact.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetContentsOfCellFormula_BigSpreadsheetFormulaAfterACircularException_NothingIsChanged()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetContentsOfCell("A1", "=B1+1");
+        spreadsheet.SetContentsOfCell("C1", "=A1 +1");
+        spreadsheet.SetContentsOfCell("B1", "=B2+2");
+        for (int i = 0; i < 20; i++)
+        {
+            spreadsheet.SetContentsOfCell($"B{i + 3}", $"=B1 + 3");
+        }
+
+        spreadsheet.Save("values.txt");
+        try
+        {
+            spreadsheet.SetContentsOfCell("B1", "=C1+2");
+        }
+        catch (Exception)
+        {
+        }
+
+        Assert.AreEqual(spreadsheet.GetCellContents("B1"), new Formula("B2+2"));
+        Assert.IsFalse(spreadsheet.Changed);
+        spreadsheet.SetContentsOfCell("B1", "2");
+        for (int i = 0; i < 20; i++)
+        {
+            Assert.AreEqual(spreadsheet.GetCellValue($"B{i + 3}"), 5.0);
+        }
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas that if a circular exception is encountered we revert
+    /// back to proper contents. We test this by making sure chains are still in tact and that the Dependees of the exception thrown cell are still
+    /// the same (we fill out the variables and make sure the cell updates).
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetContentsOfCellFormula_BigSpreadsheetFormulaAfterACircularException_DependencyGraphIsNotChanged()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetContentsOfCell("A1", "=B1+1");
+        spreadsheet.SetContentsOfCell("C1", "=A1 +1");
+        spreadsheet.SetContentsOfCell("B1", "=B2+V3+B6+E3+D7+H8+J11");
+        for (int i = 0; i < 20; i++)
+        {
+            spreadsheet.SetContentsOfCell($"B{i + 7}", $"=B1 + 3");
+        }
+
+        spreadsheet.Save("values.txt");
+        try
+        {
+            spreadsheet.SetContentsOfCell("B1", "=C1+2");
+        }
+        catch (Exception)
+        {
+        }
+
+        HashSet<string> expectedDependees = new HashSet<string>();
+        if (spreadsheet.GetCellContents("B1") is Formula formula)
+        {
+            foreach (string dependee in formula.GetVariables())
+            {
+                spreadsheet.SetContentsOfCell(dependee, "2.0");
+            }
+
+            Assert.AreEqual(spreadsheet.GetCellContents("B1"), new Formula("B2+V3+B6+E3+D7+H8+J11"));
+            Assert.AreEqual(spreadsheet.GetCellValue("B1"), 14.0);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+
+    /// <summary>
+    /// Test that ensures that when adding to an empty sheet the SetContentsOfCell method for formulas that if a circular exception is encountered we revert
+    /// back to proper contents and changed does not change.
+    /// </summary>
+    [TestMethod]
+    public void SpreadSheetSetContentsOfCellFormula_StringAfterACircularExceptionChangedShouldNotChange_ReturnsListOfOneElement()
+    {
+        Spreadsheet spreadsheet = new Spreadsheet();
+        spreadsheet.SetContentsOfCell("A1", "=B1+1");
+        spreadsheet.SetContentsOfCell("C1", "=A1 +1");
+        spreadsheet.SetContentsOfCell("B1", "Mama mia");
+        spreadsheet.Save("values.txt");
+        try
+        {
+            spreadsheet.SetContentsOfCell("B1", "=C1+2");
+        }
+        catch (Exception)
+        {
+        }
+
+        Assert.AreEqual(spreadsheet.GetCellContents("B1"), "Mama mia");
+        Assert.IsFalse(spreadsheet.Changed);
     }
 
     /// <summary>
@@ -1131,7 +1301,7 @@ public class SpreadsheetTests
         {
             s.SetContentsOfCell("A1", "=B1+1");
         }
-        catch(Exception)
+        catch (Exception)
         {
         }
 
@@ -1394,6 +1564,55 @@ public class SpreadsheetTests
         ss.Load("known_values.txt");
         Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SetEquals(expectedSpreadsheet.GetNamesOfAllNonemptyCells()));
         Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SequenceEqual(expectedSpreadsheet.GetNamesOfAllNonemptyCells()));
+
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 101);
+    }
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to load a spreadsheet with multiple cells filled out. And that the cells values are what we expect them to
+    ///  be.
+    /// </summary>
+    [TestMethod]
+    public void SpreadsheetLoad_MultiObjectJSON_CreatesExpectedObjectAndCells()
+    {
+        Spreadsheet expectedSpreadsheet = new Spreadsheet();
+        StringBuilder jsonStringBuilder = new StringBuilder();
+        jsonStringBuilder.Append(@"{""Cells"": {");
+        Random r = new Random();
+        for (int i = 0; i < 100; i++)
+        {
+            switch (r.Next(3))
+            {
+                case 0:
+                    jsonStringBuilder.Append($@" ""A{i}"":" + @"{ ""StringForm"": ""=5""},");
+                    expectedSpreadsheet.SetContentsOfCell($"A{i}", "=5");
+                    break;
+                case 1:
+                    jsonStringBuilder.Append($@" ""B{i}"":" + @"{ ""StringForm"": ""=5""},");
+                    expectedSpreadsheet.SetContentsOfCell($"B{i}", "=5");
+                    break;
+                case 2:
+                    jsonStringBuilder.Append($@" ""C{i}"":" + @"{ ""StringForm"": ""=5""},");
+                    expectedSpreadsheet.SetContentsOfCell($"C{i}", "=5");
+                    break;
+            }
+        }
+
+        jsonStringBuilder.Append(@" ""A101"":" + @"{ ""StringForm"": ""=5""}}}");
+        expectedSpreadsheet.SetContentsOfCell("A101", "=5");
+        File.WriteAllText("known_values.txt", jsonStringBuilder.ToString());
+
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SetEquals(expectedSpreadsheet.GetNamesOfAllNonemptyCells()));
+        Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().SequenceEqual(expectedSpreadsheet.GetNamesOfAllNonemptyCells()));
+
+        foreach (string cell in ss.GetNamesOfAllNonemptyCells())
+        {
+            Assert.AreEqual(ss.GetCellValue(cell), 5.0);
+            Assert.AreEqual(ss.GetCellContents(cell), new Formula("5"));
+        }
+
         Assert.IsTrue(ss.GetNamesOfAllNonemptyCells().Count == 101);
     }
 
@@ -1457,6 +1676,40 @@ public class SpreadsheetTests
     public void SpreadsheetLoad_LoadingAFileThatIsNotInOurExpectedFormat_ThrowsReadWriteException()
     {
         string expectedOutput = "Hello";
+
+        File.WriteAllText("known_values.txt", expectedOutput);
+
+        // Now Read that file
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+    }
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to correctly throw a SpreadsheetReadWriteException when the file is not a
+    ///  JSON readable file. For example the cells keyword is missed in the Json string.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(SpreadsheetReadWriteException))]
+    public void SpreadsheetLoad_LoadingAFileWithoutCellsDetailed_ThrowsReadWriteException()
+    {
+        string expectedOutput = @"{ ""A1"": { ""StringForm"": ""5""},""B1"":{""StringForm"": ""=2+B1""}}";
+
+        File.WriteAllText("known_values.txt", expectedOutput);
+
+        // Now Read that file
+        Spreadsheet ss = new Spreadsheet();
+        ss.Load("known_values.txt");
+    }
+
+    /// <summary>
+    ///  Test to ensure that the load method is able to correctly throw a SpreadsheetReadWriteException when the file is not a
+    ///  JSON readable file. For example the stringform keyword is missed in the json file.
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(SpreadsheetReadWriteException))]
+    public void SpreadsheetLoad_LoadingAFileWithoutStringFormDetailed_ThrowsReadWriteException()
+    {
+        string expectedOutput = @"{""Cells"": { ""A1"": { ""Striorm"": ""5""},""B1"":{""Striorm"": ""=4+2""}}}";
 
         File.WriteAllText("known_values.txt", expectedOutput);
 
