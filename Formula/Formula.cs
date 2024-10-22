@@ -374,7 +374,7 @@ public class Formula
                 }
                 catch (ArgumentException)
                 {
-                    return new FormulaError("Unknown variable: " + token + " please enter existing variables.");
+                    return new FormulaError("Evaluation Error attempted to add two things that were not valid.");
                 }
 
                 // This method does the multiples and or divide and will also tell us if we need to return a FormulaError

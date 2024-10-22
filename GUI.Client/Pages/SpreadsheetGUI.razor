@@ -41,6 +41,7 @@ else
                     <thead>
                         <tr class="fixed-header">
                             <th scope="col">&nbsp;</th>
+                           @*add variable for column length and row lenght and getters and setters.*@
                             @for ( int col = 0; col < 10; col++ )
                             {
                                 <th scope="col">@Alphabet[col]</th>
@@ -81,6 +82,7 @@ else
             <br/>
 
             <label for="RowsInput"> Number of Rows: </label>
+            @*Might need to change this to handle bigger values (up to 26 and 100)*@
             <input name="RowsInput" id="RowsInput" min="1" max="10"/>
             <label for="ColsInput"> Number of Cols: </label>
             <input name="ColsInput" id="ColsInput" min="1" max="10"/>
@@ -111,6 +113,14 @@ else
     /// </summary>
     private string SaveFileName = "Spreadsheet.sprd";
 
+    private int selectedRow = 0;
+    private int selectedCol = 0;
+
+    private int prevSelectedRow = 0;
+    private int prevSelectedCol = 0; 
+
+    private string selectedNameOfCell = "A1";
+
     /// <summary>
     ///   When a cell is clicked on, put the focus on the main
     ///   widget and update the toolbar.
@@ -120,6 +130,15 @@ else
     private void FocusMainInput( int row, int col )
     {
         // FIXME: show the user which cell was clicked on
+        // Add a new display for Cell name (calling update toolbar)
+        prevSelectedCol = selectedCol;
+        prevSelectedRow = selectedRow;
+
+        selectedRow = row;
+        selectedCol = col;
+
+        selectedNameOfCell = CellNameFromRowCol(row, col);
+
         UpdateToolbar();
         HighlightCell(row, col);
 
@@ -132,7 +151,9 @@ else
     /// </summary>
     private void UpdateToolbar()
     {
-        InputWidgetBackingStore = "hi there";
+        InputWidgetBackingStore = CellsBackingStore[selectedRow, selectedCol];
+
+        //CellSelectedWidgetBackingStore = whatever cell is selected
 
         StateHasChanged();
     }
@@ -145,14 +166,10 @@ else
     private void HighlightCell(int theRow, int theCol)
     {
         // FIXME: shouldn't use magic constants (e.g., 10).
+        // So do we add instance variables that keep track of what is currently selected and then set it to empty using instance variables
+        // Are these instance variables in this file or the .cs file? Keep in here figured it out
         // probably should just remember the last cell and empty its backing store.
-        for (int row=0;row<10;row++)
-        {
-            for (int col=0;col<10;col++)
-            {
-                CellsClassBackingStore[row, col] = string.Empty;
-            }
-        }
+        CellsClassBackingStore[selectedRow, selectedCol] = string.Empty;
 
         CellsClassBackingStore[theRow, theCol] = "selected";
     }
@@ -165,10 +182,10 @@ else
     private void ChangeSpreadsheetCellValue( ChangeEventArgs eventArgs )
     {
         // FIXME: determine the currently select row, col (hint: it should be saved)
-        int row = 0;
-        int col = 0;
+        int row = selectedRow;
+        int col = selectedCol;
 
-        string newInput = eventArgs.Value?.ToString() ?? "oops";
+        string newInput = eventArgs.Value?.ToString() ?? "oops"; // So if user somehow inputs null 
         InputWidgetBackingStore = newInput;
 
         HandleUpdateCellInSpreadsheet( newInput, row, col );
@@ -183,7 +200,7 @@ else
     /// <returns></returns>
     private async Task OnBeforeLeavePage( LocationChangingContext context )
     {
-        if ( true ) // FIXME: don't confirm if the sheet is not changed.
+        if (spreadsheet.Changed) // FIXME: don't confirm if the sheet is not changed.  So basically here instead of true do changed find out how to get changed in here.
         {
             var isConfirmed = await JS.InvokeAsync<bool>(
                 "confirm",

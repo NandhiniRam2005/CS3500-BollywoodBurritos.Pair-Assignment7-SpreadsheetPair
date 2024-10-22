@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using System;
 using System.Diagnostics;
+using CS3500.Spreadsheet;
 
 /// <summary>
 ///  FIXME.
@@ -38,6 +39,11 @@ using System.Diagnostics;
 public partial class SpreadsheetGUI
 {
     /// <summary>
+    /// The model of our MVC.
+    /// </summary>
+    private Spreadsheet spreadsheet = new Spreadsheet();
+
+    /// <summary>
     ///    Gets the alphabet for ease of creating columns.
     /// </summary>
     private static char[ ] Alphabet { get; } = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
@@ -60,7 +66,7 @@ public partial class SpreadsheetGUI
     private string ToolBarCellContents { get; set; } = string.Empty;
 
     /// <summary>
-    ///   <para> Gets or sets the data for all of the cells in the spreadsheet GUI. </para>
+    ///   <para> Gets or sets the data for all of the cells in the spreadsheet GUI. Basically this is our nonEmptyCells. Cells we gotta save.</para>
     ///   <remarks>Backing Store for HTML</remarks>
     /// </summary>
     private string[,] CellsBackingStore { get; set; } = new string[ 10, 10 ];
@@ -68,13 +74,16 @@ public partial class SpreadsheetGUI
     /// <summary>
     ///   <para> Gets or sets the html class string for all of the cells in the spreadsheet GUI. </para>
     ///   <remarks>Backing Store for HTML CLASS strings</remarks>
+    ///   <remarks> Kind of confused on this one I believe this is the figuring out which one is selected.</remarks>
     /// </summary>
     private string[,] CellsClassBackingStore { get; set; } = new string[ 10, 10 ];
 
     /// <summary>
-    ///   Gets or sets a value indicating whether we are showing the save "popup" or not.
+    ///   Gets or sets a value indicating whether we are showing the save "popup" or not. SO this is changed from our spreadsheet model.
     /// </summary>
     private bool SaveGUIView { get; set; }
+
+    private string[,] CellsBackingValue { get; set; } = new string[10, 10];
 
     /// <summary>
     ///   Query the spreadsheet to see if it has been changed.
@@ -89,6 +98,7 @@ public partial class SpreadsheetGUI
     [JSInvokable]
     public bool HasSpreadSheetChanged(  )
     {
+        // How is this not a fix me??
         Debug.WriteLine( $"{"HasSpreadSheetChanged",-30}: {Navigator.Uri}. Remove Me." );
         return false;
     }
@@ -137,14 +147,17 @@ public partial class SpreadsheetGUI
     ///  cells should be of the form "A5" or "B1".  The matrix of cells (the backing store) is zero
     ///  based but the first row in the spreadsheet is 1.
     /// </summary>
-    /// <param name="cellName"> The name of the cell. </param>
+    /// <param name="cellName"> The name of the cell for example A1. </param>
     /// <param name="row"> The returned conversion between row and zero based index. </param>
     /// <param name="col"> The returned conversion between column letter and zero based matrix index. </param>
     private static void ConvertCellNameToRowCol( string cellName, out int row, out int col )
     {
         // FIXME: this needs to be written.
-        col = 0;  // A1 --> (0,0)
-        row = 0;
+        char cellNameCol = cellName[0];
+        string numberForCell = cellName.Substring( 1 );
+        int.TryParse(numberForCell, out row );
+
+        col = cellNameCol - 65;  // A1 --> (0,0)
     }
 
     /// <summary>
@@ -160,7 +173,7 @@ public partial class SpreadsheetGUI
     }
 
     /// <summary>
-    ///   Called when the input widget (representing the data in a particular cell) is modified.
+    ///   Called when the input widget (representing the data in a particular cell) is modified. Most of our code will be here.
     /// </summary>
     /// <param name="newInput"> The new value to put at row/col. </param>
     /// <param name="row"> The matrix row identifier. </param>
@@ -171,13 +184,18 @@ public partial class SpreadsheetGUI
         {
             InputWidgetBackingStore = $"{row},{col}";
 
+            string cellName = CellNameFromRowCol(row, col );
+            spreadsheet.SetContentsOfCell(cellName, newInput); // Updates our model.
+            CellsBackingStore[row, col] = newInput;  // Updates like the backing of our nonEmptyCells
+            CellsBackingValue[row, col] = spreadsheet.GetCellValue(cellName).ToString();
+
             // FIXME: add your connection to the model here.
             //        then update the GUI as appropriate.
         }
-        catch
+        catch(Exception e) // catch the exception and instead of something went wrong just say the exception.message
         {
             // a way to communicate to the user that something went wrong.
-            await JS.InvokeVoidAsync( "alert", "Something went wrong." );
+            await JS.InvokeVoidAsync( "alert", e.Message );
         }
     }
 
@@ -196,7 +214,12 @@ public partial class SpreadsheetGUI
         try
         {
             // FIXME: you only need to confirm if the sheet "dirty" (hasn't been changed)
-            bool success = await JS.InvokeAsync<bool>( "confirm", "Do this?" );
+            // put this in an if statement that is if changed.
+            bool success = true;
+            if (spreadsheet.Changed)
+            {
+                 success = await JS.InvokeAsync<bool>("confirm", "Do this?");
+            }
 
             if ( !success )
             {
@@ -221,6 +244,11 @@ public partial class SpreadsheetGUI
                 await JS.InvokeVoidAsync( "alert", fileContent );
 
                 // FIXME: you need to do something with this data
+                // Well we build our spreadsheet object with this data.
+                spreadsheet.Load(fileContent); 
+
+           // this is wrong we need to give it a file there is probably to way take the jsonn sting and then sotre into a local file that our browser can read. Reference lecture.
+
                 StateHasChanged();
             }
         }
@@ -270,6 +298,8 @@ public partial class SpreadsheetGUI
         {
             bool success = await JS.InvokeAsync<bool>( "confirm", "Clear the sheet?" );
         }
+
+        this.spreadsheet = new Spreadsheet();
 
         // FIXME: you know the drill.
     }
