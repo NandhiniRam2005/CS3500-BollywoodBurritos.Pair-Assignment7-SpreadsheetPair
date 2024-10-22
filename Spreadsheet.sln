@@ -33,6 +33,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpreadsheetTests", "Spreads
 		{EB9FD2E7-A3AE-436B-B786-201EF84FE00C} = {EB9FD2E7-A3AE-436B-B786-201EF84FE00C}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GUI", "..\..\..\Downloads\ps7\GUI\GUI.csproj", "{8BF1BE38-10B8-42C5-827D-F1AEFFA4A26B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GUI.Client", "..\..\..\Downloads\ps7\GUI.Client\GUI.Client.csproj", "{91116301-83DB-4B61-82FF-6F8F06836272}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +67,14 @@ Global
 		{92202820-A461-4966-A81E-C9A6E8642A29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92202820-A461-4966-A81E-C9A6E8642A29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92202820-A461-4966-A81E-C9A6E8642A29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BF1BE38-10B8-42C5-827D-F1AEFFA4A26B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BF1BE38-10B8-42C5-827D-F1AEFFA4A26B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BF1BE38-10B8-42C5-827D-F1AEFFA4A26B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BF1BE38-10B8-42C5-827D-F1AEFFA4A26B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91116301-83DB-4B61-82FF-6F8F06836272}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91116301-83DB-4B61-82FF-6F8F06836272}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91116301-83DB-4B61-82FF-6F8F06836272}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91116301-83DB-4B61-82FF-6F8F06836272}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
