@@ -185,9 +185,10 @@ public partial class SpreadsheetGUI
             InputWidgetBackingStore = $"{row},{col}";
             ValueWidgetBackingStore = $"{row}, {col}";
 
-            string cellName = CellNameFromRowCol(row, col );
+            string cellName = CellNameFromRowCol(row, col);
             List<string> cellsToRecalculate = spreadsheet.SetContentsOfCell(cellName, newInput).ToList(); // Updates our model.
             CellsBackingStore[row, col] = newInput;  // Updates like the backing of our nonEmptyCells
+            ToolBarCellContents = newInput;
 
             foreach (string cellToRecalc in cellsToRecalculate)
             {
@@ -258,7 +259,8 @@ public partial class SpreadsheetGUI
 
                 // FIXME: you need to do something with this data
                 // Well we build our spreadsheet object with this data.
-                spreadsheet.Load(fileContent); 
+                spreadsheet.InstantiateFromJSON( fileContent );
+                // Now we need to manually add it to our sheet (modify the GUI) the spreadsheet has been changed
 
            // this is wrong we need to give it a file there is probably to way take the jsonn sting and then sotre into a local file that our browser can read. Reference lecture.
 
@@ -292,7 +294,7 @@ public partial class SpreadsheetGUI
         // the Blazor life cycle and cannot assure of non-null. </remarks>
         if ( JSModule is not null )
         {
-            var success = await JSModule.InvokeAsync<bool>( "saveToFile", "testfile.txt", "hello world" );
+            var success = await JSModule.InvokeAsync<bool>("saveToFile", "spreadsheet.sprd", spreadsheet.GetJSON());
             if (success)
             {
                 ShowHideSaveGUI( false );

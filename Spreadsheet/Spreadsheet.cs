@@ -294,6 +294,32 @@ public class Spreadsheet
     }
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SpreadsheetReadWriteException"></exception>
+    public string GetJSON()
+    {
+        var options = new JsonSerializerOptions();
+        options.WriteIndented = true;
+
+        string jsonString = string.Empty;
+        try
+        {
+            jsonString = System.Text.Json.JsonSerializer.Serialize<Spreadsheet>(this, options);
+        }
+        catch (Exception e)
+        {
+            // We do not need to revert the spreadsheet because the spreadsheet is never changed when saving.
+            throw new SpreadsheetReadWriteException("Error: " + e);
+        }
+
+        Changed = false;
+        return jsonString;
+    }
+
+
+    /// <summary>
     ///   <para>
     ///     Read the data (JSON) from the file and instantiate the current
     ///     spreadsheet.  See <see cref="Save(string)"/> for expected format.
@@ -347,6 +373,53 @@ public class Spreadsheet
             }
 
             throw new SpreadsheetReadWriteException("Error:" + e.Message);
+        }
+
+        // Should changed only be true after a successful load?
+        Changed = false;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="json"></param>
+    /// <exception cref="ArgumentException"></exception>
+    public void InstantiateFromJSON(string json)
+    {
+        Spreadsheet ogSpreadsheet = new Spreadsheet();
+        ogSpreadsheet.nonEmptyCells = new Dictionary<string, Cell>(this.nonEmptyCells);
+
+        // Clears our current spreadsheet to prepare it for loading of a new spreadsheet.
+        this.nonEmptyCells.Clear();
+        this.dependencyGraph = new DependencyGraph();
+        try
+        {
+            Spreadsheet? tempSpreadsheeet = System.Text.Json.JsonSerializer.Deserialize<Spreadsheet>(json);
+
+            List<string> loadedKeys = new List<string>();
+
+            // Needed to get rid of nullable warning.
+            if (tempSpreadsheeet != null)
+            {
+                // What we are doing here is remaking our spreadsheet from the deserialized spreadsheet.
+                loadedKeys = tempSpreadsheeet.nonEmptyCells.Keys.ToList();
+                int i = 0;
+                foreach (Cell cell in tempSpreadsheeet.nonEmptyCells.Values)
+                {
+                    this.SetContentsOfCell(loadedKeys[i], cell.StringForm);
+                    i++;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            // If an error occurs during the creation of the loaded spreadsheet (Such as a circular exception etc...) We rebuild our old spreadsheet.
+            foreach (KeyValuePair<string, Cell> pair in ogSpreadsheet.nonEmptyCells)
+            {
+                this.SetContentsOfCell(pair.Key, pair.Value.StringForm);
+            }
+
+            throw new ArgumentException("Error:" + e.Message);
         }
 
         // Should changed only be true after a successful load?

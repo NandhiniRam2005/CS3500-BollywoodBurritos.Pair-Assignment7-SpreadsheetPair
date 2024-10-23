@@ -13,10 +13,15 @@
 <PageTitle>Starter Code</PageTitle>
 
 <h1>Simple SpreadSheet GUI @(spreadsheet.Changed ? "*" : "")</h1>
-
 @* <remarks> Example of how to have two pages or an "alert" GUI. </remarks> *@
+@if (CellsClassBackingStore[0, 0] == null)
+{
+    CellsClassBackingStore[0, 0] = "selected";
+    HighlightCell(0, 0);
+}
 @if (SaveGUIView)
 {
+   
     <label for="SavefileName">Name:</label>
     <input id="SaveFileName" @bind="SaveFileName" type="text">
 
@@ -63,7 +68,13 @@ else
                                     int r = row;
                                     int c = col;
                                     <td class="@CellsClassBackingStore[r,c]"  @onclick="() => FocusMainInput(r,c)">
-                                        <span title="@CellsBackingStore[r,c] "class="SpreadsheetCell">@CellsBackingStore[r, c]</span>
+                                        @if(CellsClassBackingStore[r,c] != null && CellsClassBackingStore[r,c].Equals("selected")){
+                                           // <span title="@CellsBackingStore[r,c] "class="SpreadsheetCell">@CellsBackingStore[r, c]</span>
+                                            <input name="FormulaCellContent" id="FormulaCellContent" @ref="FormulaContentEditableInput" value="@InputWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" />
+                                        }
+                                        else{
+                                            <span title="@CellsBackingStore[r,c] " class="SpreadsheetCell">@CellsBackingValue[r, c]</span>
+                                        }
                                     </td>
                                 }
                             </tr>
@@ -144,7 +155,14 @@ else
         selectedCol = col;
 
         selectedNameOfCell = CellNameFromRowCol(row, col);
-
+        if (CellsBackingStore[row, col] != null)
+        {
+            ToolBarCellContents = CellsBackingStore[row, col];
+        }
+        else
+        {
+            ToolBarCellContents = string.Empty;
+        }
         UpdateToolbar();
         HighlightCell(row, col);
 
@@ -157,7 +175,7 @@ else
     /// </summary>
     private void UpdateToolbar()
     {
-        InputWidgetBackingStore = CellsBackingStore[selectedRow, selectedCol];
+        InputWidgetBackingStore = ToolBarCellContents;
 
         ValueWidgetBackingStore = CellsBackingValue[selectedRow, selectedCol];
 
@@ -229,5 +247,4 @@ else
             }
         }
     }
-
 }
