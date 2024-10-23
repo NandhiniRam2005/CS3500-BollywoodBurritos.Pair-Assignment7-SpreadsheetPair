@@ -156,8 +156,8 @@ public partial class SpreadsheetGUI
         char cellNameCol = cellName[0];
         string numberForCell = cellName.Substring( 1 );
         int.TryParse(numberForCell, out row );
-
-        col = cellNameCol - 65;  // A1 --> (0,0)
+        row = row - 1;
+        col = (int)(cellNameCol - 65);  // A1 --> (0,0)
     }
 
     /// <summary>
@@ -186,9 +186,21 @@ public partial class SpreadsheetGUI
             ValueWidgetBackingStore = $"{row}, {col}";
 
             string cellName = CellNameFromRowCol(row, col );
-            spreadsheet.SetContentsOfCell(cellName, newInput); // Updates our model.
+            List<string> cellsToRecalculate = spreadsheet.SetContentsOfCell(cellName, newInput).ToList(); // Updates our model.
             CellsBackingStore[row, col] = newInput;  // Updates like the backing of our nonEmptyCells
-            CellsBackingValue[row, col] = this.spreadsheet.GetCellValue(cellName).ToString();
+
+            foreach (string cellToRecalc in cellsToRecalculate)
+            {
+                int rowToRecalc;
+                int colToRecalc;
+                ConvertCellNameToRowCol(cellToRecalc, out rowToRecalc, out colToRecalc);
+
+                string? valueOfCell = spreadsheet.GetCellValue(cellToRecalc).ToString();
+                if (valueOfCell != null)
+                {
+                    CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell.ToString();
+                }
+            }
 
             // FIXME: add your connection to the model here.
             //        then update the GUI as appropriate.
@@ -301,6 +313,11 @@ public partial class SpreadsheetGUI
         }
 
         this.spreadsheet = new Spreadsheet();
+        this.CellsBackingStore = new string[10, 10];
+        this.CellsClassBackingStore = new string[10, 10];
+        this.CellsBackingValue = new string[10, 10];
+
+        FocusMainInput(selectedRow, selectedCol);
 
         // FIXME: you know the drill.
     }
