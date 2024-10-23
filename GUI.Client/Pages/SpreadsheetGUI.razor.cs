@@ -183,11 +183,12 @@ public partial class SpreadsheetGUI
         try
         {
             InputWidgetBackingStore = $"{row},{col}";
+            ValueWidgetBackingStore = $"{row}, {col}";
 
             string cellName = CellNameFromRowCol(row, col );
             spreadsheet.SetContentsOfCell(cellName, newInput); // Updates our model.
             CellsBackingStore[row, col] = newInput;  // Updates like the backing of our nonEmptyCells
-            CellsBackingValue[row, col] = spreadsheet.GetCellValue(cellName).ToString();
+            CellsBackingValue[row, col] = this.spreadsheet.GetCellValue(cellName).ToString();
 
             // FIXME: add your connection to the model here.
             //        then update the GUI as appropriate.

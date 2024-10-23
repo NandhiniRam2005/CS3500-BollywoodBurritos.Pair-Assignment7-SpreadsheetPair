@@ -29,6 +29,10 @@ else
 {
     <div id="toolbar">
         <div>
+            <label for="SpreadsheetCell">Cell:</label>
+            <label for="SelectedCell"> @selectedNameOfCell</label>
+            <label for="FormulaValue">Value:</label>
+            <input name="FormulaValue" id="FormulaValue" value="@ValueWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" readonly />
             <label for="FormulaContent">Content:</label>
             <input name="FormulaContent" id="FormulaContent" @ref="FormulaContentEditableInput" value="@InputWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" />
         </div>
@@ -108,6 +112,8 @@ else
     /// </summary>
     private string InputWidgetBackingStore = "";
 
+    private string ValueWidgetBackingStore = "";
+
     /// <summary>
     ///   The name of the file that we want to download to.
     /// </summary>
@@ -153,6 +159,8 @@ else
     {
         InputWidgetBackingStore = CellsBackingStore[selectedRow, selectedCol];
 
+        ValueWidgetBackingStore = CellsBackingValue[selectedRow, selectedCol];
+
         //CellSelectedWidgetBackingStore = whatever cell is selected
 
         StateHasChanged();
@@ -169,7 +177,15 @@ else
         // So do we add instance variables that keep track of what is currently selected and then set it to empty using instance variables
         // Are these instance variables in this file or the .cs file? Keep in here figured it out
         // probably should just remember the last cell and empty its backing store.
-        CellsClassBackingStore[selectedRow, selectedCol] = string.Empty;
+        // for (int row = 0; row < 10; row++)
+        // {
+        //     for (int col = 0; col < 10; col++)
+        //     {
+        //         CellsClassBackingStore[row, col] = string.Empty;
+        //     }
+        // }
+
+        CellsClassBackingStore[prevSelectedRow, prevSelectedCol] = string.Empty;
 
         CellsClassBackingStore[theRow, theCol] = "selected";
     }
@@ -187,6 +203,7 @@ else
 
         string newInput = eventArgs.Value?.ToString() ?? "oops"; // So if user somehow inputs null 
         InputWidgetBackingStore = newInput;
+        ValueWidgetBackingStore = CellsBackingValue[row, col];
 
         HandleUpdateCellInSpreadsheet( newInput, row, col );
 
