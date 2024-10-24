@@ -275,9 +275,41 @@ public partial class SpreadsheetGUI
                 // FIXME: you need to do something with this data
                 // Well we build our spreadsheet object with this data.
                 spreadsheet.InstantiateFromJSON( fileContent );
-                // Now we need to manually add it to our sheet (modify the GUI) the spreadsheet has been changed
-                // this is wrong we need to give it a file there is probably to way take the jsonn sting and then sotre into a local file that our browser can read. Reference lecture.
 
+                this.CellsBackingStore = new string[99, 26];
+                this.CellsBackingValue = new string[99, 26];
+
+                foreach (string cellName in spreadsheet.GetNamesOfAllNonemptyCells())
+                {
+                    int rowToChange;
+                    int colToChange;
+                    ConvertCellNameToRowCol(cellName, out rowToChange, out colToChange);
+
+                    string? valueOfCell = spreadsheet.GetCellValue(cellName).ToString();
+                    string? contentsOfCell = spreadsheet.GetCellContents(cellName).ToString();
+                    if(contentsOfCell != null && spreadsheet.GetCellContents(cellName) is Formula)
+                    {
+                        CellsBackingStore[rowToChange, colToChange] = "=" + contentsOfCell;
+                    }
+                    else if(contentsOfCell != null)
+                    {
+                        CellsBackingStore[rowToChange, colToChange] = contentsOfCell;
+                    }
+
+                    if (spreadsheet.GetCellValue(cellName) != null && spreadsheet.GetCellValue(cellName) is FormulaError formulaError)
+                    {
+                        valueOfCell = formulaError.Reason;
+                    }
+
+                    if (valueOfCell != null)
+                    {
+                        CellsBackingValue[rowToChange, colToChange] = valueOfCell;
+                    }
+                }
+
+                // Now we need to manually add it to our sheet (modify the GUI) the spreadsheet has been changed
+
+                FocusMainInput(selectedRow, selectedCol);
                 StateHasChanged();
             }
         }
@@ -330,7 +362,6 @@ public partial class SpreadsheetGUI
 
         this.spreadsheet = new Spreadsheet();
         this.CellsBackingStore = new string[99, 26];
-        this.CellsClassBackingStore = new string[99, 26];
         this.CellsBackingValue = new string[99, 26];
 
         FocusMainInput(selectedRow, selectedCol);
