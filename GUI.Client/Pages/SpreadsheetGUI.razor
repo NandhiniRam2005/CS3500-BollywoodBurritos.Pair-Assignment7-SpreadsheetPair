@@ -35,7 +35,7 @@ else
     <div id="toolbar">
         <div>
             <label for="SpreadsheetCell">Cell:</label>
-            <label for="SelectedCell"> @selectedNameOfCell</label>
+            <input name="SelectedCell" id="CellToolBar" value="@selectedNameOfCell" readonly />
             <label for="FormulaValue">Value:</label>
             <input name="FormulaValue" id="FormulaValue" value="@ValueWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" readonly />
             <label for="FormulaContent">Content:</label>
@@ -51,7 +51,7 @@ else
                         <tr class="fixed-header">
                             <th scope="col">&nbsp;</th>
                            @*add variable for column length and row lenght and getters and setters.*@
-                            @for ( int col = 0; col < 10; col++ )
+                            @for ( int col = 0; col < NumberOfCol; col++ )
                             {
                                 <th scope="col">@Alphabet[col]</th>
                             }
@@ -59,18 +59,18 @@ else
                     </thead>
 
                     <tbody>
-                        @for ( int row = 0; row < 10; row++ )
+                        @for ( int row = 0; row < NumberOfRows; row++ )
                         {
                             <tr style="padding:0px !important;">
                                 <th style="padding:0px !important;" scope="row" class="fixed-column">@(row + 1)</th>
-                                @for ( int col = 0; col < 10; col++ )
+                                @for ( int col = 0; col < NumberOfCol; col++ )
                                 {
                                     int r = row;
                                     int c = col;
                                     <td class="@CellsClassBackingStore[r,c]"  @onclick="() => FocusMainInput(r,c)">
                                         @if(CellsClassBackingStore[r,c] != null && CellsClassBackingStore[r,c].Equals("selected")){
                                            // <span title="@CellsBackingStore[r,c] "class="SpreadsheetCell">@CellsBackingStore[r, c]</span>
-                                            <input name="FormulaCellContent" id="FormulaCellContent" @ref="FormulaContentEditableInput" value="@InputWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" />
+                                            <input name="FormulaCellContent" id="FormulaCellContents" @ref="FormulaContentEditableInput" value="@InputWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" />
                                         }
                                         else{
                                             <span title="@CellsBackingStore[r,c] " class="SpreadsheetCell">@CellsBackingValue[r, c]</span>
@@ -98,9 +98,9 @@ else
 
             <label for="RowsInput"> Number of Rows: </label>
             @*Might need to change this to handle bigger values (up to 26 and 100)*@
-            <input name="RowsInput" id="RowsInput" min="1" max="10"/>
+            <input name="RowsInput" id="RowsInput" min="1" max="100" value=" @NumberOfRows" @onchange="ChangeSpreadsheetRowNumber"/>
             <label for="ColsInput"> Number of Cols: </label>
-            <input name="ColsInput" id="ColsInput" min="1" max="10"/>
+            <input name="ColsInput" id="ColsInput" min="1" max="26" value=" @NumberOfCol" @onchange="ChangeSpreadsheetColNumber"/>
         </div>
     </div>
 }
@@ -134,7 +134,10 @@ else
     private int selectedCol = 0;
 
     private int prevSelectedRow = 0;
-    private int prevSelectedCol = 0; 
+    private int prevSelectedCol = 0;
+
+    private int NumberOfRows { get; set; } = 10;
+    private int NumberOfCol { get; set; } = 10;
 
     private string selectedNameOfCell = "A1";
 
@@ -209,6 +212,42 @@ else
     }
 
     /// <summary>
+    ///   When the header widget for cell contents is changed, update THIS IS WRONG
+    ///   the spreadsheet.
+    /// </summary>
+    /// <param name="eventArgs"></param>
+    private void ChangeSpreadsheetRowNumber(ChangeEventArgs eventArgs)
+    {
+        // FIXME: determine the currently select row, col (hint: it should be saved)
+
+        string newRow = eventArgs.Value?.ToString() ?? "oops"; // So if user somehow inputs null
+        if(int.TryParse(newRow,  out int newNumberOfRow))
+        {
+            NumberOfRows = newNumberOfRow;
+        }
+
+        StateHasChanged();
+    }
+
+    /// <summary>
+    ///   When the header widget for cell contents is changed, update THIS IS WRONG
+    ///   the spreadsheet.
+    /// </summary>
+    /// <param name="eventArgs"></param>
+    private void ChangeSpreadsheetColNumber(ChangeEventArgs eventArgs)
+    {
+        // FIXME: determine the currently select row, col (hint: it should be saved)
+
+        string newCol = eventArgs.Value?.ToString() ?? "oops"; // So if user somehow inputs null
+        if (int.TryParse(newCol, out int newNumberOfCol))
+        {
+            NumberOfCol = newNumberOfCol;
+        }
+
+        StateHasChanged();
+    }
+
+    /// <summary>
     ///   When the header widget for cell contents is changed, update
     ///   the spreadsheet.
     /// </summary>
@@ -246,5 +285,9 @@ else
                 context.PreventNavigation();
             }
         }
+    }
+    private void UpdatesRows()
+    {
+        
     }
 }

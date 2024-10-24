@@ -12,6 +12,7 @@ using Microsoft.JSInterop;
 using System;
 using System.Diagnostics;
 using CS3500.Spreadsheet;
+using CS3500.Formula;
 
 /// <summary>
 ///  FIXME.
@@ -69,21 +70,21 @@ public partial class SpreadsheetGUI
     ///   <para> Gets or sets the data for all of the cells in the spreadsheet GUI. Basically this is our nonEmptyCells. Cells we gotta save.</para>
     ///   <remarks>Backing Store for HTML</remarks>
     /// </summary>
-    private string[,] CellsBackingStore { get; set; } = new string[ 10, 10 ];
+    private string[,] CellsBackingStore { get; set; } = new string[ 99, 25 ];
 
     /// <summary>
     ///   <para> Gets or sets the html class string for all of the cells in the spreadsheet GUI. </para>
     ///   <remarks>Backing Store for HTML CLASS strings</remarks>
     ///   <remarks> Kind of confused on this one I believe this is the figuring out which one is selected.</remarks>
     /// </summary>
-    private string[,] CellsClassBackingStore { get; set; } = new string[ 10, 10 ];
+    private string[,] CellsClassBackingStore { get; set; } = new string[ 99, 25 ];
 
     /// <summary>
     ///   Gets or sets a value indicating whether we are showing the save "popup" or not. SO this is changed from our spreadsheet model.
     /// </summary>
     private bool SaveGUIView { get; set; }
 
-    private string[,] CellsBackingValue { get; set; } = new string[10, 10];
+    private string[,] CellsBackingValue { get; set; } = new string[99, 25];
 
     /// <summary>
     ///   Query the spreadsheet to see if it has been changed.
@@ -197,9 +198,14 @@ public partial class SpreadsheetGUI
                 ConvertCellNameToRowCol(cellToRecalc, out rowToRecalc, out colToRecalc);
 
                 string? valueOfCell = spreadsheet.GetCellValue(cellToRecalc).ToString();
+                if (spreadsheet.GetCellValue(cellToRecalc) != null && spreadsheet.GetCellValue(cellToRecalc) is FormulaError formulaError)
+                {
+                    valueOfCell = formulaError.Reason;
+                }
+
                 if (valueOfCell != null)
                 {
-                    CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell.ToString();
+                    CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
                 }
             }
 
@@ -315,12 +321,23 @@ public partial class SpreadsheetGUI
         }
 
         this.spreadsheet = new Spreadsheet();
-        this.CellsBackingStore = new string[10, 10];
-        this.CellsClassBackingStore = new string[10, 10];
-        this.CellsBackingValue = new string[10, 10];
+        this.CellsBackingStore = new string[99, 26];
+        this.CellsClassBackingStore = new string[99, 26];
+        this.CellsBackingValue = new string[99, 26];
 
         FocusMainInput(selectedRow, selectedCol);
 
         // FIXME: you know the drill.
     }
+
+    /// <summary>
+    ///   Example of how JavaScript can talk "back" to the C# side.
+    /// </summary>
+    /// <param name="message"> string from javascript side. </param>
+    [JSInvokable]
+    public void TestBlazorInterop(string message)
+    {
+        Debug.WriteLine($"JavaScript has send me a message: {message}");
+    }
+
 }

@@ -77,6 +77,16 @@
     width:450px;
 }
 
+#FormulaCellContents
+{
+    width:150px;
+}
+
+#CellToolBar
+{
+    width: 60px;
+}
+
 #FileHandlers
 {
     margin: 20px;
