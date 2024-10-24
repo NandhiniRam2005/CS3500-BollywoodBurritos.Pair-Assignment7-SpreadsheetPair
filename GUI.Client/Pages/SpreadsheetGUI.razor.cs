@@ -3,6 +3,26 @@
 // </copyright>
 // Ignore Spelling: Spreadsheeeeeeeeee
 
+/// <summary>
+/// Author:    Joel Rodriguez,  Nandhini Ramanathan, and Professor Jim.
+/// Partner:   None
+/// Date:      October 26, 2024
+/// Course:    CS 3500, University of Utah, School of Computing
+/// Copyright: CS 3500 and [Joel Rodriguez and Nandhini Ramanathan] - This work may not
+///            be copied for use in Academic Coursework.
+///
+/// I, Joel Rodriguez and Nandhini Ramanathan, certify that I wrote this code from scratch and
+/// did not copy it in part or whole from another source.  All
+/// references used in the completion of the assignments are cited
+/// in my README file.
+///
+/// File Contents
+///
+///    This file contains the basic structure and idea of a spreadsheet it contains the idea of cells and ways to fill those cells in an
+///    actual spreadsheet. This file is the Model in MVC for our spreadsheet project. We also have ways of handling circular dependencies
+///    and invalid names.
+/// </summary>
+
 namespace SpreadsheetNS;
 
 using Microsoft.AspNetCore.Components;
@@ -15,7 +35,9 @@ using CS3500.Spreadsheet;
 using CS3500.Formula;
 
 /// <summary>
-///  FIXME.
+/// Represents the partial class for the spreadsheet GUI component.
+/// It provides the user interface logic for the spreadsheet and communicates with
+/// the Spreadsheet model to reflect changes and user interactions.
 ///  <remarks>
 ///    <para>
 ///      This is a partial class because class SpreadsheetGUI is also automatically
@@ -40,7 +62,7 @@ using CS3500.Formula;
 public partial class SpreadsheetGUI
 {
     /// <summary>
-    /// The model of our MVC.
+    /// The Spreadsheet object serving as the model in the MVC pattern.
     /// </summary>
     private Spreadsheet spreadsheet = new Spreadsheet();
 
@@ -55,19 +77,19 @@ public partial class SpreadsheetGUI
     /// </summary>
     private IJSObjectReference? JSModule { get; set; }
 
-   /// <summary>
-    ///   Gets or sets FIXME.
+    /// <summary>
+    ///  Gets or sets the default name used when saving the spreadsheet.
     /// </summary>
     private string FileSaveName { get; set; } = "Spreadsheet.sprd";
 
     /// <summary>
-    ///   <para> Gets or sets the data for the Tool Bar Cell Contents text area, e.g., =57+A2. </para>
+    ///   <para> Gets or sets the data for the Tool Bar Cell Contents text area. </para>
     ///   <remarks>Backing Store for HTML</remarks>
     /// </summary>
     private string ToolBarCellContents { get; set; } = string.Empty;
 
     /// <summary>
-    ///   <para> Gets or sets the data for all of the cells in the spreadsheet GUI. Basically this is our nonEmptyCells. Cells we gotta save.</para>
+    ///   <para> Gets or sets the backing store for the cell contents displayed in the GUI.</para>
     ///   <remarks>Backing Store for HTML</remarks>
     /// </summary>
     private string[,] CellsBackingStore { get; set; } = new string[ 99, 25 ];
@@ -75,12 +97,11 @@ public partial class SpreadsheetGUI
     /// <summary>
     ///   <para> Gets or sets the html class string for all of the cells in the spreadsheet GUI. </para>
     ///   <remarks>Backing Store for HTML CLASS strings</remarks>
-    ///   <remarks> Kind of confused on this one I believe this is the figuring out which one is selected.</remarks>
     /// </summary>
     private string[,] CellsClassBackingStore { get; set; } = new string[ 99, 25 ];
 
     /// <summary>
-    ///   Gets or sets a value indicating whether we are showing the save "popup" or not. SO this is changed from our spreadsheet model.
+    ///   Gets or sets a value indicating whether we are showing the save "popup" or not.
     /// </summary>
     private bool SaveGUIView { get; set; }
 
@@ -99,46 +120,38 @@ public partial class SpreadsheetGUI
     [JSInvokable]
     public bool HasSpreadSheetChanged(  )
     {
-        // How is this not a fix me??
-        Debug.WriteLine( $"{"HasSpreadSheetChanged",-30}: {Navigator.Uri}. Remove Me." );
-        return false;
+        Debug.WriteLine( $"{"HasSpreadSheetChanged",-30}: {Navigator.Uri}" );
+        return spreadsheet.Changed;
     }
 
     /// <summary>
     ///   Set up initial state and event handlers.
     ///   <remarks>
     ///     This is somewhat like a constructor for a Blazor Web Page (object).
-    ///     You probably don't need to do anything here.
     ///   </remarks>
     /// </summary>
     protected override void OnInitialized( )
     {
-        Debug.WriteLine( $"{"OnInitialized",-30}: {Navigator.Uri}. Remove Me." );
+        Debug.WriteLine( $"{"OnInitialized",-30}: {Navigator.Uri}" );
     }
 
     /// <summary>
     ///   Called anytime in the lifetime of the web page were the page is re-rendered.
-    ///   <remarks>
-    ///     You probably don't need to do anything in here beyond what is provided.
-    ///   </remarks>
     /// </summary>
     /// <param name="firstRender"> true the very first time the page is rendered.</param>
     protected async override void OnAfterRender( bool firstRender )
     {
         base.OnAfterRender( firstRender );
 
-        Debug.WriteLine( $"{"OnAfterRenderStart",-30}: {Navigator.Uri} - first time({firstRender}). Remove Me." );
+        Debug.WriteLine( $"{"OnAfterRenderStart",-30}: {Navigator.Uri} - first time({firstRender})" );
 
         if ( firstRender )
         {
-            /////////////////////////////////////////////////
-            //
             // The following three lines setup and test the
             // ability for Blazor to talk to javascript and vice versa.
             JSModule = await JS.InvokeAsync<IJSObjectReference>( "import", "./Pages/SpreadsheetGUI.razor.js" ); // create/read the javascript
             await JSModule.InvokeVoidAsync( "SetDotNetInterfaceObject", DotNetObjectReference.Create( this ) ); // tell the javascript about us (dot net)
-            await JSModule.InvokeVoidAsync( "TestJavaScriptInterop", "Hello JavaScript!" ); // test that it is working.  You could remove this.
-            await FormulaContentEditableInput.FocusAsync(); // when we start up, put the focus on the input. you will want to do this anytime a cell is clicked.
+            await FormulaContentEditableInput.FocusAsync(); // when we start up, put the focus on the input, done anytime a cell is clicked.
         }
 
         Debug.WriteLine( $"{"OnAfterRender Done",-30}: {Navigator.Uri} - Remove Me." );
@@ -153,12 +166,11 @@ public partial class SpreadsheetGUI
     /// <param name="col"> The returned conversion between column letter and zero based matrix index. </param>
     private static void ConvertCellNameToRowCol( string cellName, out int row, out int col )
     {
-        // FIXME: this needs to be written.
         char cellNameCol = cellName[0];
         string numberForCell = cellName.Substring( 1 );
         int.TryParse(numberForCell, out row );
         row = row - 1;
-        col = (int)(cellNameCol - 65);  // A1 --> (0,0)
+        col = (int)(cellNameCol - 65);
     }
 
     /// <summary>
@@ -174,7 +186,8 @@ public partial class SpreadsheetGUI
     }
 
     /// <summary>
-    ///   Called when the input widget (representing the data in a particular cell) is modified. Most of our code will be here.
+    ///   Called when the input widget (representing the data in a particular cell) is modified.
+    ///   Updates the contents of a specific cell in the spreadsheet and the GUI.
     /// </summary>
     /// <param name="newInput"> The new value to put at row/col. </param>
     /// <param name="row"> The matrix row identifier. </param>
@@ -187,8 +200,8 @@ public partial class SpreadsheetGUI
             ValueWidgetBackingStore = $"{row}, {col}";
 
             string cellName = CellNameFromRowCol(row, col);
-            List<string> cellsToRecalculate = spreadsheet.SetContentsOfCell(cellName, newInput).ToList(); // Updates our model.
-            CellsBackingStore[row, col] = newInput;  // Updates like the backing of our nonEmptyCells
+            List<string> cellsToRecalculate = spreadsheet.SetContentsOfCell(cellName, newInput).ToList();
+            CellsBackingStore[row, col] = newInput;
             ToolBarCellContents = newInput;
 
             foreach (string cellToRecalc in cellsToRecalculate)
@@ -208,13 +221,9 @@ public partial class SpreadsheetGUI
                     CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
                 }
             }
-
-            // FIXME: add your connection to the model here.
-            //        then update the GUI as appropriate.
         }
-        catch(Exception e) // catch the exception and instead of something went wrong just say the exception.message
+        catch(Exception e)
         {
-            // a way to communicate to the user that something went wrong.
             await JS.InvokeVoidAsync( "alert", e.Message );
         }
     }
@@ -267,8 +276,7 @@ public partial class SpreadsheetGUI
                 // Well we build our spreadsheet object with this data.
                 spreadsheet.InstantiateFromJSON( fileContent );
                 // Now we need to manually add it to our sheet (modify the GUI) the spreadsheet has been changed
-
-           // this is wrong we need to give it a file there is probably to way take the jsonn sting and then sotre into a local file that our browser can read. Reference lecture.
+                // this is wrong we need to give it a file there is probably to way take the jsonn sting and then sotre into a local file that our browser can read. Reference lecture.
 
                 StateHasChanged();
             }
@@ -296,8 +304,8 @@ public partial class SpreadsheetGUI
     /// <param name="e"> Ignored. </param>
     private async void HandleSaveFile(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
     {
-        // <remarks> this null check is done because Visual Studio doesn't understand
-        // the Blazor life cycle and cannot assure of non-null. </remarks>
+        // this null check is done because Visual Studio doesn't understand
+        // the Blazor life cycle and cannot assure of non-null.
         if ( JSModule is not null )
         {
             var success = await JSModule.InvokeAsync<bool>("saveToFile", "spreadsheet.sprd", spreadsheet.GetJSON());
@@ -326,8 +334,6 @@ public partial class SpreadsheetGUI
         this.CellsBackingValue = new string[99, 26];
 
         FocusMainInput(selectedRow, selectedCol);
-
-        // FIXME: you know the drill.
     }
 
     /// <summary>
@@ -339,5 +345,4 @@ public partial class SpreadsheetGUI
     {
         Debug.WriteLine($"JavaScript has send me a message: {message}");
     }
-
 }
