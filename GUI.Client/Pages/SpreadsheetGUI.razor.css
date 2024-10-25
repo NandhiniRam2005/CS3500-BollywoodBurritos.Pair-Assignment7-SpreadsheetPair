@@ -4,8 +4,7 @@
     Fall 2024
 */
 
-.SpreadsheetCell
-{
+.SpreadsheetCell {
     width: 250px;
     width: 150px;
     max-width: 150px;
@@ -14,107 +13,125 @@
     text-overflow: ellipsis;
 }
 
-.selected
-{
+.selected {
     border: 2px solid blue;
 }
 
-.table-container
-{
+.table-container {
     overflow-x: auto;
+    overflow-y: auto;
 }
 
-.fixed-header
-{
+.fixed-header {
     position: sticky;
     top: 0;
     z-index: 1;
-    background-color: #ffffff !important;
-    border-bottom:2px solid black;
+/*    background-color: #ffffff !important;*/
+    border-bottom: 2px solid black;
 }
 
-.fixed-column
-{
+.fixed-column {
     position: sticky;
     left: 0;
     z-index: 1;
-    background-color: #ffffff !important;
+/*    background-color: #ff3333 !important;*/
     border-right: 2px solid black;
 }
 
-.scrollable
-{
+.scrollable {
     white-space: nowrap; /* Ensures no line breaks within cells */
     width: 1000px;
     height: 500px;
     margin: -1px;
 }
 
-#toolbar
-{
-    display: inline-block;
-    border: 5px solid black;
-    overflow:hidden;
-    margin:5px;
-    padding: 5px;
+#toolbar {
+    display: flex;
+    border: 5px solid red;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 15px;
 }
 
-#RowColDisplay
-{
-    width:50px;
-    text-align:center;
-    border:0px;
+#RowColDisplay {
+    width: 50px;
+    text-align: center;
+    border: 0px;
 }
 
-#FormulaValue
-{
-    color:darkblue;
+#FormulaValue {
+    color: darkred;
     overflow-x: auto;
 }
 
-#FormulaContent
-{
-    width:450px;
+#FormulaContent {
+    width: 450px;
 }
 
-#FormulaCellContents
-{
-    width:150px;
+#FormulaCellContents {
+    width: 100%;
 }
 
-#CellToolBar
-{
+#CellToolBar {
     width: 60px;
 }
 
-#FileHandlers
-{
+#FileHandlers {
     margin: 20px;
 }
 
-#FileHandlers input
-{
-    margin: 10px;
+#FileHandlers input {
+   margin: 10px;
 }
 
-.upload-container
-{
-    position: relative; /* Needed for label positioning */
-    display: inline-block; /* Allow custom styling */
+.upload-container {
+    position: relative;
+    display: inline-block;
 }
 
-.custom-input
-{
-    display: none; /* Hide the default input */
+.custom-input {
+    display: none;
 }
 
-#hideUglyWidget
-{
-    display:none;
+#hideUglyWidget {
+    display: none;
 }
 
-#FileMenu
-{
+#FileMenu {
     border: 1px solid black;
     margin-top: 10px;
+}
+
+.colored-spreadsheet {
+    background: linear-gradient(to right, #ff6666, #ff3333, #ff0000);
+    border: 4px solid white;
+    padding: 30px;
+    border-radius: 40px;
+}
+
+    .colored-spreadsheet table {
+/*        background-color: #ffeeda;*/
+          background-color: white;
+    }
+
+    .colored-spreadsheet th, .colored-spreadsheet td {
+        border: 1px solid black;
+        padding: 10px;
+    }
+
+    .colored-spreadsheet .fixed-header {
+        background-color: #6D071A;
+        background-color: white;
+        color: black;
+        font-weight: bold;
+    }
+
+.colored-spreadsheet td.selected {
+    border: 3px solid #6D071A;
+}
+
+.SpreadsheetCell:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
 }

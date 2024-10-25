@@ -361,7 +361,7 @@ public partial class SpreadsheetGUI
                 using var reader = new System.IO.StreamReader(stream);
                 fileContent = await reader.ReadToEndAsync();
 
-                await JS.InvokeVoidAsync( "alert", fileContent );
+                //await JS.InvokeVoidAsync( "alert", fileContent );
 
                 // FIXME: you need to do something with this data
                 // Well we build our spreadsheet object with this data.
@@ -404,7 +404,7 @@ public partial class SpreadsheetGUI
         }
         catch ( Exception e )
         {
-            Debug.WriteLine( "something went wrong with loading the file..." + e );
+            await JS.InvokeVoidAsync("alert", "Bad File" + e.Message);
         }
     }
 
@@ -444,14 +444,14 @@ public partial class SpreadsheetGUI
     /// <param name="e"> Ignored. </param>
     private async void HandleClear(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
     {
-        if ( JSModule is not null )
+        if ( JSModule is not null && spreadsheet.Changed )
         {
             bool success = await JS.InvokeAsync<bool>( "confirm", "Clear the sheet?" );
         }
 
         this.spreadsheet = new Spreadsheet();
-        this.CellsBackingStore = new string[99, 26];
-        this.CellsBackingValue = new string[99, 26];
+        this.CellsBackingStore = new string[100, 26];
+        this.CellsBackingValue = new string[100, 26];
 
         FocusMainInput(selectedRow, selectedCol);
     }

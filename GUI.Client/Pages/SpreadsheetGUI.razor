@@ -29,12 +29,12 @@
 @inject IJSRuntime JS  // <remarks> Allows the "communication"/use of javascript </remarks>
 @inject NavigationManager Navigator
 
-@namespace SpreadsheetNS  
+@namespace SpreadsheetNS
 
 @using System.Diagnostics
 
 <NavigationLock ConfirmExternalNavigation="true"
-                OnBeforeInternalNavigation="OnBeforeLeavePage" />
+				OnBeforeInternalNavigation="OnBeforeLeavePage" />
 
 <PageTitle>Starter Code</PageTitle>
 @* // <remarks> Displays the header with an * if the spreadsheet has unsaved changes. </remarks> *@
@@ -43,288 +43,292 @@
 @* <remarks> Example of how to have two pages or an "alert" GUI. </remarks> *@
 @if (CellsClassBackingStore[0, 0] == null)
 {
-    CellsClassBackingStore[0, 0] = "selected";
-    HighlightCell(0, 0);
+	CellsClassBackingStore[0, 0] = "selected";
+	HighlightCell(0, 0);
 }
 
 @*  <remarks> Displays the save dialog, button, and hides the dialogue depending on the state of `SaveGUIView`. </remarks> *@
 @if (SaveGUIView)
 {
-    <label for="SavefileName">Name:</label>
-    <input id="SaveFileName" @bind="SaveFileName" type="text">
+	<label for="SavefileName">Name:</label>
+	<input id="SaveFileName" @bind="SaveFileName" type="text">
 
-    <br/>
+	<br />
 
-    <button class="btn btn-primary" @onclick="HandleSaveFile">Save</button>
-    <button class="btn btn-primary" @onclick="() => ShowHideSaveGUI(false)">Cancel</button>
+	<button class="btn btn-primary" @onclick="HandleSaveFile">Save</button>
+	<button class="btn btn-primary" @onclick="() => ShowHideSaveGUI(false)">Cancel</button>
 }
 else
 {
-    @* <remarks> Displays the currently selected cell, its computed value, and an editable input for its contents for the user. </remarks> *@
-    <div id="toolbar">
-        <div>
-            <label for="SpreadsheetCell">Cell:</label>
-            <input name="SelectedCell" id="CellToolBar" value="@selectedNameOfCell" readonly />
-            <label for="FormulaValue">Value:</label>
-            <input name="FormulaValue" id="FormulaValue" value="@ValueWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" readonly />
-            <label for="FormulaContent">Content:</label>
-            <input name="FormulaContent" id="FormulaContent" @ref="FormulaContentEditableInput" value="@InputWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" />
-        </div>
-    </div>
+	@* <remarks> Displays the currently selected cell, its computed value, and an editable input for its contents for the user. </remarks> *@
+	<div id="toolbar">
+		<div>
+			<label for="SpreadsheetCell">Cell:</label>
+			<input name="SelectedCell" id="CellToolBar" value="@selectedNameOfCell" readonly />
+			<label for="FormulaValue">Value:</label>
+			<input name="FormulaValue" id="FormulaValue" value="@ValueWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" readonly />
+			<label for="FormulaContent">Content:</label>
+			<input name="FormulaContent" id="FormulaContent" @ref="FormulaContentEditableInput" value="@InputWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" />
+		</div>
+	</div>
+	<div class="table-container colored-spreadsheet">
+		<div class="container" style="cursor: pointer;">
+			<div class="table-container">
+				<div class="scrollable">
+					<table class="table table-bordered">
+						<thead>
+							<tr class="fixed-header">
+								<th scope="col">&nbsp;</th>
+								@for (int col = 0; col < NumberOfCol; col++)
+								{
+									<th scope="col">@Alphabet[col]</th>
+								}
+							</tr>
+						</thead>
 
-    <div class="container" style="cursor: pointer;">
-        <div class="table-container">
-            <div class="scrollable">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr class="fixed-header">
-                            <th scope="col">&nbsp;</th>
-                            @for ( int col = 0; col < NumberOfCol; col++ )
-                            {
-                                <th scope="col">@Alphabet[col]</th>
-                            }
-                        </tr>
-                    </thead>
+						<tbody>
+							@*<remarks> Loops through each row and column to show cells based on the number inputted by user. </remarks> *@
+							@for (int row = 0; row < NumberOfRows; row++)
+							{
+								<tr style="padding:0px !important;">
+									<th style="padding:0px !important;" scope="row" class="fixed-column">@(row + 1)</th>
+									@for (int col = 0; col < NumberOfCol; col++)
+									{
+										int r = row;
+										int c = col;
+										<td class="@CellsClassBackingStore[r,c]" @onclick="() => FocusMainInput(r,c)">
+											@* <remarks> Displays an editable input if the cell is selected or the cell's value if it's not selected. </remarks> *@
+											@if (CellsClassBackingStore[r, c] != null && CellsClassBackingStore[r, c].Equals("selected"))
+											{
+												<input name="FormulaCellContent" id="FormulaCellContents" @ref="FormulaContentEditableInput" value="@InputWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" />
+											}
+											else
+											{
+												<span title="@CellsBackingStore[r,c] " class="SpreadsheetCell">@CellsBackingValue[r, c]</span>
+											}
+										</td>
+									}
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
 
-                    <tbody>
-                        @*<remarks> Loops through each row and column to show cells based on the number inputted by user. </remarks> *@
-                        @for ( int row = 0; row < NumberOfRows; row++ )
-                        {
-                            <tr style="padding:0px !important;">
-                                <th style="padding:0px !important;" scope="row" class="fixed-column">@(row + 1)</th>
-                                @for ( int col = 0; col < NumberOfCol; col++ )
-                                {
-                                    int r = row;
-                                    int c = col;
-                                    <td class="@CellsClassBackingStore[r,c]"  @onclick="() => FocusMainInput(r,c)">
-                                        @* <remarks> Displays an editable input if the cell is selected or the cell's value if it's not selected. </remarks> *@
-                                        @if(CellsClassBackingStore[r,c] != null && CellsClassBackingStore[r,c].Equals("selected")){
-                                            <input name="FormulaCellContent" id="FormulaCellContents" @ref="FormulaContentEditableInput" value="@InputWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" />
-                                        }
-                                        else{
-                                            <span title="@CellsBackingStore[r,c] " class="SpreadsheetCell">@CellsBackingValue[r, c]</span>
-                                        }
-                                    </td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+		<div id="FileMenu">
+			<h2>File Menu</h2>
+			<div id="FileHandlers">
+				<button class="btn btn-primary" @onclick="HandleClear">Clear</button>
+				<button class="btn btn-primary" @onclick="() => ShowHideSaveGUI(true)">Save</button>
+				<div id="hideUglyWidget">
+					<InputFile id="inputwidget" name="abc" class="custom-input" type="file" OnChange="HandleLoadFile" />
+				</div>
+				<label for="inputwidget" class="btn btn-primary">Load</label>
+				<br />
 
-    <div id="FileMenu">
-        <h2>File Menu</h2>
-        <div id="FileHandlers">
-            <button class="btn btn-primary" @onclick="HandleClear">Clear</button>
-            <button class="btn btn-primary" @onclick="() => ShowHideSaveGUI(true)">Save</button>
-            <div id="hideUglyWidget">
-                <InputFile id="inputwidget" name="abc" class="custom-input" type="file" OnChange="HandleLoadFile" />
-            </div>
-            <label for="inputwidget" class="btn btn-primary">Load</label>
-            <br/>
-
-            @* <remarks> Allows the user to specify the number of rows and columns and stores these in appropriate variables used to render the cells. </remarks> *@
-            <label for="RowsInput"> Number of Rows: </label>
-            <input name="RowsInput" id="RowsInput" min="1" max="100" value="@NumberOfRows" @onchange="ChangeSpreadsheetRowNumber" />
-            <label for="ColsInput"> Number of Cols: </label>
-            <input name="ColsInput" id="ColsInput" min="1" max="26" value=" @NumberOfCol" @onchange="ChangeSpreadsheetColNumber"/>
-        </div>
-    </div>
+				@* <remarks> Allows the user to specify the number of rows and columns and stores these in appropriate variables used to render the cells. </remarks> *@
+				<label for="RowsInput"> Number of Rows: </label>
+				<input type="number" name="RowsInput" id="RowsInput" min="1" max="100" value="@NumberOfRows" @onchange="ChangeSpreadsheetRowNumber" />
+				<label for="ColsInput"> Number of Cols: </label>
+				<input type="number" name="ColsInput" id="ColsInput" min="1" max="100" value="@NumberOfCol" @onchange="ChangeSpreadsheetColNumber" />
+			</div>
+		</div>
 }
 
 @code
 {
-    /// <summary>
-    ///   Direct reference to the html element (so we can focus it).
-    /// </summary>
-    private ElementReference FormulaContentEditableInput;
+	/// <summary>
+	///   Direct reference to the html element (so we can focus it).
+	/// </summary>
+	private ElementReference FormulaContentEditableInput;
 
-    /// <summary>
-    ///   The value of the main input widget where users type
-    ///   their formulas and numbers and strings.
-    /// </summary>
-    private string InputWidgetBackingStore = "";
+	/// <summary>
+	///   The value of the main input widget where users type
+	///   their formulas and numbers and strings.
+	/// </summary>
+	private string InputWidgetBackingStore = "";
 
-    /// <summary>
-    /// The evaluated displayed value of the currently selected 
-    /// spreadsheet cell that is non-editable.
-    /// </summary>
-    private string ValueWidgetBackingStore = "";
+	/// <summary>
+	/// The evaluated displayed value of the currently selected
+	/// spreadsheet cell that is non-editable.
+	/// </summary>
+	private string ValueWidgetBackingStore = "";
 
-    /// <summary>
-    ///   The name of the file to save the spreadsheet content.
-    /// </summary>
-    private string SaveFileName = "Spreadsheet.sprd";
+	/// <summary>
+	///   The name of the file to save the spreadsheet content.
+	/// </summary>
+	private string SaveFileName = "Spreadsheet.sprd";
 
-    /// <summary>
-    /// Stores the currently selected row index in the spreadsheet.
-    /// This value changes when a new cell is selected.
-    /// </summary>
-    private int selectedRow = 0;
+	/// <summary>
+	/// Stores the currently selected row index in the spreadsheet.
+	/// This value changes when a new cell is selected.
+	/// </summary>
+	private int selectedRow = 0;
 
-    /// <summary>
-    /// Stores the currently selected column index in the spreadsheet.
-    /// This value changes when a new cell is selected.
-    /// </summary>
-    private int selectedCol = 0;
+	/// <summary>
+	/// Stores the currently selected column index in the spreadsheet.
+	/// This value changes when a new cell is selected.
+	/// </summary>
+	private int selectedCol = 0;
 
-    /// <summary>
-    /// Keeps track of the previously selected row index.
-    /// It's used to manage state when switching between cells.
-    /// </summary>
-    private int prevSelectedRow = 0;
+	/// <summary>
+	/// Keeps track of the previously selected row index.
+	/// It's used to manage state when switching between cells.
+	/// </summary>
+	private int prevSelectedRow = 0;
 
-    /// <summary>
-    /// Keeps track of the previously selected column index.
-    /// It's used to manage state when switching between cells.
-    /// </summary>
-    private int prevSelectedCol = 0;
+	/// <summary>
+	/// Keeps track of the previously selected column index.
+	/// It's used to manage state when switching between cells.
+	/// </summary>
+	private int prevSelectedCol = 0;
 
-    /// <summary>
-    /// Gets or sets the number of rows in the spreadsheet that 
-    /// is adjusted by user input.
-    /// </summary>
-    private int NumberOfRows { get; set; } = 10;
+	/// <summary>
+	/// Gets or sets the number of rows in the spreadsheet that
+	/// is adjusted by user input.
+	/// </summary>
+	private int NumberOfRows { get; set; } = 10;
 
-    /// <summary>
-    /// Gets or sets the number of columns in the spreadsheet that
-    /// is adjusted by user input.
-    /// </summary>
-    private int NumberOfCol { get; set; } = 10;
+	/// <summary>
+	/// Gets or sets the number of columns in the spreadsheet that
+	/// is adjusted by user input.
+	/// </summary>
+	private int NumberOfCol { get; set; } = 10;
 
-    /// <summary>
-    /// The name of the currently selected cell, 
-    /// displayed in the toolbar.
-    /// </summary>
-    private string selectedNameOfCell = "A1";
+	/// <summary>
+	/// The name of the currently selected cell,
+	/// displayed in the toolbar.
+	/// </summary>
+	private string selectedNameOfCell = "A1";
 
-    /// <summary>
-    ///   When a cell is clicked on, put the focus on the main
-    ///   widget and update the toolbar.
-    /// </summary>
-    /// <param name="row">The row index of the selected cell.</param>
-    /// <param name="col">The column index of the selected cell.</param>
-    private void FocusMainInput( int row, int col )
-    {
-        prevSelectedCol = selectedCol;
-        prevSelectedRow = selectedRow;
+	/// <summary>
+	///   When a cell is clicked on, put the focus on the main
+	///   widget and update the toolbar.
+	/// </summary>
+	/// <param name="row">The row index of the selected cell.</param>
+	/// <param name="col">The column index of the selected cell.</param>
+	private void FocusMainInput(int row, int col)
+	{
+		prevSelectedCol = selectedCol;
+		prevSelectedRow = selectedRow;
 
-        selectedRow = row;
-        selectedCol = col;
+		selectedRow = row;
+		selectedCol = col;
 
-        selectedNameOfCell = CellNameFromRowCol(row, col);
-        if (CellsBackingStore[row, col] != null)
-        {
-            ToolBarCellContents = CellsBackingStore[row, col];
-        }
-        else
-        {
-            ToolBarCellContents = string.Empty;
-        }
-        UpdateToolbar();
-        HighlightCell(row, col);
+		selectedNameOfCell = CellNameFromRowCol(row, col);
+		if (CellsBackingStore[row, col] != null)
+		{
+			ToolBarCellContents = CellsBackingStore[row, col];
+		}
+		else
+		{
+			ToolBarCellContents = string.Empty;
+		}
+		UpdateToolbar();
+		HighlightCell(row, col);
 
-        FormulaContentEditableInput.FocusAsync(); // <remarks> move focus back to input widget. </remarks>
-    }
+		FormulaContentEditableInput.FocusAsync(); // <remarks> move focus back to input widget. </remarks>
+	}
 
-    /// <summary>
-    ///   Make the value and content display/input of the tool bar match the
-    ///   spreadsheet.
-    /// </summary>
-    private void UpdateToolbar()
-    {
-        InputWidgetBackingStore = ToolBarCellContents;
-        ValueWidgetBackingStore = CellsBackingValue[selectedRow, selectedCol];
-        StateHasChanged();
-    }
+	/// <summary>
+	///   Make the value and content display/input of the tool bar match the
+	///   spreadsheet.
+	/// </summary>
+	private void UpdateToolbar()
+	{
+		InputWidgetBackingStore = ToolBarCellContents;
+		ValueWidgetBackingStore = CellsBackingValue[selectedRow, selectedCol];
+		StateHasChanged();
+	}
 
-    /// <summary>
-    ///   Highlights the currently selected cell and removes highlighting from the previously selected cell.
-    /// </summary>
-    /// <param name="theRow">The row index of the new cell.</param>
-    /// <param name="theCol">The column index of the new cell.</param>
-    private void HighlightCell(int theRow, int theCol)
-    {
-        CellsClassBackingStore[prevSelectedRow, prevSelectedCol] = string.Empty;
-        CellsClassBackingStore[theRow, theCol] = "selected";
-    }
+	/// <summary>
+	///   Highlights the currently selected cell and removes highlighting from the previously selected cell.
+	/// </summary>
+	/// <param name="theRow">The row index of the new cell.</param>
+	/// <param name="theCol">The column index of the new cell.</param>
+	private void HighlightCell(int theRow, int theCol)
+	{
+		CellsClassBackingStore[prevSelectedRow, prevSelectedCol] = string.Empty;
+		CellsClassBackingStore[theRow, theCol] = "selected";
+	}
 
-    /// <summary>
-    ///   Changes the number of rows in the spreadsheet based on user input.
-    /// </summary>
-    /// <param name="eventArgs">The input event containing the new row count.</param>
-    private async void ChangeSpreadsheetRowNumber(ChangeEventArgs eventArgs)
-    {
-        string newRow = eventArgs.Value?.ToString() ?? "oops";
-        if (int.TryParse(newRow, out int newNumberOfRow) && newNumberOfRow <= 100 && newNumberOfRow >= 1)
-        {
-            NumberOfRows = newNumberOfRow;
-            revaluateAllSpreadsheet();
-        }
-        else
-        {
-            await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of rows. (Max 100, Min 1).");
-        }
+	/// <summary>
+	///   Changes the number of rows in the spreadsheet based on user input.
+	/// </summary>
+	/// <param name="eventArgs">The input event containing the new row count.</param>
+	private async void ChangeSpreadsheetRowNumber(ChangeEventArgs eventArgs)
+	{
+		string newRow = eventArgs.Value?.ToString() ?? "oops";
+		if (int.TryParse(newRow, out int newNumberOfRow) && newNumberOfRow <= 100 && newNumberOfRow >= 1)
+		{
+			NumberOfRows = newNumberOfRow;
+			revaluateAllSpreadsheet();
+		}
+		else
+		{
+			await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of rows. (Max 100, Min 1).");
+		}
 
-        StateHasChanged();
-    }
+		StateHasChanged();
+	}
 
-    /// <summary>
-    ///   Changes the number of columns in the spreadsheet based on user input.
-    /// </summary>
-    /// <param name="eventArgs">The input event containing the new column count.</param>
-    private async void ChangeSpreadsheetColNumber(ChangeEventArgs eventArgs)
-    {
-        string newCol = eventArgs.Value?.ToString() ?? "oops";
-        if (int.TryParse(newCol, out int newNumberOfCol) && newNumberOfCol <= 26 && newNumberOfCol >= 1)
-        {
-            NumberOfCol = newNumberOfCol;
-            revaluateAllSpreadsheet();
-        }
-        else
-        {
-            await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of columns. (Max 26, Min 1).");
-        }
-        StateHasChanged();
-    }
+	/// <summary>
+	///   Changes the number of columns in the spreadsheet based on user input.
+	/// </summary>
+	/// <param name="eventArgs">The input event containing the new column count.</param>
+	private async void ChangeSpreadsheetColNumber(ChangeEventArgs eventArgs)
+	{
+		string newCol = eventArgs.Value?.ToString() ?? "oops";
+		if (int.TryParse(newCol, out int newNumberOfCol) && newNumberOfCol <= 26 && newNumberOfCol >= 1)
+		{
+			NumberOfCol = newNumberOfCol;
+			revaluateAllSpreadsheet();
+		}
+		else
+		{
+			await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of columns. (Max 26, Min 1).");
+		}
 
-    /// <summary>
-    ///   Updates the spreadsheet cell with new content based on user input.
-    /// </summary>
-    /// <param name="eventArgs">The input event containing the new cell content.</param>
-    private void ChangeSpreadsheetCellValue( ChangeEventArgs eventArgs )
-    {
-        int row = selectedRow;
-        int col = selectedCol;
+		StateHasChanged();
+	}
 
-        string newInput = eventArgs.Value?.ToString() ?? "oops";
-        InputWidgetBackingStore = newInput;
-        ValueWidgetBackingStore = CellsBackingValue[row, col];
+	/// <summary>
+	///   Updates the spreadsheet cell with new content based on user input.
+	/// </summary>
+	/// <param name="eventArgs">The input event containing the new cell content.</param>
+	private void ChangeSpreadsheetCellValue(ChangeEventArgs eventArgs)
+	{
+		int row = selectedRow;
+		int col = selectedCol;
 
-        HandleUpdateCellInSpreadsheet( newInput, row, col );
+		string newInput = eventArgs.Value?.ToString() ?? "oops";
+		InputWidgetBackingStore = newInput;
+		ValueWidgetBackingStore = CellsBackingValue[row, col];
 
-        UpdateToolbar();
-    }
+		HandleUpdateCellInSpreadsheet(newInput, row, col);
 
-    /// <summary>
-    ///   Confirms with the user before navigating away from the spreadsheet page if there are unsaved changes.
-    /// </summary>
-    /// <param name="context">The context of the location change, providing control over the navigation event.</param>
-    /// <returns>A task that shows/indicates whether navigation was prevented.</returns>
-    private async Task OnBeforeLeavePage( LocationChangingContext context )
-    {
-        if (spreadsheet.Changed)
-        {
-            var isConfirmed = await JS.InvokeAsync<bool>(
-                "confirm",
-                "Are you sure you want to navigate away?");
+		UpdateToolbar();
+	}
 
-            if (!isConfirmed)
-            {
-                context.PreventNavigation();
-            }
-        }
-    }
+	/// <summary>
+	///   Confirms with the user before navigating away from the spreadsheet page if there are unsaved changes.
+	/// </summary>
+	/// <param name="context">The context of the location change, providing control over the navigation event.</param>
+	/// <returns>A task that shows/indicates whether navigation was prevented.</returns>
+	private async Task OnBeforeLeavePage(LocationChangingContext context)
+	{
+		if (spreadsheet.Changed)
+		{
+			var isConfirmed = await JS.InvokeAsync<bool>(
+				"confirm",
+				"Are you sure you want to navigate away?");
+
+			if (!isConfirmed)
+			{
+				context.PreventNavigation();
+			}
+		}
+	}
 }
