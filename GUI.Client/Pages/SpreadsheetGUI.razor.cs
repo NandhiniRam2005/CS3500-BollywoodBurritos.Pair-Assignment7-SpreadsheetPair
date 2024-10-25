@@ -1,7 +1,7 @@
 ﻿// <copyright file="SpreadsheetGUI.razor.cs" company="UofU-CS3500">
 // Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
-// Ignore Spelling: Spreadsheeeeeeeeee
+// Ignore Spelling: Spreadsheeeeeeeeee Blazor Interop
 
 /// <summary>
 /// Author:    Joel Rodriguez,  Nandhini Ramanathan, and Professor Jim.
@@ -92,20 +92,20 @@ public partial class SpreadsheetGUI
     ///   <para> Gets or sets the backing store for the cell contents displayed in the GUI.</para>
     ///   <remarks>Backing Store for HTML</remarks>
     /// </summary>
-    private string[,] CellsBackingStore { get; set; } = new string[ 99, 25 ];
+    private string[,] CellsBackingStore { get; set; } = new string[ 100, 26 ];
 
     /// <summary>
     ///   <para> Gets or sets the html class string for all of the cells in the spreadsheet GUI. </para>
     ///   <remarks>Backing Store for HTML CLASS strings</remarks>
     /// </summary>
-    private string[,] CellsClassBackingStore { get; set; } = new string[ 99, 25 ];
+    private string[,] CellsClassBackingStore { get; set; } = new string[ 100, 26 ];
 
     /// <summary>
     ///   Gets or sets a value indicating whether we are showing the save "popup" or not.
     /// </summary>
     private bool SaveGUIView { get; set; }
 
-    private string[,] CellsBackingValue { get; set; } = new string[99, 25];
+    private string[,] CellsBackingValue { get; set; } = new string[100, 26];
 
     /// <summary>
     ///   Query the spreadsheet to see if it has been changed.
@@ -122,6 +122,16 @@ public partial class SpreadsheetGUI
     {
         Debug.WriteLine( $"{"HasSpreadSheetChanged",-30}: {Navigator.Uri}" );
         return spreadsheet.Changed;
+    }
+
+    /// <summary>
+    ///   Example of how JavaScript can talk "back" to the C# side.
+    /// </summary>
+    /// <param name="message"> string from javascript side. </param>
+    [JSInvokable]
+    public void TestBlazorInterop(string message)
+    {
+        Debug.WriteLine($"JavaScript has send me a message: {message}");
     }
 
     /// <summary>
@@ -218,13 +228,94 @@ public partial class SpreadsheetGUI
 
                 if (valueOfCell != null)
                 {
-                    CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
+                    if (spreadsheet.GetCellContents(cellName) is Formula formula)
+                    {
+                        List<string> formulaVars = formula.GetVariables().ToList();
+                        bool successfullyParsed = true;
+                        foreach (string variable in formulaVars)
+                        {
+                            int suspiciousRow;
+                            int suspiciousCol;
+                            ConvertCellNameToRowCol(variable, out suspiciousRow, out suspiciousCol);
+                            if (suspiciousRow + 1 > NumberOfRows || suspiciousCol + 1 > NumberOfCol)
+                            {
+                                CellsBackingValue[rowToRecalc, colToRecalc] = "Error Attempting to evaluate two invalid things";
+                                successfullyParsed = false;
+                                break;
+                            }
+                        }
+
+                        if (successfullyParsed)
+                        {
+                            CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
+                        }
+
+                    }
+                    else
+                    {
+                        CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
+                    }
                 }
             }
         }
         catch(Exception e)
         {
             await JS.InvokeVoidAsync( "alert", e.Message );
+        }
+    }
+
+
+    private async void revaluateAllSpreadsheet()
+    {
+        try
+        {
+            foreach (string cellToRecalc in spreadsheet.GetNamesOfAllNonemptyCells())
+            {
+                int rowToRecalc;
+                int colToRecalc;
+                ConvertCellNameToRowCol(cellToRecalc, out rowToRecalc, out colToRecalc);
+
+                string? valueOfCell = spreadsheet.GetCellValue(cellToRecalc).ToString();
+                if (spreadsheet.GetCellValue(cellToRecalc) != null && spreadsheet.GetCellValue(cellToRecalc) is FormulaError formulaError)
+                {
+                    valueOfCell = formulaError.Reason;
+                }
+
+                if (valueOfCell != null)
+                {
+                    if (spreadsheet.GetCellContents(cellToRecalc) is Formula formula)
+                    {
+                        List<string> formulaVars = formula.GetVariables().ToList();
+                        bool successfullyParsed = true;
+                        foreach (string variable in formulaVars)
+                        {
+                            int suspiciousRow;
+                            int suspiciousCol;
+                            ConvertCellNameToRowCol(variable, out suspiciousRow, out suspiciousCol);
+                            if (suspiciousRow + 1 > NumberOfRows || suspiciousCol + 1 > NumberOfCol)
+                            {
+                                CellsBackingValue[rowToRecalc, colToRecalc] = "Error Attempting to evaluate two invalid things";
+                                successfullyParsed = false;
+                                break;
+                            }
+                        }
+
+                        if (successfullyParsed)
+                        {
+                            CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
+                        }
+
+                    }
+                    else
+                    {
+                        CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            await JS.InvokeVoidAsync("alert", e.Message);
         }
     }
 
@@ -307,8 +398,6 @@ public partial class SpreadsheetGUI
                     }
                 }
 
-                // Now we need to manually add it to our sheet (modify the GUI) the spreadsheet has been changed
-
                 FocusMainInput(selectedRow, selectedCol);
                 StateHasChanged();
             }
@@ -365,15 +454,5 @@ public partial class SpreadsheetGUI
         this.CellsBackingValue = new string[99, 26];
 
         FocusMainInput(selectedRow, selectedCol);
-    }
-
-    /// <summary>
-    ///   Example of how JavaScript can talk "back" to the C# side.
-    /// </summary>
-    /// <param name="message"> string from javascript side. </param>
-    [JSInvokable]
-    public void TestBlazorInterop(string message)
-    {
-        Debug.WriteLine($"JavaScript has send me a message: {message}");
     }
 }

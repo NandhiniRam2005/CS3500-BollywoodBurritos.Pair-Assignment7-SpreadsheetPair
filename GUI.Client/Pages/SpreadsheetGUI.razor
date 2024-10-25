@@ -127,7 +127,7 @@ else
 
             @* <remarks> Allows the user to specify the number of rows and columns and stores these in appropriate variables used to render the cells. </remarks> *@
             <label for="RowsInput"> Number of Rows: </label>
-            <input name="RowsInput" id="RowsInput" min="1" max="100" value=" @NumberOfRows" @onchange="ChangeSpreadsheetRowNumber"/>
+            <input name="RowsInput" id="RowsInput" min="1" max="100" value="@NumberOfRows" @onchange="ChangeSpreadsheetRowNumber" />
             <label for="ColsInput"> Number of Cols: </label>
             <input name="ColsInput" id="ColsInput" min="1" max="26" value=" @NumberOfCol" @onchange="ChangeSpreadsheetColNumber"/>
         </div>
@@ -255,12 +255,17 @@ else
     ///   Changes the number of rows in the spreadsheet based on user input.
     /// </summary>
     /// <param name="eventArgs">The input event containing the new row count.</param>
-    private void ChangeSpreadsheetRowNumber(ChangeEventArgs eventArgs)
+    private async void ChangeSpreadsheetRowNumber(ChangeEventArgs eventArgs)
     {
         string newRow = eventArgs.Value?.ToString() ?? "oops";
-        if(int.TryParse(newRow,  out int newNumberOfRow))
+        if (int.TryParse(newRow, out int newNumberOfRow) && newNumberOfRow <= 100 && newNumberOfRow >= 1)
         {
             NumberOfRows = newNumberOfRow;
+            revaluateAllSpreadsheet();
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of rows. (Max 100, Min 1).");
         }
 
         StateHasChanged();
@@ -270,14 +275,18 @@ else
     ///   Changes the number of columns in the spreadsheet based on user input.
     /// </summary>
     /// <param name="eventArgs">The input event containing the new column count.</param>
-    private void ChangeSpreadsheetColNumber(ChangeEventArgs eventArgs)
+    private async void ChangeSpreadsheetColNumber(ChangeEventArgs eventArgs)
     {
         string newCol = eventArgs.Value?.ToString() ?? "oops";
-        if (int.TryParse(newCol, out int newNumberOfCol))
+        if (int.TryParse(newCol, out int newNumberOfCol) && newNumberOfCol <= 26 && newNumberOfCol >= 1)
         {
             NumberOfCol = newNumberOfCol;
+            revaluateAllSpreadsheet();
         }
-
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of columns. (Max 26, Min 1).");
+        }
         StateHasChanged();
     }
 
