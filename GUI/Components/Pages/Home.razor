@@ -2,10 +2,147 @@
 
 <PageTitle>CS 3500</PageTitle>
 
-<h1>CS 3500 - Spreadsheet GUI in Blazor!</h1>
+<div class="top-container">
+    <h1>CS 3500 - Spreadsheet GUI in Blazor!</h1>
 
-<p> Click on the spreadsheet nav link!</p>
+    <p class="intro-text">
+        Not only learn about our Spreadsheet project's dope features but also about the GOAT creators behind the scenes:
+    </p>
+
+    <div class="button-container">
+        <div class="dropdown">
+            <input type="checkbox" id="about-toggle" class="toggle">
+            <label for="about-toggle" class="btn btn-info">About</label>
+            <div class="dropdown-content">
+                <p>
+                    This project is a Spreadsheet model which you can access through in the sidebar. You can start typing contents of numbers,
+                    words, and formulas in the highlighted cell directly which get evaluated in the the cell and in the value toolbar on top.
+                    This Spreadsheet will add 4,000,000+ aura to your daily life as you embody the U's spirit in our school colors.
+                    You can use this Spreadsheet whenever and wherever you want, it's just a a click away!
+                </p>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <input type="checkbox" id="feature-toggle" class="toggle">
+            <label for="feature-toggle" class="btn btn-secondary">Extra Features</label>
+            <div class="dropdown-content">
+                <p>
+                    The extra features we added include adding the ability to directly start typing values into the cells itself in the Spreadsheet.
+                    We also added some GUI features which include adding the University's colors to our Spreadsheet model and adding a drop shadow
+                    to filled out cells when you hover over them.
+                </p>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <input type="checkbox" id="lore-toggle" class="toggle">
+            <label for="lore-toggle" class="btn btn-dark">Creators' Lore</label>
+            <div class="dropdown-content">
+                <p>This project was put together by:</p>
+                <ul class="indented-list">
+                    <li>Joel Rodriguez: THE GOAT</li>
+                    <li>Nandhini Ramanathan: jus a gurl</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 
 <environment names="Development">
     <script src="_framework/aspnetcore-browser-refresh.js"></script>
 </environment>
+
+<style>
+    .top-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        height: 100vh;
+        padding-top: 50px;
+        gap: 40px;
+    }
+
+    .intro-text {
+        font-size: 22px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+        max-width: 1500px;
+    }
+
+    .dropdown {
+        position: relative;
+        width: 100%;
+    }
+
+    .toggle {
+        display: none;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        height: 60px;
+        font-size: 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        text-align: center;
+        transition: background-color 0.3s ease;
+        line-height: 60px;
+        color: white;
+    }
+
+    .btn-info {
+        background-color: #f94449;
+        color: white;
+    }
+
+        .btn-info:hover {
+            background-color: gray;
+            color: white;
+        }
+
+    .btn-secondary {
+        background-color: #f01e2c;
+        color: white;
+    }
+
+        .btn-secondary:hover {
+            background-color: gray;
+            color: white;
+        }
+
+    .btn-dark {
+        background-color: #c30010;
+        color: white;
+    }
+
+        .btn-dark:hover {
+            background-color: gray;
+            color: white;
+        }
+
+    .dropdown-content {
+        display: none;
+        margin-top: 15px;
+        padding: 14px;
+        background-color: white;
+        border: 1px solid red;
+        border-radius: 8px;
+        font-size: 19px;
+        line-height: 1.6;
+    }
+
+    .toggle:checked + label + .dropdown-content {
+        display: block;
+    }
+</style>
