@@ -2,6 +2,7 @@
 // Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
 
+// Ignore Spelling: json
 namespace CS3500.Spreadsheet;
 
 using System.Text.Json;
@@ -169,6 +170,15 @@ public class Spreadsheet
     }
 
     /// <summary>
+    /// Gets or sets the name of the spreadsheet object.
+    /// </summary>
+    public string Name
+    {
+        get { return name; }
+        set { name = value; }
+    }
+
+    /// <summary>
     ///   <para>
     ///     Shortcut syntax to for getting the value of the cell
     ///     using the [] operator.
@@ -294,10 +304,11 @@ public class Spreadsheet
     }
 
     /// <summary>
-    /// 
+    /// Saves the data in the spreadsheet in a JSON string and returns that JSON string.
+    /// See <see cref="Save(string)"></see> for expected format and basic more detailed implementation of save.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="SpreadsheetReadWriteException"></exception>
+    /// <returns> A JSON string representation of the Spreadsheet.</returns>
+    /// <exception cref="SpreadsheetReadWriteException"> Thrown if any errors occur when reading or writing the JSON. </exception>
     public string GetJSON()
     {
         var options = new JsonSerializerOptions();
@@ -317,7 +328,6 @@ public class Spreadsheet
         Changed = false;
         return jsonString;
     }
-
 
     /// <summary>
     ///   <para>
@@ -380,10 +390,11 @@ public class Spreadsheet
     }
 
     /// <summary>
-    /// 
+    /// Loads a spreadsheet from a Json string.
+    ///  See <see cref="Load(string)"/> for further details of implementation.
     /// </summary>
-    /// <param name="json"></param>
-    /// <exception cref="ArgumentException"></exception>
+    /// <param name="json"> The JSON string to be read. </param>
+    /// <exception cref="ArgumentException">Thrown When the json is bad.</exception>
     public void InstantiateFromJSON(string json)
     {
         Spreadsheet ogSpreadsheet = new Spreadsheet();
@@ -409,6 +420,8 @@ public class Spreadsheet
                     this.SetContentsOfCell(loadedKeys[i], cell.StringForm);
                     i++;
                 }
+
+                this.Name = tempSpreadsheeet.Name;
             }
         }
         catch (Exception e)

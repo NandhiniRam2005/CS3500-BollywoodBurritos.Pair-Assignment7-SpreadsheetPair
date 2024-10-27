@@ -23,6 +23,31 @@
             </div>
         </div>
 
+        <div class="button-container">
+            <div class="dropdown">
+                <input type="checkbox" id="HowTo-toggle" class="toggle">
+                <label for="HowTo-toggle" class="btn btn-info">How To Use</label>
+                <div class="dropdown-content">
+                    <p>
+                        To access our spreadsheet please click the spreadsheet button on the left sidebar upon loading into the spreadsheet you will 
+                        be greeted with various options heres how to use each of our components: <br />
+                        1. The spreadsheet works as any spreadsheet would! Go ahead and type things in either directly into each cell or in the contents
+                        bar located in the tool bar!<br />
+                        2. Feeling like changing the name of your spreadsheet? Go ahead and change it! It will be saved upon saving and loaded back in
+                        when loading in. Illegal characters are handled correctly through the help of our program and your OS!<br />
+                        3. Change the Row and Column numbers by using the Number inputs located in the bottom container. Only numbers are allowed and
+                        anything less then 1 in both inputs is invalid and anything greater than 100 for the rows or 26 for the columns is rejected! <br />
+                        4. Value is displayed when not pressed on it and contents are displayed in each cell when selected! <br />
+                        5. Circular dependencies are caught and handled correctly. <br />
+                        6. Our spreadsheet updates in real time after a cell has been successfully changed! <br />
+                        7. Upon changing column/row numbers if a cell referenced a cell which no longer is visible the value for the cell (in the view only )
+                        changes to an Evaluation Error. Upon bringing the cell back by changing row/col number back the cells value is reverted to its
+                        original value!
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div class="dropdown">
             <input type="checkbox" id="feature-toggle" class="toggle">
             <label for="feature-toggle" class="btn btn-secondary">Extra Features</label>
@@ -30,7 +55,12 @@
                 <p>
                     The extra features we added include adding the ability to directly start typing values into the cells itself in the Spreadsheet.
                     We also added some GUI features which include adding the University's colors to our Spreadsheet model and adding a drop shadow
-                    to filled out cells when you hover over them.
+                    to filled out cells when you hover over them.<br />
+                    Functunality to name your spreadsheet has also been added. Upon loading your sprd file the name that it was given will also be
+                    loaded into the name input box. Illegal names are not allowed and are handled correctly.<br />
+                    Upon changing column/row numbers if a cell referenced a cell which no longer is visible the value for the cell (in the view only )
+                    changes to an Evaluation Error. Upon bringing the cell back by changing row/col number back the cells value is reverted to its
+                    original value!
                 </p>
             </div>
         </div>

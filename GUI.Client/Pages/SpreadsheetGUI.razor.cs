@@ -3,6 +3,18 @@
 // </copyright>
 // Ignore Spelling: Spreadsheeeeeeeeee Blazor Interop
 
+namespace SpreadsheetNS;
+
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.JSInterop;
+using System;
+using System.Diagnostics;
+using CS3500.Spreadsheet;
+using CS3500.Formula;
+using System.Text.RegularExpressions;
+
 /// <summary>
 /// Author:    Joel Rodriguez,  Nandhini Ramanathan, and Professor Jim.
 /// Partner:   None
@@ -22,17 +34,6 @@
 ///    actual spreadsheet. This file is the Model in MVC for our spreadsheet project. We also have ways of handling circular dependencies
 ///    and invalid names.
 /// </summary>
-
-namespace SpreadsheetNS;
-
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.JSInterop;
-using System;
-using System.Diagnostics;
-using CS3500.Spreadsheet;
-using CS3500.Formula;
 
 /// <summary>
 /// Represents the partial class for the spreadsheet GUI component.
@@ -80,7 +81,7 @@ public partial class SpreadsheetGUI
     /// <summary>
     ///  Gets or sets the default name used when saving the spreadsheet.
     /// </summary>
-    private string FileSaveName { get; set; } = "Spreadsheet.sprd";
+    private string FileSaveName { get; set; } = Regex.Replace("default", @"[\/@#%&*]", string.Empty) + ".sprd";
 
     /// <summary>
     ///   <para> Gets or sets the data for the Tool Bar Cell Contents text area. </para>
@@ -214,49 +215,7 @@ public partial class SpreadsheetGUI
             CellsBackingStore[row, col] = newInput;
             ToolBarCellContents = newInput;
 
-            foreach (string cellToRecalc in cellsToRecalculate)
-            {
-                int rowToRecalc;
-                int colToRecalc;
-                ConvertCellNameToRowCol(cellToRecalc, out rowToRecalc, out colToRecalc);
-
-                string? valueOfCell = spreadsheet.GetCellValue(cellToRecalc).ToString();
-                if (spreadsheet.GetCellValue(cellToRecalc) != null && spreadsheet.GetCellValue(cellToRecalc) is FormulaError formulaError)
-                {
-                    valueOfCell = formulaError.Reason;
-                }
-
-                if (valueOfCell != null)
-                {
-                    if (spreadsheet.GetCellContents(cellName) is Formula formula)
-                    {
-                        List<string> formulaVars = formula.GetVariables().ToList();
-                        bool successfullyParsed = true;
-                        foreach (string variable in formulaVars)
-                        {
-                            int suspiciousRow;
-                            int suspiciousCol;
-                            ConvertCellNameToRowCol(variable, out suspiciousRow, out suspiciousCol);
-                            if (suspiciousRow + 1 > NumberOfRows || suspiciousCol + 1 > NumberOfCol)
-                            {
-                                CellsBackingValue[rowToRecalc, colToRecalc] = "Error Attempting to evaluate two invalid things";
-                                successfullyParsed = false;
-                                break;
-                            }
-                        }
-
-                        if (successfullyParsed)
-                        {
-                            CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
-                        }
-
-                    }
-                    else
-                    {
-                        CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
-                    }
-                }
-            }
+            RevaluateAllCellsInList( cellsToRecalculate );
         }
         catch(Exception e)
         {
@@ -264,12 +223,15 @@ public partial class SpreadsheetGUI
         }
     }
 
-
-    private async void revaluateAllSpreadsheet()
+    /// <summary>
+    /// Reevaluates all the cells in a given list.
+    /// </summary>
+    /// <param name="listOfCellsToReevaluate"> List of cells to recalculates. </param>
+    private async void RevaluateAllCellsInList(List<string> listOfCellsToReevaluate)
     {
         try
         {
-            foreach (string cellToRecalc in spreadsheet.GetNamesOfAllNonemptyCells())
+            foreach (string cellToRecalc in listOfCellsToReevaluate)
             {
                 int rowToRecalc;
                 int colToRecalc;
@@ -287,6 +249,8 @@ public partial class SpreadsheetGUI
                     {
                         List<string> formulaVars = formula.GetVariables().ToList();
                         bool successfullyParsed = true;
+
+                        // The following foreach statement is added to see if a formula is outside the users current view. If it is the view will reflect that.
                         foreach (string variable in formulaVars)
                         {
                             int suspiciousRow;
@@ -304,7 +268,6 @@ public partial class SpreadsheetGUI
                         {
                             CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
                         }
-
                     }
                     else
                     {
@@ -333,8 +296,6 @@ public partial class SpreadsheetGUI
     {
         try
         {
-            // FIXME: you only need to confirm if the sheet "dirty" (hasn't been changed)
-            // put this in an if statement that is if changed.
             bool success = true;
             if (spreadsheet.Changed)
             {
@@ -361,15 +322,12 @@ public partial class SpreadsheetGUI
                 using var reader = new System.IO.StreamReader(stream);
                 fileContent = await reader.ReadToEndAsync();
 
-                //await JS.InvokeVoidAsync( "alert", fileContent );
-
-                // FIXME: you need to do something with this data
-                // Well we build our spreadsheet object with this data.
                 spreadsheet.InstantiateFromJSON( fileContent );
 
-                this.CellsBackingStore = new string[99, 26];
-                this.CellsBackingValue = new string[99, 26];
+                this.CellsBackingStore = new string[100, 26];
+                this.CellsBackingValue = new string[100, 26];
 
+                // Although similar this foreach statement is different than the helper method. So we cannot use it.
                 foreach (string cellName in spreadsheet.GetNamesOfAllNonemptyCells())
                 {
                     int rowToChange;
@@ -378,11 +336,11 @@ public partial class SpreadsheetGUI
 
                     string? valueOfCell = spreadsheet.GetCellValue(cellName).ToString();
                     string? contentsOfCell = spreadsheet.GetCellContents(cellName).ToString();
-                    if(contentsOfCell != null && spreadsheet.GetCellContents(cellName) is Formula)
+                    if (contentsOfCell != null && spreadsheet.GetCellContents(cellName) is Formula)
                     {
                         CellsBackingStore[rowToChange, colToChange] = "=" + contentsOfCell;
                     }
-                    else if(contentsOfCell != null)
+                    else if (contentsOfCell != null)
                     {
                         CellsBackingStore[rowToChange, colToChange] = contentsOfCell;
                     }
@@ -394,12 +352,38 @@ public partial class SpreadsheetGUI
 
                     if (valueOfCell != null)
                     {
-                        CellsBackingValue[rowToChange, colToChange] = valueOfCell;
-                    }
-                }
+                        if (spreadsheet.GetCellContents(cellName) is Formula formula)
+                        {
+                            List<string> formulaVars = formula.GetVariables().ToList();
+                            bool successfullyParsed = true;
+                            foreach (string var in formulaVars)
+                            {
+                                int suspiciousRow;
+                                int suspiciousCol;
+                                ConvertCellNameToRowCol(cellName, out suspiciousRow, out suspiciousCol);
+                                if (suspiciousRow + 1 > NumberOfRows || suspiciousCol + 1 > NumberOfCol)
+                                {
+                                    CellsBackingValue[rowToChange, colToChange] = "Error Attempting to evaluate two invalid things";
+                                    successfullyParsed = false;
+                                    break;
+                                }
+                            }
 
-                FocusMainInput(selectedRow, selectedCol);
-                StateHasChanged();
+                            if (successfullyParsed)
+                            {
+                                CellsBackingValue[rowToChange, colToChange] = valueOfCell;
+                            }
+                        }
+                        else
+                        {
+                            CellsBackingValue[rowToChange, colToChange] = valueOfCell;
+                        }
+                    }
+
+                    NameWidgetBackingStore = this.spreadsheet.Name;
+                    FocusMainInput(selectedRow, selectedCol);
+                    StateHasChanged();
+                }
             }
         }
         catch ( Exception e )
@@ -414,6 +398,8 @@ public partial class SpreadsheetGUI
     /// <param name="show"> if true, show the file save view. </param>
     private void ShowHideSaveGUI(bool show)
     {
+        SaveFileName = spreadsheet.Name + ".sprd";
+
         SaveGUIView = show;
         StateHasChanged();
     }
@@ -429,7 +415,7 @@ public partial class SpreadsheetGUI
         // the Blazor life cycle and cannot assure of non-null.
         if ( JSModule is not null )
         {
-            var success = await JSModule.InvokeAsync<bool>("saveToFile", "spreadsheet.sprd", spreadsheet.GetJSON());
+            var success = await JSModule.InvokeAsync<bool>("saveToFile", SaveFileName, spreadsheet.GetJSON());
             if (success)
             {
                 ShowHideSaveGUI( false );

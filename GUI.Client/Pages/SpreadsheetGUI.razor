@@ -39,7 +39,6 @@
 <PageTitle>Starter Code</PageTitle>
 @* // <remarks> Displays the header with an * if the spreadsheet has unsaved changes. </remarks> *@
 <h1>Simple SpreadSheet GUI @(spreadsheet.Changed ? "*" : "")</h1>
-
 @* <remarks> Example of how to have two pages or an "alert" GUI. </remarks> *@
 @if (CellsClassBackingStore[0, 0] == null)
 {
@@ -60,6 +59,8 @@
 }
 else
 {
+	<label for="SpreadsheetName">Name: </label>
+	<input name="SpreadsheetName" id="NameOfSpreadsheet" value="@NameWidgetBackingStore" @onchange="ChangeSpreadsheetName" />
 	@* <remarks> Displays the currently selected cell, its computed value, and an editable input for its contents for the user. </remarks> *@
 	<div id="toolbar">
 		<div>
@@ -151,6 +152,11 @@ else
 	private string InputWidgetBackingStore = "";
 
 	/// <summary>
+	/// The name of the spreadsheet. This is an input widget.
+	/// </summary>
+	private string NameWidgetBackingStore = "default";
+
+	/// <summary>
 	/// The evaluated displayed value of the currently selected
 	/// spreadsheet cell that is non-editable.
 	/// </summary>
@@ -159,7 +165,7 @@ else
 	/// <summary>
 	///   The name of the file to save the spreadsheet content.
 	/// </summary>
-	private string SaveFileName = "Spreadsheet.sprd";
+	private string SaveFileName = "default" + ".sprd";
 
 	/// <summary>
 	/// Stores the currently selected row index in the spreadsheet.
@@ -264,7 +270,7 @@ else
 		if (int.TryParse(newRow, out int newNumberOfRow) && newNumberOfRow <= 100 && newNumberOfRow >= 1)
 		{
 			NumberOfRows = newNumberOfRow;
-			revaluateAllSpreadsheet();
+			RevaluateAllCellsInList(spreadsheet.GetNamesOfAllNonemptyCells().ToList());
 		}
 		else
 		{
@@ -284,11 +290,11 @@ else
 		if (int.TryParse(newCol, out int newNumberOfCol) && newNumberOfCol <= 26 && newNumberOfCol >= 1)
 		{
 			NumberOfCol = newNumberOfCol;
-			revaluateAllSpreadsheet();
+			RevaluateAllCellsInList(spreadsheet.GetNamesOfAllNonemptyCells().ToList());
 		}
 		else
 		{
-			await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of columns. (Max 26, Min 1).");
+			await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of columns. (Max 26, Min 1 only whole numbers permitted).");
 		}
 
 		StateHasChanged();
@@ -310,6 +316,28 @@ else
 		HandleUpdateCellInSpreadsheet(newInput, row, col);
 
 		UpdateToolbar();
+	}
+
+	/// <summary>
+	///  Updates the name of the spreadsheet both in the model and the GUI.
+	/// </summary>
+	/// <param name="eventArgs"> The input event containing the new cell content. </param>
+	private async void ChangeSpreadsheetName(ChangeEventArgs eventArgs)
+	{
+		string newName = eventArgs.Value?.ToString() ?? "oops";
+		if (!newName.Contains('/') && !newName.Equals(string.Empty))
+		{
+			NameWidgetBackingStore = newName;
+			this.spreadsheet.Name = newName;
+		}
+		else
+		{
+			NameWidgetBackingStore = "Default";
+			spreadsheet.Name = "Default";
+			await JS.InvokeVoidAsync("alert", "Spreadsheet naming violation. Spreadsheet names CANNOT contain '/' and must contain at least one character. Name changed to 'Default'");
+		}
+
+		StateHasChanged();
 	}
 
 	/// <summary>

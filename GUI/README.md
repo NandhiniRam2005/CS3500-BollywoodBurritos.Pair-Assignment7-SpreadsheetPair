@@ -13,6 +13,11 @@ Copyright:  CS 3500 and [Joel Rodriguez and Nandhini Ramanathan] - This work may
 # Comments to Evaluators:
 We decided to add the README to both the GUI and GUI.client per the instructions of a TA via office hours. We were also told to just leave the contents of
 a cell that has been cut off after shortening spreadsheet in the spreadsheet per instructions of both Professor De St Germaine and a TA. 
+Upon loading we removed the popup which shows the JSON being loaded. This popup in our opinion is ugly and not user friendly. A random person in the real world
+would get concerned by seeing such a thing so we removed it. 
+In class Professor De St Germaines GUI implementation included a Name in the Json. So we went ahead and included the name in our spreadsheet JSON as well. 
+A student also asked in class if we would be allowed to add a feature where we could add the name to the spreadsheet in which Professor De St Germaine said 
+yes. So we implemented it.
 # Assignment Specific Topics
 We decided to make various design decisions. For example we decided to:
 1. Added functionality to  type inside the cells themselves
