@@ -67,11 +67,13 @@ else
 			<label for="SpreadsheetCell">Cell:</label>
 			<input name="SelectedCell" id="CellToolBar" value="@selectedNameOfCell" readonly />
 			<label for="FormulaValue">Value:</label>
-			<input name="FormulaValue" id="FormulaValue" value="@ValueWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" readonly />
+			<input name="FormulaValue" id="FormulaValue" value="@ValueWidgetBackingStore" readonly />
 			<label for="FormulaContent">Content:</label>
-			<input name="FormulaContent" id="FormulaContent" @ref="FormulaContentEditableInput" value="@InputWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" />
+			<input name="FormulaContent" id="FormulaContent" @ref="FormulaContentEditableInput" @bind="@InputWidgetBackingStore" @onkeydown="HandleOnKeyDown" />
 		</div>
 	</div>
+
+
 	<div class="table-container colored-spreadsheet">
 		<div class="container" style="cursor: pointer;">
 			<div class="table-container">
@@ -80,7 +82,7 @@ else
 						<thead>
 							<tr class="fixed-header">
 								<th scope="col">&nbsp;</th>
-								@for (int col = 0; col < NumberOfCol; col++)
+								@for (int col = 0; col < NumberOfCols; col++)
 								{
 									<th scope="col">@Alphabet[col]</th>
 								}
@@ -93,7 +95,7 @@ else
 							{
 								<tr style="padding:0px !important;">
 									<th style="padding:0px !important;" scope="row" class="fixed-column">@(row + 1)</th>
-									@for (int col = 0; col < NumberOfCol; col++)
+									@for (int col = 0; col < NumberOfCols; col++)
 									{
 										int r = row;
 										int c = col;
@@ -101,11 +103,11 @@ else
 											@* <remarks> Displays an editable input if the cell is selected or the cell's value if it's not selected. </remarks> *@
 											@if (CellsClassBackingStore[r, c] != null && CellsClassBackingStore[r, c].Equals("selected"))
 											{
-												<input name="FormulaCellContent" id="FormulaCellContents" @ref="FormulaContentEditableInput" value="@InputWidgetBackingStore" @onchange="ChangeSpreadsheetCellValue" />
+												<input name="FormulaCellContent" id="FormulaCellContents" @ref="FormulaContentEditableInput" @bind="InputWidgetBackingStore" @onkeydown="HandleOnKeyDown" />
 											}
 											else
 											{
-												<span title="@CellsBackingStore[r,c] " class="SpreadsheetCell">@CellsBackingValue[r, c]</span>
+												<span title="@CellsBackingStore[r,c] " class="SpreadsheetCell">@CellsBackingValue[r, c] </span>
 											}
 										</td>
 									}
@@ -118,24 +120,24 @@ else
 		</div>
 	</div>
 
-		<div id="FileMenu">
-			<h2>File Menu</h2>
-			<div id="FileHandlers">
-				<button class="btn btn-primary" @onclick="HandleClear">Clear</button>
-				<button class="btn btn-primary" @onclick="() => ShowHideSaveGUI(true)">Save</button>
-				<div id="hideUglyWidget">
-					<InputFile id="inputwidget" name="abc" class="custom-input" type="file" OnChange="HandleLoadFile" />
-				</div>
-				<label for="inputwidget" class="btn btn-primary">Load</label>
-				<br />
-
-				@* <remarks> Allows the user to specify the number of rows and columns and stores these in appropriate variables used to render the cells. </remarks> *@
-				<label for="RowsInput"> Number of Rows: </label>
-				<input type="number" name="RowsInput" id="RowsInput" min="1" max="100" value="@NumberOfRows" @onchange="ChangeSpreadsheetRowNumber" />
-				<label for="ColsInput"> Number of Cols: </label>
-				<input type="number" name="ColsInput" id="ColsInput" min="1" max="100" value="@NumberOfCol" @onchange="ChangeSpreadsheetColNumber" />
+	<div id="FileMenu">
+		<h2>File Menu</h2>
+		<div id="FileHandlers">
+			<button class="btn btn-primary" @onclick="HandleClear">Clear</button>
+			<button class="btn btn-primary" @onclick="() => ShowHideSaveGUI(true)">Save</button>
+			<div id="hideUglyWidget">
+				<InputFile id="inputwidget" name="abc" class="custom-input" type="file" OnChange="HandleLoadFile" />
 			</div>
+			<label for="inputwidget" class="btn btn-primary">Load</label>
+			<br />
+
+			@* <remarks> Allows the user to specify the number of rows and columns and stores these in appropriate variables used to render the cells. </remarks> *@
+			<label for="RowsInput"> Number of Rows: </label>
+			<input type="number" name="RowsInput" id="RowsInput" min="1" max="100" @bind="@NumberOfRows" />
+			<label for="ColsInput"> Number of Cols: </label>
+			<input type="number" name="ColsInput" id="ColsInput" min="1" max="100" @bind="@NumberOfCols" />
 		</div>
+	</div>
 }
 
 @code
@@ -149,7 +151,27 @@ else
 	///   The value of the main input widget where users type
 	///   their formulas and numbers and strings.
 	/// </summary>
-	private string InputWidgetBackingStore = "";
+	private string inputWidgetBackingStore = "";
+
+	/// <summary>
+	/// Gets and sets the InputWidgetBackingStore and calls methods checking for inaccurate logic.
+	/// </summary>
+	private string InputWidgetBackingStore
+	{
+		get { return inputWidgetBackingStore; }
+		set
+		{
+			int row = selectedRow;
+			int col = selectedCol;
+
+			inputWidgetBackingStore = value;
+			ValueWidgetBackingStore = CellsBackingValue[row, col];
+
+			HandleUpdateCellInSpreadsheet(value, row, col);
+
+			UpdateToolbar();
+		}
+	}
 
 	/// <summary>
 	/// The name of the spreadsheet. This is an input widget.
@@ -192,16 +214,58 @@ else
 	private int prevSelectedCol = 0;
 
 	/// <summary>
+	/// The number of rows initially.
+	/// </summary>
+	private int numberOfRows = 10;
+
+	/// <summary>
 	/// Gets or sets the number of rows in the spreadsheet that
 	/// is adjusted by user input.
 	/// </summary>
-	private int NumberOfRows { get; set; } = 10;
+	private int NumberOfRows
+	{
+		get { return numberOfRows; }
+		set
+		{
+			if (value <= 100 && value >= 1)
+			{
+				numberOfRows = value;
+				RevaluateAllCellsInList(spreadsheet.GetNamesOfAllNonemptyCells().ToList());
+			}
+			else
+			{
+				ShowInvalidRowMessage();
+			}
+
+		}
+	}
 
 	/// <summary>
-	/// Gets or sets the number of columns in the spreadsheet that
+	/// The number of cols initially.
+	/// </summary>
+	private int numberOfCols = 10;
+
+	/// <summary>
+	/// Gets or sets the number of cols in the spreadsheet that
 	/// is adjusted by user input.
 	/// </summary>
-	private int NumberOfCol { get; set; } = 10;
+	private int NumberOfCols
+	{
+		get { return numberOfCols; }
+		set
+		{
+			if (value <= 26 && value >= 1)
+			{
+				numberOfCols = value;
+				RevaluateAllCellsInList(spreadsheet.GetNamesOfAllNonemptyCells().ToList());
+			}
+			else
+			{
+				ShowInvalidColMessage();
+			}
+
+		}
+	}
 
 	/// <summary>
 	/// The name of the currently selected cell,
@@ -244,7 +308,7 @@ else
 	/// </summary>
 	private void UpdateToolbar()
 	{
-		InputWidgetBackingStore = ToolBarCellContents;
+		inputWidgetBackingStore = ToolBarCellContents;
 		ValueWidgetBackingStore = CellsBackingValue[selectedRow, selectedCol];
 		StateHasChanged();
 	}
@@ -263,59 +327,21 @@ else
 	/// <summary>
 	///   Changes the number of rows in the spreadsheet based on user input.
 	/// </summary>
-	/// <param name="eventArgs">The input event containing the new row count.</param>
-	private async void ChangeSpreadsheetRowNumber(ChangeEventArgs eventArgs)
+	private async void ShowInvalidRowMessage()
 	{
-		string newRow = eventArgs.Value?.ToString() ?? "oops";
-		if (int.TryParse(newRow, out int newNumberOfRow) && newNumberOfRow <= 100 && newNumberOfRow >= 1)
-		{
-			NumberOfRows = newNumberOfRow;
-			RevaluateAllCellsInList(spreadsheet.GetNamesOfAllNonemptyCells().ToList());
-		}
-		else
-		{
-			await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of rows. (Max 100, Min 1).");
-		}
 
-		StateHasChanged();
+		await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of rows. (Max 100, Min 1).");
+
 	}
 
 	/// <summary>
-	///   Changes the number of columns in the spreadsheet based on user input.
+	///  Shows invalid message if number of cols is invalid
 	/// </summary>
-	/// <param name="eventArgs">The input event containing the new column count.</param>
-	private async void ChangeSpreadsheetColNumber(ChangeEventArgs eventArgs)
+	private async void ShowInvalidColMessage()
 	{
-		string newCol = eventArgs.Value?.ToString() ?? "oops";
-		if (int.TryParse(newCol, out int newNumberOfCol) && newNumberOfCol <= 26 && newNumberOfCol >= 1)
-		{
-			NumberOfCol = newNumberOfCol;
-			RevaluateAllCellsInList(spreadsheet.GetNamesOfAllNonemptyCells().ToList());
-		}
-		else
-		{
-			await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of columns. (Max 26, Min 1 only whole numbers permitted).");
-		}
 
-		StateHasChanged();
-	}
+		await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of columns. (Max 26, Min 1 only whole numbers permitted).");
 
-	/// <summary>
-	///   Updates the spreadsheet cell with new content based on user input.
-	/// </summary>
-	/// <param name="eventArgs">The input event containing the new cell content.</param>
-	private void ChangeSpreadsheetCellValue(ChangeEventArgs eventArgs)
-	{
-		int row = selectedRow;
-		int col = selectedCol;
-
-		string newInput = eventArgs.Value?.ToString() ?? "oops";
-		InputWidgetBackingStore = newInput;
-		ValueWidgetBackingStore = CellsBackingValue[row, col];
-
-		HandleUpdateCellInSpreadsheet(newInput, row, col);
-
-		UpdateToolbar();
 	}
 
 	/// <summary>
@@ -338,6 +364,49 @@ else
 		}
 
 		StateHasChanged();
+	}
+	/// <summary>
+	/// Handles Key Down
+	/// </summary>
+	/// <param name="e"> The key that was pressed. </param>
+	private void HandleOnKeyDown(KeyboardEventArgs e)
+	{
+		switch (e.Key)
+		{
+			case "ArrowUp":
+				if (selectedRow - 1 >= 0)
+				{
+					InputWidgetBackingStore = string.Empty;
+					int newSelectedRow = selectedRow - 1;
+					FocusMainInput(newSelectedRow, selectedCol);
+				}
+				break;
+			case "ArrowDown":
+				if (selectedRow + 1 < NumberOfRows)
+				{
+					InputWidgetBackingStore = string.Empty;
+					int newSelectedRow = selectedRow + 1;
+					FocusMainInput(newSelectedRow, selectedCol);
+				}
+				break;
+			case "ArrowLeft":
+				if (selectedCol - 1 >= 0)
+				{
+					InputWidgetBackingStore = string.Empty;
+					int newSelectedCol = selectedCol - 1;
+					FocusMainInput(selectedRow, newSelectedCol);
+				}
+
+				break;
+			case "ArrowRight":
+				if (selectedCol + 1 < NumberOfCols)
+				{
+					InputWidgetBackingStore = string.Empty;
+					int newSelectedCol = selectedCol + 1;
+					FocusMainInput(selectedRow, newSelectedCol);
+				}
+				break;
+		}
 	}
 
 	/// <summary>

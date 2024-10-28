@@ -17,7 +17,7 @@ Upon loading we removed the popup which shows the JSON being loaded. This popup 
 would get concerned by seeing such a thing so we removed it. 
 In class Professor De St Germaines GUI implementation included a Name in the Json. So we went ahead and included the name in our spreadsheet JSON as well. 
 A student also asked in class if we would be allowed to add a feature where we could add the name to the spreadsheet in which Professor De St Germaine said 
-yes. So we implemented it.
+yes. So we implemented it. (Check lecture 16 time stamp 41:00 if you want proof)
 # Assignment Specific Topics
 We decided to make various design decisions. For example we decided to:
 1. Added functionality to  type inside the cells themselves

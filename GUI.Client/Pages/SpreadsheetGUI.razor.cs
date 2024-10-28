@@ -162,6 +162,7 @@ public partial class SpreadsheetGUI
             // ability for Blazor to talk to javascript and vice versa.
             JSModule = await JS.InvokeAsync<IJSObjectReference>( "import", "./Pages/SpreadsheetGUI.razor.js" ); // create/read the javascript
             await JSModule.InvokeVoidAsync( "SetDotNetInterfaceObject", DotNetObjectReference.Create( this ) ); // tell the javascript about us (dot net)
+            Thread.Sleep(10);
             await FormulaContentEditableInput.FocusAsync(); // when we start up, put the focus on the input, done anytime a cell is clicked.
         }
 
@@ -207,7 +208,7 @@ public partial class SpreadsheetGUI
     {
         try
         {
-            InputWidgetBackingStore = $"{row},{col}";
+            inputWidgetBackingStore = $"{row},{col}";
             ValueWidgetBackingStore = $"{row}, {col}";
 
             string cellName = CellNameFromRowCol(row, col);
@@ -256,7 +257,7 @@ public partial class SpreadsheetGUI
                             int suspiciousRow;
                             int suspiciousCol;
                             ConvertCellNameToRowCol(variable, out suspiciousRow, out suspiciousCol);
-                            if (suspiciousRow + 1 > NumberOfRows || suspiciousCol + 1 > NumberOfCol)
+                            if (suspiciousRow + 1 > NumberOfRows || suspiciousCol + 1 > NumberOfCols)
                             {
                                 CellsBackingValue[rowToRecalc, colToRecalc] = "Error Attempting to evaluate two invalid things";
                                 successfullyParsed = false;
@@ -361,7 +362,7 @@ public partial class SpreadsheetGUI
                                 int suspiciousRow;
                                 int suspiciousCol;
                                 ConvertCellNameToRowCol(cellName, out suspiciousRow, out suspiciousCol);
-                                if (suspiciousRow + 1 > NumberOfRows || suspiciousCol + 1 > NumberOfCol)
+                                if (suspiciousRow + 1 > NumberOfRows || suspiciousCol + 1 > NumberOfCols)
                                 {
                                     CellsBackingValue[rowToChange, colToChange] = "Error Attempting to evaluate two invalid things";
                                     successfullyParsed = false;
