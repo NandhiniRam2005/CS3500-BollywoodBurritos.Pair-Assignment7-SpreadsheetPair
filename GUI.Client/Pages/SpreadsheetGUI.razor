@@ -38,6 +38,7 @@
 
 <PageTitle>Starter Code</PageTitle>
 @* // <remarks> Displays the header with an * if the spreadsheet has unsaved changes. </remarks> *@
+
 <h1>Simple SpreadSheet GUI @(spreadsheet.Changed ? "*" : "")</h1>
 @* <remarks> Example of how to have two pages or an "alert" GUI. </remarks> *@
 @if (CellsClassBackingStore[0, 0] == null)
@@ -59,85 +60,87 @@
 }
 else
 {
-	<label for="SpreadsheetName">Name: </label>
-	<input name="SpreadsheetName" id="NameOfSpreadsheet" value="@NameWidgetBackingStore" @onchange="ChangeSpreadsheetName" />
-	@* <remarks> Displays the currently selected cell, its computed value, and an editable input for its contents for the user. </remarks> *@
-	<div id="toolbar">
-		<div>
-			<label for="SpreadsheetCell">Cell:</label>
-			<input name="SelectedCell" id="CellToolBar" value="@selectedNameOfCell" readonly />
-			<label for="FormulaValue">Value:</label>
-			<input name="FormulaValue" id="FormulaValue" value="@ValueWidgetBackingStore" readonly />
-			<label for="FormulaContent">Content:</label>
-			<input name="FormulaContent" id="FormulaContent" @ref="FormulaContentEditableInput" @bind="@InputWidgetBackingStore" />
+	<div id="body">
+		<div id="FileMenu">
+			<h2>File Menu</h2>
+			<div id="FileHandlers">
+				<button class="btn btn-primary" @onclick="HandleClear">Clear</button>
+				<button class="btn btn-primary" @onclick="() => ShowHideSaveGUI(true)">Save</button>
+				<div id="hideUglyWidget">
+					<InputFile id="inputwidget" name="abc" class="custom-input" type="file" OnChange="HandleLoadFile" />
+				</div>
+				<label for="inputwidget" class="btn btn-primary">Load</label>
+				<br />
+				<label for="SpreadsheetName">Name: </label>
+				<input name="SpreadsheetName" id="NameOfSpreadsheet" value="@NameWidgetBackingStore" @onchange="ChangeSpreadsheetName" />
+				@* <remarks> Allows the user to specify the number of rows and columns and stores these in appropriate variables used to render the cells. </remarks> *@
+				<label for="RowsInput"> Number of Rows: </label>
+				<input type="number" name="RowsInput" id="RowsInput" min="1" max="100" @bind="@NumberOfRows" />
+				<label for="ColsInput"> Number of Cols: </label>
+				<input type="number" name="ColsInput" id="ColsInput" min="1" max="100" @bind="@NumberOfCols" />
+			</div>
 		</div>
-	</div>
+
+		@* <remarks> Displays the currently selected cell, its computed value, and an editable input for its contents for the user. </remarks> *@
+		<div id="toolbar">
+			<div>
+				<label for="SpreadsheetCell">Cell:</label>
+				<input name="SelectedCell" id="CellToolBar" value="@selectedNameOfCell" readonly />
+				<label for="FormulaValue">Value:</label>
+				<input name="FormulaValue" id="FormulaValue" value="@ValueWidgetBackingStore" readonly />
+				<label for="FormulaContent">Content:</label>
+				<input name="FormulaContent" id="FormulaContent" @ref="FormulaContentEditableInput" @bind="@InputWidgetBackingStore" />
+			</div>
+		</div>
 
 
-	<div class="table-container colored-spreadsheet">
-		<div class="container" style="cursor: pointer;">
-			<div class="table-container">
-				<div class="scrollable">
-					<table class="table table-bordered">
-						<thead>
-							<tr class="fixed-header">
-								<th scope="col">&nbsp;</th>
-								@for (int col = 0; col < NumberOfCols; col++)
-								{
-									<th scope="col">@Alphabet[col]</th>
-								}
-							</tr>
-						</thead>
-
-						<tbody>
-							@*<remarks> Loops through each row and column to show cells based on the number inputted by user. </remarks> *@
-							@for (int row = 0; row < NumberOfRows; row++)
-							{
-								<tr style="padding:0px !important;">
-									<th style="padding:0px !important;" scope="row" class="fixed-column">@(row + 1)</th>
+		<div class="table-container colored-spreadsheet">
+			<div class="container" style="cursor: pointer;">
+				<div class="table-container">
+					<div class="scrollable">
+						<table class="table table-bordered">
+							<thead>
+								<tr class="fixed-header">
+									<th scope="col">&nbsp;</th>
 									@for (int col = 0; col < NumberOfCols; col++)
 									{
-										int r = row;
-										int c = col;
-										<td class="@CellsClassBackingStore[r,c]" @onclick="() => FocusMainInput(r,c)">
-											@* <remarks> Displays an editable input if the cell is selected or the cell's value if it's not selected. </remarks> *@
-											@if (CellsClassBackingStore[r, c] != null && CellsClassBackingStore[r, c].Equals("selected"))
-											{
-												<input name="FormulaCellContent" id="FormulaCellContents" @ref="FormulaContentEditableInput" @bind="InputWidgetBackingStore" />
-											}
-											else
-											{
-												<span title="@CellsBackingStore[r,c] " class="SpreadsheetCell">@CellsBackingValue[r, c] </span>
-											}
-										</td>
+										<th scope="col">@Alphabet[col]</th>
 									}
 								</tr>
-							}
-						</tbody>
-					</table>
+							</thead>
+
+							<tbody>
+								@*<remarks> Loops through each row and column to show cells based on the number inputted by user. </remarks> *@
+								@for (int row = 0; row < NumberOfRows; row++)
+								{
+									<tr style="padding:0px !important;">
+										<th style="padding:0px !important;" scope="row" class="fixed-column">@(row + 1)</th>
+										@for (int col = 0; col < NumberOfCols; col++)
+										{
+											int r = row;
+											int c = col;
+											<td class="@CellsClassBackingStore[r,c]" @onclick="() => FocusMainInput(r,c)">
+												@* <remarks> Displays an editable input if the cell is selected or the cell's value if it's not selected. </remarks> *@
+												@if (CellsClassBackingStore[r, c] != null && CellsClassBackingStore[r, c].Equals("selected"))
+												{
+													<input name="FormulaCellContent" id="FormulaCellContents" @ref="FormulaContentEditableInput" @bind="InputWidgetBackingStore" />
+												}
+												else
+												{
+													<span title="@CellsBackingStore[r,c] " class="SpreadsheetCell">@CellsBackingValue[r, c] </span>
+												}
+											</td>
+										}
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<div id="FileMenu">
-		<h2>File Menu</h2>
-		<div id="FileHandlers">
-			<button class="btn btn-primary" @onclick="HandleClear">Clear</button>
-			<button class="btn btn-primary" @onclick="() => ShowHideSaveGUI(true)">Save</button>
-			<div id="hideUglyWidget">
-				<InputFile id="inputwidget" name="abc" class="custom-input" type="file" OnChange="HandleLoadFile" />
-			</div>
-			<label for="inputwidget" class="btn btn-primary">Load</label>
-			<br />
-
-			@* <remarks> Allows the user to specify the number of rows and columns and stores these in appropriate variables used to render the cells. </remarks> *@
-			<label for="RowsInput"> Number of Rows: </label>
-			<input type="number" name="RowsInput" id="RowsInput" min="1" max="100" @bind="@NumberOfRows" />
-			<label for="ColsInput"> Number of Cols: </label>
-			<input type="number" name="ColsInput" id="ColsInput" min="1" max="100" @bind="@NumberOfCols" />
-		</div>
-	</div>
 }
 
 @code
@@ -330,7 +333,7 @@ else
 	/// </summary>
 	private async void ShowInvalidRowMessage()
 	{
-		// We need this helper method to be asyc which is why we can't directly have this line of code in the NumberOfRows setter.
+		// We need this helper method to be async which is why we can't directly have this line of code in the NumberOfRows setter.
 		await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of rows. (Max 100, Min 1).");
 	}
 
@@ -339,7 +342,7 @@ else
 	/// </summary>
 	private async void ShowInvalidColMessage()
 	{
-		// We need this helper method to be asyc which is why we can't directly have this line of code in the NumberOfCols setter.
+		// We need this helper method to be async which is why we can't directly have this line of code in the NumberOfCols setter.
 		await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of columns. (Max 26, Min 1 only whole numbers permitted).");
 	}
 

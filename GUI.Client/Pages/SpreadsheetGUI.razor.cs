@@ -263,6 +263,7 @@ public partial class SpreadsheetGUI
                         // The following foreach statement is added to see if a formula is outside the users current view. If it is the view will reflect that.
                         foreach (string variable in formulaVars)
                         {
+                            // Suspicious variables are variables that could possibly be outside of the current scope of our view.
                             int suspiciousRow;
                             int suspiciousCol;
                             ConvertCellNameToRowCol(variable, out suspiciousRow, out suspiciousCol);
@@ -372,6 +373,7 @@ public partial class SpreadsheetGUI
                             bool successfullyParsed = true;
                             foreach (string var in formulaVars)
                             {
+                                // Suspicious variables are variables that could possibly be outside of the current scope of our view.
                                 int suspiciousRow;
                                 int suspiciousCol;
                                 ConvertCellNameToRowCol(cellName, out suspiciousRow, out suspiciousCol);
