@@ -33,15 +33,15 @@ TA's of CS 3500.
 We occasionally ran into problems when attempting to add certain things to our spreadsheet which we eventually gave up on to ensure we
 would not be spending too much time and things that didn't matter. For example:
 1. Attempted to add arrows keys to maneuver around cells in spreadsheet, it worked in every situation except for the situation where you were typing something and then pressed
-   arrow key. This led to various javascript errors which for whatever reason would overwrite the cell we maneuvered too with the text that we were typing. There was an also
+   arrow key. This led to various javascript errors which for whatever reason would overwrite the cell we maneuvered too with the text that we were typing. There was an also 
    an issue of practicality. A user must be selected into a input (and typing) to use the arrow keys. We abandoned the idea (you can view our git commits to see what we tried).
-2. Attempted to add Google Ad-sense to our project for fun.We realized this would require a server so abandoned the idea.
-Using our page is simple and functions just as a spreadsheet would.The basic idea is:
-1.Click on cell to type into
-2.Type into cell itself or the contents in the tool - bar
-3.Press enter or click to different cell to save contents into spreadsheet
-4.Press save and load to save and load files.
-5.Press clear to clear spreadsheet.
+2. Attempted to add Google Ad-sense to our project for fun. We realized this would require a server so abandoned the idea.
+Using our page is simple and functions just as a spreadsheet would. The basic idea is:
+1. Click on cell to type into 
+2. Type into cell itself or the contents in the tool-bar
+3. Press enter or click to different cell to save contents into spreadsheet
+4. Press save and load to save and load files.
+5. Press clear to clear spreadsheet.
 
 # Partnership Information
 All of our code was done using pair programming. We found that it would be too difficult and unfair for us to split up the work so we
