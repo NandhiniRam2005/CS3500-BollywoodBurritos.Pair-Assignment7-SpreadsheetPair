@@ -22,6 +22,8 @@ We noticed that the website looks different on different machines, this is becau
 vw and vh. We chose not to change this because this would require a lot of time (finding all components and figuring out how to convert to vw and vh). Please just use 
 a zoom percentage which seems right.
 We also noticed that stylecop is giving a warning in mangage nuget dependencies. This is how it came with the starter code so we did not fix it as we assumed it was needed.
+We have been docked before for using not using "this." syntax so we used it here and changed starter to code to use it as well.
+Also per assignment instructions in our .razor file we only have code that pertains to the view while the razor.cs file has any additionaly logic
 
 # Assignment Specific Topics
 We decided to make various design decisions.For example we decided to:

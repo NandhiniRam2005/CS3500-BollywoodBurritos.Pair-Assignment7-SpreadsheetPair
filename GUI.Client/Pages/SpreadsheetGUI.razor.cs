@@ -67,9 +67,19 @@ public partial class SpreadsheetGUI
     private Spreadsheet spreadsheet = new Spreadsheet();
 
     /// <summary>
+    /// The number of columns initially.
+    /// </summary>
+    private int numberOfCols = 10;
+
+    /// <summary>
+    /// The number of rows initially.
+    /// </summary>
+    private int numberOfRows = 10;
+
+    /// <summary>
     ///    Gets the alphabet for ease of creating columns.
     /// </summary>
-    private static char[ ] Alphabet { get; } = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+    private static char[] Alphabet { get; } = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
     /// <summary>
     ///   Gets or sets the javascript object for this web page that allows
@@ -92,19 +102,72 @@ public partial class SpreadsheetGUI
     ///   <para> Gets or sets the backing store for the cell contents displayed in the GUI.</para>
     ///   <remarks>Backing Store for HTML</remarks>
     /// </summary>
-    private string[,] CellsBackingStore { get; set; } = new string[ 100, 26 ];
+    private string[,] CellsBackingStore { get; set; } = new string[100, 26];
 
     /// <summary>
     ///   <para> Gets or sets the html class string for all of the cells in the spreadsheet GUI. </para>
     ///   <remarks>Backing Store for HTML CLASS strings</remarks>
     /// </summary>
-    private string[,] CellsClassBackingStore { get; set; } = new string[ 100, 26 ];
+    private string[,] CellsClassBackingStore { get; set; } = new string[100, 26];
 
     /// <summary>
     ///   Gets or sets a value indicating whether we are showing the save "popup" or not.
     /// </summary>
     private bool SaveGUIView { get; set; }
 
+    /// <summary>
+    /// Gets or sets the number of rows in the spreadsheet that
+    /// is adjusted by user input.
+    /// </summary>
+    private int NumberOfRows
+    {
+        get
+        {
+            return this.numberOfRows;
+        }
+
+        set
+        {
+            if (value <= 100 && value >= 1)
+            {
+                this.numberOfRows = value;
+                RevaluateAllCellsInList(spreadsheet.GetNamesOfAllNonemptyCells().ToList());
+            }
+            else
+            {
+                ShowInvalidRowMessage();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the number of columns in the spreadsheet that
+    /// is adjusted by user input.
+    /// </summary>
+    private int NumberOfCols
+    {
+        get
+        {
+            return this.numberOfCols;
+        }
+
+        set
+        {
+            if (value <= 26 && value >= 1)
+            {
+                this.numberOfCols = value;
+                RevaluateAllCellsInList(spreadsheet.GetNamesOfAllNonemptyCells().ToList());
+            }
+            else
+            {
+                ShowInvalidColMessage();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets backing storage for the values of each cell and the cell widget.
+    /// </summary>
     private string[,] CellsBackingValue { get; set; } = new string[100, 26];
 
     /// <summary>
@@ -118,9 +181,9 @@ public partial class SpreadsheetGUI
     ///   true if the spreadsheet is changed.
     /// </returns>
     [JSInvokable]
-    public bool HasSpreadSheetChanged(  )
+    public bool HasSpreadSheetChanged()
     {
-        Debug.WriteLine( $"{"HasSpreadSheetChanged",-30}: {Navigator.Uri}" );
+        Debug.WriteLine($"{"HasSpreadSheetChanged",-30}: {Navigator.Uri}");
         return spreadsheet.Changed;
     }
 
@@ -140,32 +203,32 @@ public partial class SpreadsheetGUI
     ///     This is somewhat like a constructor for a Blazor Web Page (object).
     ///   </remarks>
     /// </summary>
-    protected override void OnInitialized( )
+    protected override void OnInitialized()
     {
-        Debug.WriteLine( $"{"OnInitialized",-30}: {Navigator.Uri}" );
+        Debug.WriteLine($"{"OnInitialized",-30}: {Navigator.Uri}");
     }
 
     /// <summary>
     ///   Called anytime in the lifetime of the web page were the page is re-rendered.
     /// </summary>
     /// <param name="firstRender"> true the very first time the page is rendered.</param>
-    protected async override void OnAfterRender( bool firstRender )
+    protected async override void OnAfterRender(bool firstRender)
     {
-        base.OnAfterRender( firstRender );
+        base.OnAfterRender(firstRender);
 
-        Debug.WriteLine( $"{"OnAfterRenderStart",-30}: {Navigator.Uri} - first time({firstRender})" );
+        Debug.WriteLine($"{"OnAfterRenderStart",-30}: {Navigator.Uri} - first time({firstRender})");
 
-        if ( firstRender )
+        if (firstRender)
         {
             // The following three lines setup and test the
             // ability for Blazor to talk to javascript and vice versa.
-            JSModule = await JS.InvokeAsync<IJSObjectReference>( "import", "./Pages/SpreadsheetGUI.razor.js" ); // create/read the javascript
-            await JSModule.InvokeVoidAsync( "SetDotNetInterfaceObject", DotNetObjectReference.Create( this ) ); // tell the javascript about us (dot net)
+            JSModule = await JS.InvokeAsync<IJSObjectReference>("import", "./Pages/SpreadsheetGUI.razor.js"); // create/read the javascript
+            await JSModule.InvokeVoidAsync("SetDotNetInterfaceObject", DotNetObjectReference.Create(this)); // tell the javascript about us (dot net)
             Thread.Sleep(10);
             await FormulaContentEditableInput.FocusAsync(); // when we start up, put the focus on the input, done anytime a cell is clicked.
         }
 
-        Debug.WriteLine( $"{"OnAfterRender Done",-30}: {Navigator.Uri} - Remove Me." );
+        Debug.WriteLine($"{"OnAfterRender Done",-30}: {Navigator.Uri} - Remove Me.");
     }
 
     /// <summary>
@@ -175,11 +238,11 @@ public partial class SpreadsheetGUI
     /// <param name="cellName"> The name of the cell for example A1. </param>
     /// <param name="row"> The returned conversion between row and zero based index. </param>
     /// <param name="col"> The returned conversion between column letter and zero based matrix index. </param>
-    private static void ConvertCellNameToRowCol( string cellName, out int row, out int col )
+    private static void ConvertCellNameToRowCol(string cellName, out int row, out int col)
     {
         char cellNameCol = cellName[0];
-        string numberForCell = cellName.Substring( 1 );
-        int.TryParse(numberForCell, out row );
+        string numberForCell = cellName.Substring(1);
+        int.TryParse(numberForCell, out row);
         row = row - 1;
         col = (int)(cellNameCol - 65);
     }
@@ -191,7 +254,7 @@ public partial class SpreadsheetGUI
     /// <param name="row"> The row number (0-A, 1-B, ...).</param>
     /// <param name="col"> The column number (0 based).</param>
     /// <returns>A string defining the cell name, where the col is A-Z and row is not zero based.</returns>
-    private static string CellNameFromRowCol( int row, int col )
+    private static string CellNameFromRowCol(int row, int col)
     {
         return $"{Alphabet[col]}{row + 1}";
     }
@@ -203,12 +266,12 @@ public partial class SpreadsheetGUI
     /// <param name="newInput"> The new value to put at row/col. </param>
     /// <param name="row"> The matrix row identifier. </param>
     /// <param name="col"> The matrix column identifier. </param>
-    private async void HandleUpdateCellInSpreadsheet( string newInput, int row, int col )
+    private async void HandleUpdateCellInSpreadsheet(string newInput, int row, int col)
     {
         try
         {
-            inputWidgetBackingStore = $"{row},{col}";
-            ValueWidgetBackingStore = $"{row}, {col}";
+            this.inputWidgetBackingStore = $"{row},{col}";
+            this.ValueWidgetBackingStore = $"{row}, {col}";
 
             string cellName = CellNameFromRowCol(row, col);
             List<string> cellsToRecalculate = spreadsheet.SetContentsOfCell(cellName, newInput).ToList();
@@ -216,20 +279,20 @@ public partial class SpreadsheetGUI
             // Normalize the variable so the contents display shows normalized variables.
             if (newInput.StartsWith("="))
             {
-                CellsBackingStore[row, col] = newInput.ToUpper();
-                ToolBarCellContents = newInput.ToUpper();
+                this.CellsBackingStore[row, col] = newInput.ToUpper();
+                this.ToolBarCellContents = newInput.ToUpper();
             }
             else
             {
-                CellsBackingStore[row, col] = newInput;
-                ToolBarCellContents = newInput;
+                this.CellsBackingStore[row, col] = newInput;
+                this.ToolBarCellContents = newInput;
             }
 
             RevaluateAllCellsInList(cellsToRecalculate);
         }
         catch (Exception e)
         {
-            await JS.InvokeVoidAsync( "alert", e.Message );
+            await JS.InvokeVoidAsync("alert", e.Message);
         }
     }
 
@@ -269,7 +332,7 @@ public partial class SpreadsheetGUI
                             ConvertCellNameToRowCol(variable, out suspiciousRow, out suspiciousCol);
                             if (suspiciousRow + 1 > NumberOfRows || suspiciousCol + 1 > NumberOfCols)
                             {
-                                CellsBackingValue[rowToRecalc, colToRecalc] = "Error Attempting to evaluate two invalid things";
+                                this.CellsBackingValue[rowToRecalc, colToRecalc] = "Error Attempting to evaluate two invalid things";
                                 successfullyParsed = false;
                                 break;
                             }
@@ -277,12 +340,12 @@ public partial class SpreadsheetGUI
 
                         if (successfullyParsed)
                         {
-                            CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
+                            this.CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
                         }
                     }
                     else
                     {
-                        CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
+                        this.CellsBackingValue[rowToRecalc, colToRecalc] = valueOfCell;
                     }
                 }
             }
@@ -303,17 +366,17 @@ public partial class SpreadsheetGUI
     ///   </remarks>
     /// </summary>
     /// <param name="args"> Information about the file that has been selected. </param>
-    private async void HandleLoadFile( EventArgs args )
+    private async void HandleLoadFile(EventArgs args)
     {
         try
         {
             bool success = true;
-            if (spreadsheet.Changed)
+            if (this.spreadsheet.Changed)
             {
-                 success = await JS.InvokeAsync<bool>("confirm", "Do this?");
+                success = await JS.InvokeAsync<bool>("confirm", "Do this?");
             }
 
-            if ( !success )
+            if (!success)
             {
                 // user canceled the action.
                 return;
@@ -322,10 +385,10 @@ public partial class SpreadsheetGUI
             string fileContent = string.Empty;
 
             InputFileChangeEventArgs eventArgs = args as InputFileChangeEventArgs ?? throw new Exception("that didn't work");
-            if ( eventArgs.FileCount == 1 )
+            if (eventArgs.FileCount == 1)
             {
                 var file = eventArgs.File;
-                if ( file is null )
+                if (file is null)
                 {
                     // No file found, return/exit.
                     return;
@@ -335,7 +398,7 @@ public partial class SpreadsheetGUI
                 using var reader = new System.IO.StreamReader(stream);
                 fileContent = await reader.ReadToEndAsync();
 
-                spreadsheet.InstantiateFromJSON( fileContent );
+                spreadsheet.InstantiateFromJSON(fileContent);
 
                 this.CellsBackingStore = new string[100, 26];
                 this.CellsBackingValue = new string[100, 26];
@@ -349,29 +412,29 @@ public partial class SpreadsheetGUI
                     int rowToChange;
                     int colToChange;
                     ConvertCellNameToRowCol(cellName, out rowToChange, out colToChange);
-                    if(rowToChange > biggestRow)
+                    if (rowToChange > biggestRow)
                     {
                         biggestRow = rowToChange;
                     }
 
-                    if(colToChange > biggestColumn)
+                    if (colToChange > biggestColumn)
                     {
                         biggestColumn = colToChange;
                     }
 
-                    string? valueOfCell = spreadsheet.GetCellValue(cellName).ToString();
-                    string? contentsOfCell = spreadsheet.GetCellContents(cellName).ToString();
+                    string? valueOfCell = this.spreadsheet.GetCellValue(cellName).ToString();
+                    string? contentsOfCell = this.spreadsheet.GetCellContents(cellName).ToString();
 
-                    if (contentsOfCell != null && spreadsheet.GetCellContents(cellName) is Formula)
+                    if (contentsOfCell != null && this.spreadsheet.GetCellContents(cellName) is Formula)
                     {
-                        CellsBackingStore[rowToChange, colToChange] = "=" + contentsOfCell;
+                        this.CellsBackingStore[rowToChange, colToChange] = "=" + contentsOfCell;
                     }
                     else if (contentsOfCell != null)
                     {
-                        CellsBackingStore[rowToChange, colToChange] = contentsOfCell;
+                        this.CellsBackingStore[rowToChange, colToChange] = contentsOfCell;
                     }
 
-                    if (spreadsheet.GetCellValue(cellName) != null && spreadsheet.GetCellValue(cellName) is FormulaError formulaError)
+                    if (this.spreadsheet.GetCellValue(cellName) != null && this.spreadsheet.GetCellValue(cellName) is FormulaError formulaError)
                     {
                         valueOfCell = formulaError.Reason;
                     }
@@ -389,9 +452,9 @@ public partial class SpreadsheetGUI
                                 int suspiciousRow;
                                 int suspiciousCol;
                                 ConvertCellNameToRowCol(cellName, out suspiciousRow, out suspiciousCol);
-                                if (suspiciousRow + 1 > NumberOfRows || suspiciousCol + 1 > NumberOfCols)
+                                if (suspiciousRow + 1 > this.NumberOfRows || suspiciousCol + 1 > this.NumberOfCols)
                                 {
-                                    CellsBackingValue[rowToChange, colToChange] = "Error Attempting to evaluate two invalid things";
+                                    this.CellsBackingValue[rowToChange, colToChange] = "Error Attempting to evaluate two invalid things";
                                     successfullyParsed = false;
                                     break;
                                 }
@@ -399,16 +462,16 @@ public partial class SpreadsheetGUI
 
                             if (successfullyParsed)
                             {
-                                CellsBackingValue[rowToChange, colToChange] = valueOfCell;
+                                this.CellsBackingValue[rowToChange, colToChange] = valueOfCell;
                             }
                         }
                         else
                         {
-                            CellsBackingValue[rowToChange, colToChange] = valueOfCell;
+                            this.CellsBackingValue[rowToChange, colToChange] = valueOfCell;
                         }
                     }
 
-                    NameWidgetBackingStore = this.spreadsheet.Name;
+                    this.NameWidgetBackingStore = this.spreadsheet.Name;
                     this.NumberOfCols = biggestColumn + 1;
                     this.NumberOfRows = biggestRow + 1;
                     FocusMainInput(selectedRow, selectedCol);
@@ -416,7 +479,7 @@ public partial class SpreadsheetGUI
                 }
             }
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
             await JS.InvokeVoidAsync("alert", "Bad File" + e.Message);
         }
@@ -428,7 +491,7 @@ public partial class SpreadsheetGUI
     /// <param name="show"> if true, show the file save view. </param>
     private void ShowHideSaveGUI(bool show)
     {
-        SaveFileName = spreadsheet.Name + ".sprd";
+        this.SaveFileName = spreadsheet.Name + ".sprd";
 
         SaveGUIView = show;
         StateHasChanged();
@@ -443,12 +506,12 @@ public partial class SpreadsheetGUI
     {
         // this null check is done because Visual Studio doesn't understand
         // the Blazor life cycle and cannot assure of non-null.
-        if ( JSModule is not null )
+        if (JSModule is not null)
         {
-            var success = await JSModule.InvokeAsync<bool>("saveToFile", SaveFileName, spreadsheet.GetJSON());
+            var success = await JSModule.InvokeAsync<bool>("saveToFile", SaveFileName, this.spreadsheet.GetJSON());
             if (success)
             {
-                ShowHideSaveGUI( false );
+                ShowHideSaveGUI(false);
                 StateHasChanged();
             }
         }
@@ -460,9 +523,9 @@ public partial class SpreadsheetGUI
     /// <param name="e"> Mouse Event is Ignored. </param>
     private async void HandleClear(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
     {
-        if ( JSModule is not null && spreadsheet.Changed )
+        if (JSModule is not null && spreadsheet.Changed)
         {
-            bool success = await JS.InvokeAsync<bool>( "confirm", "Clear the sheet?" );
+            bool success = await JS.InvokeAsync<bool>("confirm", "Clear the sheet?");
         }
 
         this.spreadsheet = new Spreadsheet();

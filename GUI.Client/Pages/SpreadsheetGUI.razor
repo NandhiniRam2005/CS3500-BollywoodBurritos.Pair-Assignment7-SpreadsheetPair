@@ -60,7 +60,7 @@
 }
 else
 {
-	<div >
+	<div>
 		<div id="FileMenu">
 			<h2>File Menu</h2>
 			<div id="FileHandlers">
@@ -72,7 +72,7 @@ else
 				<label for="inputwidget" class="btn btn-primary">Load</label>
 				<br />
 				<label for="SpreadsheetName">Name: </label>
-				<input name="SpreadsheetName" id="NameOfSpreadsheet" value="@NameWidgetBackingStore" @onchange="ChangeSpreadsheetName" />
+				<input name="SpreadsheetName" id="NameOfSpreadsheet" @bind="NameWidgetBackingStore" />
 				@* <remarks> Allows the user to specify the number of rows and columns and stores these in appropriate variables used to render the cells. </remarks> *@
 				<label for="RowsInput"> Number of Rows: </label>
 				<input type="number" name="RowsInput" id="RowsInput" min="1" max="100" @bind="@NumberOfRows" />
@@ -179,7 +179,30 @@ else
 	/// <summary>
 	/// The name of the spreadsheet. This is an input widget.
 	/// </summary>
-	private string NameWidgetBackingStore = "default";
+	private string nameWidgetBackingStore = "default";
+	private string NameWidgetBackingStore
+	{
+		get
+		{ 
+			return nameWidgetBackingStore;
+		}
+
+		set
+		{
+			string newName = value;
+			if (!newName.Contains('/') && !newName.Equals(string.Empty))
+			{
+				this.nameWidgetBackingStore = newName;
+				this.spreadsheet.Name = newName;
+			}
+			else
+			{
+				ShowInvalidNameMessage();
+			}
+
+			StateHasChanged();
+		}
+	}
 
 	/// <summary>
 	/// The evaluated displayed value of the currently selected
@@ -215,60 +238,6 @@ else
 	/// It's used to manage state when switching between cells.
 	/// </summary>
 	private int prevSelectedCol = 0;
-
-	/// <summary>
-	/// The number of rows initially.
-	/// </summary>
-	private int numberOfRows = 10;
-
-	/// <summary>
-	/// Gets or sets the number of rows in the spreadsheet that
-	/// is adjusted by user input.
-	/// </summary>
-	private int NumberOfRows
-	{
-		get { return numberOfRows; }
-		set
-		{
-			if (value <= 100 && value >= 1)
-			{
-				numberOfRows = value;
-				RevaluateAllCellsInList(spreadsheet.GetNamesOfAllNonemptyCells().ToList());
-			}
-			else
-			{
-				ShowInvalidRowMessage();
-			}
-
-		}
-	}
-
-	/// <summary>
-	/// The number of columns initially.
-	/// </summary>
-	private int numberOfCols = 10;
-
-	/// <summary>
-	/// Gets or sets the number of columns in the spreadsheet that
-	/// is adjusted by user input.
-	/// </summary>
-	private int NumberOfCols
-	{
-		get { return numberOfCols; }
-		set
-		{
-			if (value <= 26 && value >= 1)
-			{
-				numberOfCols = value;
-				RevaluateAllCellsInList(spreadsheet.GetNamesOfAllNonemptyCells().ToList());
-			}
-			else
-			{
-				ShowInvalidColMessage();
-			}
-
-		}
-	}
 
 	/// <summary>
 	/// The name of the currently selected cell,
@@ -347,25 +316,13 @@ else
 	}
 
 	/// <summary>
-	///  Updates the name of the spreadsheet both in the model and the GUI.
+	///  Shows invalid message when name change is invalid
 	/// </summary>
-	/// <param name="eventArgs"> The input event containing the new cell content. </param>
-	private async void ChangeSpreadsheetName(ChangeEventArgs eventArgs)
+	private async void ShowInvalidNameMessage()
 	{
-		string newName = eventArgs.Value?.ToString() ?? "oops";
-		if (!newName.Contains('/') && !newName.Equals(string.Empty))
-		{
-			NameWidgetBackingStore = newName;
-			this.spreadsheet.Name = newName;
-		}
-		else
-		{
-			NameWidgetBackingStore = "Default";
-			spreadsheet.Name = "Default";
-			await JS.InvokeVoidAsync("alert", "Spreadsheet naming violation. Spreadsheet names CANNOT contain '/' and must contain at least one character. Name changed to 'Default'");
-		}
+		// We need this helper method to be async which is why we can't directly have this line of code in the NameWidget setter.
+		await JS.InvokeVoidAsync("alert", "Spreadsheet naming violation. Spreadsheet names CANNOT contain '/' and must contain at least one character. Name changed to 'default'");
 
-		StateHasChanged();
 	}
 
 	/// <summary>
