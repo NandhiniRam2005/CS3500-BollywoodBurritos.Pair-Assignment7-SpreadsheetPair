@@ -19,7 +19,7 @@ using System.Text.RegularExpressions;
 /// Partner:   None
 /// Date:      October 29, 2024
 /// Course:    CS 3500, University of Utah, School of Computing
-/// Copyright: CS 3500 and [Joel Rodriguez and Nandhini Ramanathan] - This work may not
+/// Copyright: CS 3500 and [Joel Rodriguez and Nandhini Ramanathan] - This work may no
 ///            be copied for use in Academic Coursework.
 ///
 /// I, Joel Rodriguez and Nandhini Ramanathan, certify that I wrote this code from scratch and
