@@ -128,7 +128,7 @@ public partial class SpreadsheetGUI
 
         set
         {
-            if (value <= 100 && value >= 1)
+            if (value <= 99 && value >= 1)
             {
                 this.numberOfRows = value;
                 RevaluateAllCellsInList(spreadsheet.GetNamesOfAllNonemptyCells().ToList());

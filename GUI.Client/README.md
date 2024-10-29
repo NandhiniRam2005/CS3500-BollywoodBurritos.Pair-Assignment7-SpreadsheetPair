@@ -23,7 +23,9 @@ vw and vh. We chose not to change this because this would require a lot of time 
 a zoom percentage which seems right.
 We also noticed that stylecop is giving a warning in mangage nuget dependencies. This is how it came with the starter code so we did not fix it as we assumed it was needed.
 We have been docked before for using not using "this." syntax so we used it here and changed starter to code to use it as well.
-Also per assignment instructions in our .razor file we only have code that pertains to the view while the razor.cs file has any additionaly logic
+Also per assignment instructions in our .razor file we only have code that pertains to the view while the razor.cs file has any additionaly logic.
+I dont mean to sound like a hotdog sitting on the sidewalk of a hot phoenix day (UwU) but piazza question @754 a TA says that one additional feature (we added 5 including one
+that professor suggested) is enough for full credit so as long as we did it correctly it should be enough.
 # Assignment Specific Topics
 We decided to make various design decisions.For example we decided to:
 1. Added functionality to type inside the cells themselves

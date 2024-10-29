@@ -303,7 +303,7 @@ else
 	private async void ShowInvalidRowMessage()
 	{
 		// We need this helper method to be async which is why we can't directly have this line of code in the NumberOfRows setter.
-		await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of rows. (Max 100, Min 1).");
+		await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of rows. (Max 99, Min 1).");
 	}
 
 	/// <summary>
