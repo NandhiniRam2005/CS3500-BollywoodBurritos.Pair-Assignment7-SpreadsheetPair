@@ -21,6 +21,7 @@ yes.So we implemented it.  (Check lecture 16 time stamp 41:00 if you want proof)
 We noticed that the website looks different on different machines, this is because Professor De St Germaine used px as a unit for defining the size of components instead of 
 vw and vh. We chose not to change this because this would require a lot of time (finding all components and figuring out how to convert to vw and vh). Please just use 
 a zoom percentage which seems right.
+We also noticed that stylecop is giving a warning in mangage nuget dependencies. This is how it came with the starter code so we did not fix it as we assumed it was needed.
 
 # Assignment Specific Topics
 We decided to make various design decisions.For example we decided to:
