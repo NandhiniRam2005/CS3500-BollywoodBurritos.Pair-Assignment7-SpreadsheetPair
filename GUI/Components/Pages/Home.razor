@@ -40,6 +40,7 @@
             <label for="about-toggle" class="btn btn-info">About</label>
             <div class="dropdown-content">
                 <p style="color: black;">
+                    To begin we'd like to say this page is basically our readme. I figured this would make your guys' life easier. < br />
                     This project is a Spreadsheet model which you can access through in the sidebar. You can start typing contents of numbers,
                     words, and formulas in the highlighted cell directly which get evaluated in the the cell and in the value toolbar on top.
                     This Spreadsheet will add 4,000,000+ aura to your daily life as you embody the U's spirit in our school colors.
@@ -84,20 +85,40 @@
             <label for="feature-toggle" class="btn btn-secondary">Extra Features</label>
             <div class="dropdown-content">
                 <p style="color: black;">
-                    The extra features we added include adding the ability to directly start typing values into the cells itself in the Spreadsheet.
+                    1. The extra features we added include adding the ability to directly start typing values into the cells itself in the Spreadsheet.
                     We also added some GUI features which include adding the University's colors to our Spreadsheet model and adding a drop shadow
                     to filled out cells when you hover over them.<br />
-                    Functionality to name your spreadsheet has also been added. Upon loading your sprd file the name that it was given will also be
+                    2. Functionality to name your spreadsheet has also been added. Upon loading your sprd file the name that it was given will also be
                     loaded into the name input box. Illegal names are not allowed and are handled correctly.<br />
                     Upon changing column/row numbers if a cell referenced a cell which no longer is visible the value for the cell (in the view only )
                     changes to an Evaluation Error. Upon bringing the cell back by changing row/col number back the cells value is reverted to its
-                    original value!
-                    We attempted to add the following:
+                    original value! <br />
+                    3. Major styling changes.  <br />
+                    We attempted to add the following: <br />
                     1.  Attempted to add arrows keys to maneuver around cells in spreadsheet, it worked in every situation except for the situation where you were typing something and then pressed
                     arrow key. This led to various javascript errors which for whatever reason would overwrite the cell we maneuvered too with the text that we were typing. There was an also
-                    an issue of practicality. A user must be selected into a input (and typing) to use the arrow keys. We abandoned the idea (you can view our git commits to see what we tried).
+                    an issue of practicality. A user must be selected into a input (and typing) to use the arrow keys. We abandoned the idea (you can view our git commits to see what we tried).  <br />
                     2. Attempted to add Google Ad-sense to our project for fun. We realized this would require a server so abandoned the idea.
                 </p>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <input type="checkbox" id="notes-toggle" class="toggle">
+            <label for="notes-toggle" class="btn btn-dark">Notes To Instructors</label>
+            <div class="dropdown-content">
+                <p style="color: black;">
+                    PLEASE HIT CTRL + SHIFT + R BEFORE GRADING. Sometimes the css is cached and hitting this button forces the css to be updated.
+                    We decided to add the README to both the GUI and GUI.client per the instructions of a TA via office hours. We were also told to just leave the contents of
+                    a cell that has been cut off after shortening spreadsheet in the spreadsheet per instructions of both Professor De St Germaine and a TA.
+                    Upon loading we removed the popup which shows the JSON being loaded. This popup in our opinion is ugly and not user friendly. A random person in the real world
+                    would get concerned by seeing such a thing so we removed it.
+                    In class Professor De St Germaine's GUI implementation included a Name in the Json. So we went ahead and included the name in our spreadsheet JSON as well.
+                    A student also asked in class if we would be allowed to add a feature where we could add the name to the spreadsheet in which Professor De St Germaine said
+                    yes. So we implemented it. (Check lecture 16 time stamp 41:00 if you want proof). 
+
+                </p>
+                
             </div>
         </div>
 
