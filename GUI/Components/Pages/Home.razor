@@ -1,4 +1,29 @@
-﻿@page "/"
+﻿@* // <copyright file="Home.razor" company="UofU-CS3500">
+    // Copyright (c) 2024 UofU-CS3500. All rights reserved.
+    //
+</copyright>
+// Ignore Spelling: Spreadsheeeeeeeeee
+
+// <summary>
+    // Author:    Joel Rodriguez,  Nandhini Ramanathan, and Professor Jim.
+    // Partner:   None
+    // Date:      October 29, 2024
+    // Course:    CS 3500, University of Utah, School of Computing
+    // Copyright: CS 3500 and [Joel Rodriguez and Nandhini Ramanathan] - This work may not
+    //            be copied for use in Academic Coursework.
+    //
+    // I, Joel Rodriguez and Nandhini Ramanathan, certify that I wrote this code from scratch and
+    // did not copy it in part or whole from another source.  All
+    // references used in the completion of the assignments are cited
+    // in my README file.
+    //
+    // File Contents
+    //
+    //    This file contains our GUI elements for the Home page that consists of an About page, explains teh extra featured added to our spreadsheet, and
+    //    information on how to use our Spreadsheet.
+// </summary> *@
+
+@page "/"
 
 <PageTitle>CS 3500</PageTitle>
 
@@ -30,7 +55,7 @@
                 <div class="dropdown-content">
                     <p>
                         To access our spreadsheet please click the spreadsheet button on the left sidebar upon loading into the spreadsheet you will 
-                        be greeted with various options heres how to use each of our components: <br />
+                        be greeted with various options here's how to use each of our components: <br />
                         1. The spreadsheet works as any spreadsheet would! Go ahead and type things in either directly into each cell or in the contents
                         bar located in the tool bar!<br />
                         2. Feeling like changing the name of your spreadsheet? Go ahead and change it! It will be saved upon saving and loaded back in
@@ -43,6 +68,12 @@
                         7. Upon changing column/row numbers if a cell referenced a cell which no longer is visible the value for the cell (in the view only )
                         changes to an Evaluation Error. Upon bringing the cell back by changing row/col number back the cells value is reverted to its
                         original value!
+
+                        We attempted to add the following:
+                        1.  Attempted to add arrows keys to maneuver around cells in spreadsheet, it worked in every situation except for the situation where you were typing something and then pressed
+                        arrow key. This led to various javascript errors which for whatever reason would overwrite the cell we maneuvered too with the text that we were typing. There was an also
+                        an issue of practicality. A user must be selected into a input (and typing) to use the arrow keys. We abandoned the idea (you can view our git commits to see what we tried).
+                        2. Attempted to add Google Ad-sense to our project for fun. We realized this would require a server so abandoned the idea.
                     </p>
                 </div>
             </div>
@@ -56,7 +87,7 @@
                     The extra features we added include adding the ability to directly start typing values into the cells itself in the Spreadsheet.
                     We also added some GUI features which include adding the University's colors to our Spreadsheet model and adding a drop shadow
                     to filled out cells when you hover over them.<br />
-                    Functunality to name your spreadsheet has also been added. Upon loading your sprd file the name that it was given will also be
+                    Functionality to name your spreadsheet has also been added. Upon loading your sprd file the name that it was given will also be
                     loaded into the name input box. Illegal names are not allowed and are handled correctly.<br />
                     Upon changing column/row numbers if a cell referenced a cell which no longer is visible the value for the cell (in the view only )
                     changes to an Evaluation Error. Upon bringing the cell back by changing row/col number back the cells value is reverted to its

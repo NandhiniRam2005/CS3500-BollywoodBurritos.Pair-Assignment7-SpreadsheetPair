@@ -7,7 +7,6 @@ namespace SpreadsheetNS;
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using System;
 using System.Diagnostics;
@@ -18,7 +17,7 @@ using System.Text.RegularExpressions;
 /// <summary>
 /// Author:    Joel Rodriguez,  Nandhini Ramanathan, and Professor Jim.
 /// Partner:   None
-/// Date:      October 26, 2024
+/// Date:      October 29, 2024
 /// Course:    CS 3500, University of Utah, School of Computing
 /// Copyright: CS 3500 and [Joel Rodriguez and Nandhini Ramanathan] - This work may not
 ///            be copied for use in Academic Coursework.
@@ -213,12 +212,22 @@ public partial class SpreadsheetGUI
 
             string cellName = CellNameFromRowCol(row, col);
             List<string> cellsToRecalculate = spreadsheet.SetContentsOfCell(cellName, newInput).ToList();
-            CellsBackingStore[row, col] = newInput;
-            ToolBarCellContents = newInput;
 
-            RevaluateAllCellsInList( cellsToRecalculate );
+            // Normalize the variable so the contents display shows normalized variables.
+            if (newInput.StartsWith("="))
+            {
+                CellsBackingStore[row, col] = newInput.ToUpper();
+                ToolBarCellContents = newInput.ToUpper();
+            }
+            else
+            {
+                CellsBackingStore[row, col] = newInput;
+                ToolBarCellContents = newInput;
+            }
+
+            RevaluateAllCellsInList(cellsToRecalculate);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             await JS.InvokeVoidAsync( "alert", e.Message );
         }
@@ -305,7 +314,8 @@ public partial class SpreadsheetGUI
 
             if ( !success )
             {
-                return;    // user canceled the action.
+                // user canceled the action.
+                return;
             }
 
             string fileContent = string.Empty;
@@ -316,6 +326,7 @@ public partial class SpreadsheetGUI
                 var file = eventArgs.File;
                 if ( file is null )
                 {
+                    // No file found, return/exit.
                     return;
                 }
 
@@ -337,6 +348,7 @@ public partial class SpreadsheetGUI
 
                     string? valueOfCell = spreadsheet.GetCellValue(cellName).ToString();
                     string? contentsOfCell = spreadsheet.GetCellContents(cellName).ToString();
+
                     if (contentsOfCell != null && spreadsheet.GetCellContents(cellName) is Formula)
                     {
                         CellsBackingStore[rowToChange, colToChange] = "=" + contentsOfCell;
@@ -351,6 +363,7 @@ public partial class SpreadsheetGUI
                         valueOfCell = formulaError.Reason;
                     }
 
+                    // Store the evaluated value of the cell.
                     if (valueOfCell != null)
                     {
                         if (spreadsheet.GetCellContents(cellName) is Formula formula)
@@ -428,7 +441,7 @@ public partial class SpreadsheetGUI
     /// <summary>
     ///   Clear the spreadsheet if not modified.
     /// </summary>
-    /// <param name="e"> Ignored. </param>
+    /// <param name="e"> Mouse Event is Ignored. </param>
     private async void HandleClear(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
     {
         if ( JSModule is not null && spreadsheet.Changed )

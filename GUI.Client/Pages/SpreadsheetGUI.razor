@@ -7,7 +7,7 @@
 // <summary>
     // Author:    Joel Rodriguez,  Nandhini Ramanathan, and Professor Jim.
     // Partner:   None
-    // Date:      October 26, 2024
+    // Date:      October 29, 2024
     // Course:    CS 3500, University of Utah, School of Computing
     // Copyright: CS 3500 and [Joel Rodriguez and Nandhini Ramanathan] - This work may not
     //            be copied for use in Academic Coursework.
@@ -69,7 +69,7 @@ else
 			<label for="FormulaValue">Value:</label>
 			<input name="FormulaValue" id="FormulaValue" value="@ValueWidgetBackingStore" readonly />
 			<label for="FormulaContent">Content:</label>
-			<input name="FormulaContent" id="FormulaContent" @ref="FormulaContentEditableInput" @bind="@InputWidgetBackingStore" @onkeydown="HandleOnKeyDown" />
+			<input name="FormulaContent" id="FormulaContent" @ref="FormulaContentEditableInput" @bind="@InputWidgetBackingStore" />
 		</div>
 	</div>
 
@@ -103,7 +103,7 @@ else
 											@* <remarks> Displays an editable input if the cell is selected or the cell's value if it's not selected. </remarks> *@
 											@if (CellsClassBackingStore[r, c] != null && CellsClassBackingStore[r, c].Equals("selected"))
 											{
-												<input name="FormulaCellContent" id="FormulaCellContents" @ref="FormulaContentEditableInput" @bind="InputWidgetBackingStore" @onkeydown="HandleOnKeyDown" />
+												<input name="FormulaCellContent" id="FormulaCellContents" @ref="FormulaContentEditableInput" @bind="InputWidgetBackingStore" />
 											}
 											else
 											{
@@ -241,12 +241,12 @@ else
 	}
 
 	/// <summary>
-	/// The number of cols initially.
+	/// The number of columns initially.
 	/// </summary>
 	private int numberOfCols = 10;
 
 	/// <summary>
-	/// Gets or sets the number of cols in the spreadsheet that
+	/// Gets or sets the number of columns in the spreadsheet that
 	/// is adjusted by user input.
 	/// </summary>
 	private int NumberOfCols
@@ -269,7 +269,7 @@ else
 
 	/// <summary>
 	/// The name of the currently selected cell,
-	/// displayed in the toolbar.
+	/// displayed in the toolbar. First cell "A1" is selected by default.
 	/// </summary>
 	private string selectedNameOfCell = "A1";
 
@@ -299,7 +299,8 @@ else
 		UpdateToolbar();
 		HighlightCell(row, col);
 
-		FormulaContentEditableInput.FocusAsync(); // <remarks> move focus back to input widget. </remarks>
+		// moves focus back to input widget.
+		FormulaContentEditableInput.FocusAsync();
 	}
 
 	/// <summary>
@@ -329,9 +330,8 @@ else
 	/// </summary>
 	private async void ShowInvalidRowMessage()
 	{
-
+		// We need this helper method to be asyc which is why we can't directly have this line of code in the NumberOfRows setter.
 		await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of rows. (Max 100, Min 1).");
-
 	}
 
 	/// <summary>
@@ -339,9 +339,8 @@ else
 	/// </summary>
 	private async void ShowInvalidColMessage()
 	{
-
+		// We need this helper method to be asyc which is why we can't directly have this line of code in the NumberOfCols setter.
 		await JS.InvokeVoidAsync("alert", "Attempted to add invalid value of columns. (Max 26, Min 1 only whole numbers permitted).");
-
 	}
 
 	/// <summary>
@@ -364,49 +363,6 @@ else
 		}
 
 		StateHasChanged();
-	}
-	/// <summary>
-	/// Handles Key Down
-	/// </summary>
-	/// <param name="e"> The key that was pressed. </param>
-	private void HandleOnKeyDown(KeyboardEventArgs e)
-	{
-		switch (e.Key)
-		{
-			case "ArrowUp":
-				if (selectedRow - 1 >= 0)
-				{
-					InputWidgetBackingStore = string.Empty;
-					int newSelectedRow = selectedRow - 1;
-					FocusMainInput(newSelectedRow, selectedCol);
-				}
-				break;
-			case "ArrowDown":
-				if (selectedRow + 1 < NumberOfRows)
-				{
-					InputWidgetBackingStore = string.Empty;
-					int newSelectedRow = selectedRow + 1;
-					FocusMainInput(newSelectedRow, selectedCol);
-				}
-				break;
-			case "ArrowLeft":
-				if (selectedCol - 1 >= 0)
-				{
-					InputWidgetBackingStore = string.Empty;
-					int newSelectedCol = selectedCol - 1;
-					FocusMainInput(selectedRow, newSelectedCol);
-				}
-
-				break;
-			case "ArrowRight":
-				if (selectedCol + 1 < NumberOfCols)
-				{
-					InputWidgetBackingStore = string.Empty;
-					int newSelectedCol = selectedCol + 1;
-					FocusMainInput(selectedRow, newSelectedCol);
-				}
-				break;
-		}
 	}
 
 	/// <summary>

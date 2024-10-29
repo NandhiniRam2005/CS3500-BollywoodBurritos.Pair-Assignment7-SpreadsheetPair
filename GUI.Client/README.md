@@ -5,8 +5,8 @@ Start Date: 22-Oct-2024
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  joel-rodriguez and NandhiniRam2005
 Repo:      https://github.com/uofu-cs3500-20-fall2024/spreadsheetpair-bollywood-burritos
-Commit Date: 28-October-2024 10:00 PM
-Project:    GUI
+Commit Date: 29-October-2024 10:00 PM
+Project:    GUI Client
 Copyright:  CS 3500 and [Joel Rodriguez and Nandhini Ramanathan] - This work may not be copied for use in Academic Coursework.```
 ```
 
@@ -18,6 +18,7 @@ would get concerned by seeing such a thing so we removed it.
 In class Professor De St Germaines GUI implementation included a Name in the Json. So we went ahead and included the name in our spreadsheet JSON as well. 
 A student also asked in class if we would be allowed to add a feature where we could add the name to the spreadsheet in which Professor De St Germaine said 
 yes. So we implemented it.  (Check lecture 16 time stamp 41:00 if you want proof)
+
 # Assignment Specific Topics
 We decided to make various design decisions. For example we decided to:
 1. Added functionality to  type inside the cells themselves
@@ -31,8 +32,9 @@ Throughout the implementation of this project we frequently referenced stack ove
 TA's of CS 3500. 
 We occasionally ran into problems when attempting to add certain things to our spreadsheet which we eventually gave up on to ensure we 
 would not be spending too much time and things that didn't matter. For example:
-1. Attempted to have rows and cols revert to former value if invalid value was entered. This feature only worked on occasion even when it
-   should have worked every time we decided to not dedicate more time into this.
+1. Attempted to add arrows keys to maneuver around cells in spreadsheet, it worked in every situation except for the situation where you were typing something and then pressed
+   arrow key. This led to various javascript errors which for whatever reason would overwrite the cell we maneuvered too with the text that we were typing. There was an also 
+   an issue of practicality. A user must be selected into a input (and typing) to use the arrow keys. We abandoned the idea (you can view our git commits to see what we tried).
 2. Attempted to add Google Ad-sense to our project for fun. We realized this would require a server so abandoned the idea.
 Using our page is simple and functions just as a spreadsheet would. The basic idea is:
 1. Click on cell to type into 
@@ -57,7 +59,7 @@ each other that we thought an idea wouldn't add much to the spreadsheet or would
 when we realized that one us was getting tired of typing or was getting their brain fried we would switch off drivers and all the other person 
 to start. We would take periodic breaks to ensure we only coded quality code. We chose not to assign tasks since that felt unfair to the both of us.
 
-Although are partisanship was great their was places where we could improve. For example I felt that we had two problems that sometimes made us program 
+Although are partnership was great their was places where we could improve. For example I felt that we had two problems that sometimes made us program 
 slowly and not be to get the assignment done as quickly as we could of. One of the things that held us back was our similar class schedule we would frequently 
 get distracted talking about other class homework like 3810 homework since we have the same class together. Another problem we had was talking too much, we 
 always went to do work in the cade lab together with all of our friends and we found that we kept distracting each other with conversations about Bronny James

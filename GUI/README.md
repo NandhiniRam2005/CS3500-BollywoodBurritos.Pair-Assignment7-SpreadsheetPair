@@ -5,7 +5,7 @@ Start Date: 22-Oct-2024
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  joel-rodriguez and NandhiniRam2005
 Repo:      https://github.com/uofu-cs3500-20-fall2024/spreadsheetpair-bollywood-burritos
-Commit Date: 28-October-2024 10:00 PM
+Commit Date: 29-October-2024 10:00 PM
 Project:    GUI
 Copyright:  CS 3500 and [Joel Rodriguez and Nandhini Ramanathan] - This work may not be copied for use in Academic Coursework.```
 ```
@@ -15,9 +15,10 @@ We decided to add the README to both the GUI and GUI.client per the instructions
 a cell that has been cut off after shortening spreadsheet in the spreadsheet per instructions of both Professor De St Germaine and a TA. 
 Upon loading we removed the popup which shows the JSON being loaded. This popup in our opinion is ugly and not user friendly. A random person in the real world
 would get concerned by seeing such a thing so we removed it. 
-In class Professor De St Germaines GUI implementation included a Name in the Json. So we went ahead and included the name in our spreadsheet JSON as well. 
+In class Professor De St Germaine's GUI implementation included a Name in the Json. So we went ahead and included the name in our spreadsheet JSON as well. 
 A student also asked in class if we would be allowed to add a feature where we could add the name to the spreadsheet in which Professor De St Germaine said 
 yes. So we implemented it. (Check lecture 16 time stamp 41:00 if you want proof)
+
 # Assignment Specific Topics
 We decided to make various design decisions. For example we decided to:
 1. Added functionality to  type inside the cells themselves
@@ -31,9 +32,9 @@ Throughout the implementation of this project we frequently referenced stack ove
 TA's of CS 3500. 
 We occasionally ran into problems when attempting to add certain things to our spreadsheet which we eventually gave up on to ensure we 
 would not be spending too much time and things that didn't matter. For example:
-1. Attempted to have rows and cols revert to former value if invalid value was entered. This feature only worked on occasion even when it
-   should have worked every time we decided to not dedicate more time into this.
-2. Attempted to add Google Ad-sense to our project for fun. We realized this would require a server so abandoned the idea.
+1. Attempted to add arrows keys to maneuver around cells in spreadsheet, it worked in every situation except for the situation where you were typing something and then pressed
+   arrow key. This led to various javascript errors which for whatever reason would overwrite the cell we maneuvered too with the text that we were typing. There was an also 
+   an issue of practicality. A user must be selected into a input (and typing) to use the arrow keys. We abandoned the idea (you can view our git commits to see what we tried).2. Attempted to add Google Ad-sense to our project for fun. We realized this would require a server so abandoned the idea.
 Using our page is simple and functions just as a spreadsheet would. The basic idea is:
 1. Click on cell to type into 
 2. Type into cell itself or the contents in the tool-bar
@@ -44,7 +45,7 @@ Using our page is simple and functions just as a spreadsheet would. The basic id
 # Partnership Information
 All of our code was done using pair programming. We found that it would be too difficult and unfair for us to split up the work so we 
 decided to not split up the work. Our schedules aligned very well so we decided to just meet up whenever we could on campus to work on 
-the assignment. On occassion we would also work together over discord on late nights when we were feeling motivated.  The only work 
+the assignment. On occasion we would also work together over discord on late nights when we were feeling motivated.  The only work 
 we did on our own time at times was searching up bugs. When we encountered a bug in our code we would pause and do some googling on our own
 and rejoin when we had a found a solution on line.
 
@@ -65,7 +66,7 @@ and Jujutsu Kaisen. We need to be able to focus more on future assignments.
 
 # Branching
 
-We did all of our coding in pairs together. On occassion we would switch off who's computers we were using. We mostly used one computer (which is why most 
+We did all of our coding in pairs together. On ocassion we would switch off who's computers we were using. We mostly used one computer (which is why most 
 commits are under joel-rodriguez) but sometimes we would switch to Nandhini's computer when we were doing pair programming online since her computer is faster.
 This is why you see a mix of commits from both Joel and Nandhini. We didn't work on additional functionality on our own to make sure that no one would fall 
 behind. So to sum it up there are NO branches.
