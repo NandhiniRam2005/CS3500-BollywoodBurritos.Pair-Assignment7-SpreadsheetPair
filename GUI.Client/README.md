@@ -18,6 +18,9 @@ would get concerned by seeing such a thing so we removed it.
 In class Professor De St Germaine's GUI implementation included a Name in the Json.So we went ahead and included the name in our spreadsheet JSON as well.
 A student also asked in class if we would be allowed to add a feature where we could add the name to the spreadsheet in which Professor De St Germaine said
 yes.So we implemented it.  (Check lecture 16 time stamp 41:00 if you want proof)
+We noticed that the website looks different on different machines, this is because Professor De St Germaine used px as a unit for defining the size of components instead of 
+vw and vh. We chose not to change this because this would require a lot of time (finding all components and figuring out how to convert to vw and vh). Please just use 
+a zoom percentage which seems right.
 
 # Assignment Specific Topics
 We decided to make various design decisions.For example we decided to:
@@ -27,7 +30,9 @@ We decided to make various design decisions.For example we decided to:
 4. Added way for the user to change the amount of rows and columns (up to 100 rows and 26 columns)
 5. Added Save and Load functionality 
 6. Added way for someone to name the spreadsheet and for the name to be displayed
-7. All other expected functionality of a basic spreadsheet program.
+7. Added functunality for when spreadsheet loads that its size changes to the minimum size it needs to be (min 10 x 10) For example if loaded spreadsheet
+   has a cell at Z100 filled out then the spreadsheet will load in at being 100x100. If there is no cell outside of the default 10x10 then the size loaded is 10x10.
+8. All other expected functionality of a basic spreadsheet program.
 Throughout the implementation of this project we frequently referenced stack overflow, the documentation of Blazor, and of course the ever knowledgeable
 TA's of CS 3500. 
 We occasionally ran into problems when attempting to add certain things to our spreadsheet which we eventually gave up on to ensure we

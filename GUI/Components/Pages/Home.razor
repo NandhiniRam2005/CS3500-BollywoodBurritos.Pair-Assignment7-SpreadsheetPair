@@ -94,6 +94,9 @@
                     changes to an Evaluation Error. Upon bringing the cell back by changing row/col number back the cells value is reverted to its
                     original value! <br />
                     3. Major styling changes.  <br />
+                    4. Added functunality for when spreadsheet loads that its size changes to the minimum size it needs to be (min 10 x 10) For example if loaded spreadsheet
+                    has a cell at Z100 filled out then the spreadsheet will load in at being 100x100. If there is no cell outside of the default 10x10 then the size loaded is 
+                    10x10. <br />
                     We attempted to add the following: <br />
                     1.  Attempted to add arrows keys to maneuver around cells in spreadsheet, it worked in every situation except for the situation where you were typing something and then pressed
                     arrow key. This led to various javascript errors which for whatever reason would overwrite the cell we maneuvered too with the text that we were typing. There was an also
@@ -112,10 +115,15 @@
                     We decided to add the README to both the GUI and GUI.client per the instructions of a TA via office hours. We were also told to just leave the contents of
                     a cell that has been cut off after shortening spreadsheet in the spreadsheet per instructions of both Professor De St Germaine and a TA.
                     Upon loading we removed the popup which shows the JSON being loaded. This popup in our opinion is ugly and not user friendly. A random person in the real world
-                    would get concerned by seeing such a thing so we removed it.
+                    would get concerned by seeing such a thing so we removed it.<br />
+                    <br />
                     In class Professor De St Germaine's GUI implementation included a Name in the Json. So we went ahead and included the name in our spreadsheet JSON as well.
                     A student also asked in class if we would be allowed to add a feature where we could add the name to the spreadsheet in which Professor De St Germaine said
-                    yes. So we implemented it. (Check lecture 16 time stamp 41:00 if you want proof). 
+                    yes. So we implemented it. (Check lecture 16 time stamp 41:00 if you want proof). <br />
+                    <br />
+                    We noticed that the website looks different on different machines, this is because Professor De St Germaine used px as a unit for defining the size of components instead of
+                    vw and vh. We chose not to change this because this would require a lot of time (finding all components and figuring out how to convert to vw and vh). Please just use
+                    a zoom percentage which seems right.
 
                 </p>
                 

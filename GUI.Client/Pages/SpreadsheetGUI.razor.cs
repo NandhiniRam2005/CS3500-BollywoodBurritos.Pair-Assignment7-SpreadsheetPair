@@ -340,12 +340,24 @@ public partial class SpreadsheetGUI
                 this.CellsBackingStore = new string[100, 26];
                 this.CellsBackingValue = new string[100, 26];
 
+                int biggestRow = 9;
+                int biggestColumn = 9;
+
                 // Although similar this foreach statement is different than the helper method. So we cannot use it.
                 foreach (string cellName in spreadsheet.GetNamesOfAllNonemptyCells())
                 {
                     int rowToChange;
                     int colToChange;
                     ConvertCellNameToRowCol(cellName, out rowToChange, out colToChange);
+                    if(rowToChange > biggestRow)
+                    {
+                        biggestRow = rowToChange;
+                    }
+
+                    if(colToChange > biggestColumn)
+                    {
+                        biggestColumn = colToChange;
+                    }
 
                     string? valueOfCell = spreadsheet.GetCellValue(cellName).ToString();
                     string? contentsOfCell = spreadsheet.GetCellContents(cellName).ToString();
@@ -397,6 +409,8 @@ public partial class SpreadsheetGUI
                     }
 
                     NameWidgetBackingStore = this.spreadsheet.Name;
+                    this.NumberOfCols = biggestColumn + 1;
+                    this.NumberOfRows = biggestRow + 1;
                     FocusMainInput(selectedRow, selectedCol);
                     StateHasChanged();
                 }

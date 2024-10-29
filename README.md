@@ -110,15 +110,15 @@ our next assignments.
                                                                                    Learning Tools:  0.5
 
     7. Assignment 6: A Full Spreadsheet Model        Nandhini Ramanathan: 
-                                                     Predicted Hours:  13         Actual Hours:   
+                                                     Predicted Hours:  17         Actual Hours: 16.5  
                                                                                 Hours Spent - 
-                                                                                   Effectively:     
-                                                                                   Debugging:       
-                                                                                   Learning Tools:  
+                                                                                   Effectively: 13     
+                                                                                   Debugging: 1      
+                                                                                   Learning Tools:  2.5
 
                                                      Joel Rodriguez:
-                                                     Predicted Hours: 13          Actual Hours:   
+                                                     Predicted Hours: 17          Actual Hours:   16.5
                                                                                 Hours Spent - 
-                                                                                   Effectively:     
-                                                                                   Debugging:       
-                                                                                   Learning Tools: 
+                                                                                   Effectively:   13  
+                                                                                   Debugging:  1     
+                                                                                   Learning Tools: 2.5
