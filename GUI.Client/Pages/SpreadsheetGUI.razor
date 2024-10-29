@@ -69,7 +69,7 @@ else
 			<label for="FormulaValue">Value:</label>
 			<input name="FormulaValue" id="FormulaValue" value="@ValueWidgetBackingStore" readonly />
 			<label for="FormulaContent">Content:</label>
-			<input name="FormulaContent" id="FormulaContent" @ref="FormulaContentEditableInput" @bind="@InputWidgetBackingStore" @onkeydown="HandleOnKeyDown" />
+			<input name="FormulaContent" id="FormulaContent" @ref="FormulaContentEditableInput" @bind="@InputWidgetBackingStore" />
 		</div>
 	</div>
 
@@ -103,7 +103,7 @@ else
 											@* <remarks> Displays an editable input if the cell is selected or the cell's value if it's not selected. </remarks> *@
 											@if (CellsClassBackingStore[r, c] != null && CellsClassBackingStore[r, c].Equals("selected"))
 											{
-												<input name="FormulaCellContent" id="FormulaCellContents" @ref="FormulaContentEditableInput" @bind="InputWidgetBackingStore" @onkeydown="HandleOnKeyDown" />
+												<input name="FormulaCellContent" id="FormulaCellContents" @ref="FormulaContentEditableInput" @bind="InputWidgetBackingStore" />
 											}
 											else
 											{
@@ -364,49 +364,6 @@ else
 		}
 
 		StateHasChanged();
-	}
-	/// <summary>
-	/// Handles Key Down
-	/// </summary>
-	/// <param name="e"> The key that was pressed. </param>
-	private void HandleOnKeyDown(KeyboardEventArgs e)
-	{
-		switch (e.Key)
-		{
-			case "ArrowUp":
-				if (selectedRow - 1 >= 0)
-				{
-					InputWidgetBackingStore = string.Empty;
-					int newSelectedRow = selectedRow - 1;
-					FocusMainInput(newSelectedRow, selectedCol);
-				}
-				break;
-			case "ArrowDown":
-				if (selectedRow + 1 < NumberOfRows)
-				{
-					InputWidgetBackingStore = string.Empty;
-					int newSelectedRow = selectedRow + 1;
-					FocusMainInput(newSelectedRow, selectedCol);
-				}
-				break;
-			case "ArrowLeft":
-				if (selectedCol - 1 >= 0)
-				{
-					InputWidgetBackingStore = string.Empty;
-					int newSelectedCol = selectedCol - 1;
-					FocusMainInput(selectedRow, newSelectedCol);
-				}
-
-				break;
-			case "ArrowRight":
-				if (selectedCol + 1 < NumberOfCols)
-				{
-					InputWidgetBackingStore = string.Empty;
-					int newSelectedCol = selectedCol + 1;
-					FocusMainInput(selectedRow, newSelectedCol);
-				}
-				break;
-		}
 	}
 
 	/// <summary>

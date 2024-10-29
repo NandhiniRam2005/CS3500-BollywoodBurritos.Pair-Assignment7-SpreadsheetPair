@@ -213,8 +213,16 @@ public partial class SpreadsheetGUI
 
             string cellName = CellNameFromRowCol(row, col);
             List<string> cellsToRecalculate = spreadsheet.SetContentsOfCell(cellName, newInput).ToList();
-            CellsBackingStore[row, col] = newInput;
-            ToolBarCellContents = newInput;
+            if (newInput.StartsWith("="))
+            {
+                CellsBackingStore[row, col] = newInput.ToUpper();
+                ToolBarCellContents = newInput.ToUpper();
+            }
+            else
+            {
+                CellsBackingStore[row, col] = newInput;
+                ToolBarCellContents = newInput;
+            }
 
             RevaluateAllCellsInList( cellsToRecalculate );
         }
